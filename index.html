@@ -433,60 +433,8 @@ function generateLevel(lvl,customSeed){
   gridCols=cols;gridRows=rows;
 
   // occ[r][c] = arrow index that owns this cell, or -1
-  // -2 = forbidden (outside shape mask for picture levels)
   const occ=[];
   for(let r=0;r<rows;r++){occ[r]=[];for(let c=0;c<cols;c++)occ[r][c]=-1}
-
-  // Every 10th level is a "picture level" — arrows form a shape silhouette
-  const SHAPES=[
-    // Heart
-    (x,y)=>{const dx=x-.5,dy=y-.45;
-      return(dx*dx+((dy>0?dy:dy*1.6))*(dy>0?dy:dy*1.6))<.18||
-      (y<.55&&((x-.27)**2+(y-.3)**2<.045||( x-.73)**2+(y-.3)**2<.045))},
-    // Star (5-point)
-    (x,y)=>{const cx=.5,cy=.5,a=Math.atan2(y-cy,x-cx),d=Math.sqrt((x-cx)**2+(y-cy)**2);
-      const r5=.2+.18*Math.cos(5*a+PI/2);return d<r5},
-    // Diamond
-    (x,y)=>abs(x-.5)+abs(y-.5)<.4,
-    // Arrow pointing right
-    (x,y)=>((y>.3&&y<.7&&x>.1&&x<.6)||(x>=.5&&abs(y-.5)<(x-.5)*1.2+.08&&x<.9)),
-    // Lightning bolt
-    (x,y)=>((x>.25&&x<.55&&y>.05&&y<.45)||(x>.35&&x<.65&&y>.4&&y<.55)||(x>.45&&x<.75&&y>.5&&y<.95)),
-    // Circle (ring)
-    (x,y)=>{const d=Math.sqrt((x-.5)**2+(y-.5)**2);return d<.45&&d>.15},
-    // Cat face
-    (x,y)=>{const d=Math.sqrt((x-.5)**2+(y-.55)**2);
-      const ear1=(x>.15&&x<.35&&y<.3&&y>(.15+abs(x-.25)));
-      const ear2=(x>.65&&x<.85&&y<.3&&y>(.15+abs(x-.75)));
-      return d<.35||ear1||ear2},
-    // Rocket
-    (x,y)=>((abs(x-.5)<.15&&y>.2&&y<.85)||(abs(x-.5)<(.4-y*1.2)&&y<.3)||(abs(x-.5)<.22&&abs(x-.5)>.13&&y>.75)),
-    // Music note
-    (x,y)=>{const d=Math.sqrt((x-.35)**2+(y-.75)**2);
-      return d<.12||(x>.33&&x<.38&&y>.2&&y<.75)||(x>.35&&x<.6&&y>.18&&y<.25)},
-    // Crown
-    (x,y)=>(y>.5&&y<.85&&x>.15&&x<.85)||(y>.3&&y<=.5&&(abs(x-.5)<.05||abs(x-.27)<.05||abs(x-.73)<.05)&&x>.15&&x<.85),
-    // Puzzle piece
-    (x,y)=>{const inRect=(x>.2&&x<.8&&y>.25&&y<.75);
-      const bump1=Math.sqrt((x-.5)**2+(y-.25)**2)<.1;
-      const bump2=Math.sqrt((x-.8)**2+(y-.5)**2)<.1;
-      return inRect||bump1||bump2},
-    // Smiley
-    (x,y)=>{const d=Math.sqrt((x-.5)**2+(y-.5)**2);return d<.42},
-  ];
-
-  const isShapeLevel=(lvl%10===0)&&lvl>5&&lvl<=200;
-  if(isShapeLevel){
-    const shapeIdx=(floor(lvl/10)-1)%SHAPES.length;
-    const shapeFn=SHAPES[shapeIdx];
-    // Scale shape to fill ~80% of grid (add padding so shape isn't clipped)
-    const pad=.08;
-    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
-      const nx=pad+(c+.5)/cols*(1-2*pad);
-      const ny=pad+(r+.5)/rows*(1-2*pad);
-      if(!shapeFn(nx,ny))occ[r][c]=-2; // forbidden — outside shape
-    }
-  }
 
   const placed=[];
 
