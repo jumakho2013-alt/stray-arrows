@@ -23,6 +23,9 @@ canvas{display:block}
 <body class="light">
 <canvas id="c"></canvas>
 <script>
+// Wrap everything in IIFE to prevent single-letter global variable conflicts
+// with browser extensions (crypto wallets, ad blockers, etc.)
+(function(){
 // ================================================================
 //  ARROW ESCAPE — Minimalist Puzzle Game
 // ================================================================
@@ -132,7 +135,7 @@ function haptic(ms){try{navigator.vibrate(ms)}catch(e){}}
 // ================================================================
 //  GAME STATE
 // ================================================================
-let _S='menu'; // menu|play|complete|levels|settings|daily|challenge
+let S='menu'; // menu|play|complete|levels|settings|daily|challenge
 let level=+localStorage.getItem('ae_level')||1;
 // maxLevel = highest level ever reached. Used for unlocking in level select.
 // level = currently playing level (can go back to replay earlier levels).
@@ -370,7 +373,7 @@ function continueFromGameover(){
   coins-=CONTINUE_COST;
   undosLeft=3;
   save();
-  _S='play';
+  S='play';
   sfx.tap();haptic(10);
   return true;
 }
@@ -673,7 +676,7 @@ function tapArrowByIndex(idx){
     for(const ar of arrows)if(ar.alive){allGone=false;break}
     if(allGone){
       setTimeout(()=>{
-        _S='complete';
+        S='complete';
         sfx.complete();haptic(30);
         const s=max(1,undosLeft);
         const perfect=(s===3);
@@ -726,7 +729,7 @@ function tapArrowByIndex(idx){
     // Visual feedback: floating "-1 ❤" near the head
     spawnFloater(sx,sy-cs*.6,'-1',TH.arrowBlock);
     if(undosLeft<=0){
-      setTimeout(()=>{_S='gameover';sfx.blocked()},500);
+      setTimeout(()=>{S='gameover';sfx.blocked()},500);
     }
   }
 }
@@ -1440,7 +1443,7 @@ function drawGameOver(){
   // Continue by watching ad (FREE alternative)
   const aby=H*.66;
   if(drawBtn('CONTINUE (Watch Ad)',W/2,aby,220,42,TH.success)){
-    showRewardedAd(()=>{undosLeft=3;_S='play'});
+    showRewardedAd(()=>{undosLeft=3;S='play'});
   }
 
   // Watch ad for coins (when low on coins)
@@ -1618,7 +1621,7 @@ function loop(t){
     if(fadeAlpha>=1){
       if(pendingState){
         if(pendingState.action)pendingState.action();
-        _S=pendingState.state;
+        S=pendingState.state;
         pendingState=null;
       }
       fadingOut=false;
@@ -1628,14 +1631,14 @@ function loop(t){
   }
 
   // Render
-  if(_S==='menu')drawMenu();
-  else if(_S==='play')drawPlay();
-  else if(_S==='complete')drawComplete();
-  else if(_S==='gameover')drawGameOver();
-  else if(_S==='settings')drawSettings();
-  else if(_S==='levels')drawLevels();
-  else if(_S==='achievements')drawAchievements();
-  else if(_S==='stats')drawStats();
+  if(S==='menu')drawMenu();
+  else if(S==='play')drawPlay();
+  else if(S==='complete')drawComplete();
+  else if(S==='gameover')drawGameOver();
+  else if(S==='settings')drawSettings();
+  else if(S==='levels')drawLevels();
+  else if(S==='achievements')drawAchievements();
+  else if(S==='stats')drawStats();
 
   // Global: floating coin popups + achievement unlock popup
   drawFloaters();
@@ -1655,6 +1658,7 @@ requestAnimationFrame(loop);
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
+})(); // end IIFE
 </script>
 </body>
 </html>
