@@ -456,14 +456,75 @@ function generateLevel(lvl,customSeed){
     placed.push(arrow);
   }
 
-  // Pass 3: single-cell arrows only where valid escape lines exist (clean gaps)
-  safety=3000;
-  while(safety-->0){
-    const arrow=tryBuildArrow(occ,rows,cols,rng,1,1);
-    if(!arrow)break;
-    for(const[r,c] of arrow.cells)occ[r][c]=placed.length;
-    placed.push(arrow);
+  // Pass 3: connect remaining empty cells into LONG arrows that weave through gaps.
+  // Random-walk through adjacent empty cells → fewer arrows, longer paths, no scattered dots.
+  {const empties=[];
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(occ[r][c]===-1)empties.push([r,c]);
+  // Shuffle so we start from random positions
+  for(let i=empties.length-1;i>0;i--){const j=floor(rng()*(i+1));[empties[i],empties[j]]=[empties[j],empties[i]]}
+
+  for(const[sr,sc] of empties){
+    if(occ[sr][sc]!==-1)continue; // already claimed by another gap-arrow
+    // Random walk through adjacent empty cells
+    const path=[[sr,sc]];
+    const used=new Set();used.add(sr+','+sc);
+    let cr=sr,cc=sc;
+    while(path.length<15){
+      const opts=[];
+      for(let d=0;d<4;d++){
+        const nr=cr+DY[d],nc=cc+DX[d];
+        if(nr<0||nr>=rows||nc<0||nc>=cols)continue;
+        if(occ[nr][nc]!==-1||used.has(nr+','+nc))continue;
+        opts.push([nr,nc]);
+      }
+      if(opts.length===0)break;
+      const pick=opts[floor(rng()*opts.length)];
+      path.push(pick);used.add(pick[0]+','+pick[1]);
+      cr=pick[0];cc=pick[1];
+    }
+    // Direction from last segment (or random for 1-cell)
+    let dir;
+    if(path.length>=2){
+      const last=path[path.length-1],prev=path[path.length-2];
+      const dr=last[0]-prev[0],dc=last[1]-prev[1];
+      dir=dc===1?0:dr===-1?1:dc===-1?2:3;
+    }else{dir=floor(rng()*4)}
+    const idx=placed.length;
+    for(const[r,c] of path)occ[r][c]=idx;
+    placed.push({cells:path,dir});
   }
+
+  // Solvability fixup: simulate solving, rotate stuck arrows
+  const alive=placed.map(()=>true);
+  let rem=placed.length,maxIter=rem*6;
+  while(rem>0&&maxIter-->0){
+    let found=false;
+    for(let i=0;i<placed.length;i++){
+      if(!alive[i])continue;
+      const a=placed[i],head=a.cells[a.cells.length-1];
+      let clear=true,cr2=head[0]+DY[a.dir],cc2=head[1]+DX[a.dir];
+      while(cr2>=0&&cr2<rows&&cc2>=0&&cc2<cols){
+        if(occ[cr2][cc2]!==-1&&occ[cr2][cc2]!==i&&alive[occ[cr2][cc2]]){clear=false;break}
+        cr2+=DY[a.dir];cc2+=DX[a.dir];
+      }
+      if(clear){alive[i]=false;rem--;found=true}
+    }
+    if(!found&&rem>0){
+      for(let i=0;i<placed.length;i++){
+        if(!alive[i]||placed[i].cells.length>1)continue;
+        const head=placed[i].cells[0];
+        for(let d=0;d<4;d++){
+          let clear=true,cr2=head[0]+DY[d],cc2=head[1]+DX[d];
+          while(cr2>=0&&cr2<rows&&cc2>=0&&cc2<cols){
+            if(occ[cr2][cc2]!==-1&&occ[cr2][cc2]!==i&&alive[occ[cr2][cc2]]){clear=false;break}
+            cr2+=DY[d];cc2+=DX[d];
+          }
+          if(clear){placed[i].dir=d;break}
+        }
+        break;
+      }
+    }
+  }}
 
   // Reverse so arrows[0] = first solved
   arrows=placed.reverse();
