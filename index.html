@@ -375,14 +375,15 @@ function generateLevel(lvl,customSeed){
   levelRevealT=0;
   updateStreak();
 
-  // Unlimited levels. Difficulty ramps from level 1 to ~250, then stays at max.
+  // Unlimited levels. Difficulty ramps from level 1 to ~500, then stays at max.
   // Level 1 = gentle intro (8×11, ~15 arrows, big cells).
-  // Level 250+ = insane dense maze (24×32, ~140+ arrows, tiny cells).
-  const p=min(1,(lvl-1)/249);
-  const cols=floor(lrp(8,24,p)+.5);
-  const rows=floor(lrp(11,32,p)+.5);
-  const minLen=floor(lrp(2,7,p)+.5);
-  const maxLen=floor(lrp(6,18,p)+.5);
+  // Level 500+ = extreme dense maze (34×48, ~300+ arrows, tiny cells).
+  // Arrowheads ALWAYS visible — complexity comes from density, not hidden info.
+  const p=min(1,(lvl-1)/499);
+  const cols=floor(lrp(8,34,p)+.5);
+  const rows=floor(lrp(11,48,p)+.5);
+  const minLen=floor(lrp(2,8,p)+.5);
+  const maxLen=floor(lrp(6,22,p)+.5);
 
   gridCols=cols;gridRows=rows;
 
