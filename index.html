@@ -883,8 +883,8 @@ function getPathSegment(path,sFrom,sTo){
 function drawArrowPolyline(pts,sz,col,alpha){
   if(pts.length<2)return;
   // Thin lines scaled to cell size. Min 2px keeps lines visible at tiny cells.
-  const thick=max(2,sz*.18);
-  const headL=sz*.32,headW=sz*.19;
+  const thick=max(1.5,sz*.10);
+  const headL=sz*.32,headW=sz*.22;
 
   X.save();
   X.globalAlpha=alpha==null?1:alpha;
