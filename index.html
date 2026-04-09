@@ -427,8 +427,8 @@ function generateLevel(lvl,customSeed){
   const p=min(1,(lvl-1)/499);
   const cols=floor(lrp(8,24,p)+.5);
   const rows=floor(lrp(11,32,p)+.5);
-  const minLen=floor(lrp(2,8,p)+.5);
-  const maxLen=floor(lrp(6,22,p)+.5);
+  const minLen=2; // always accept short arrows to fill tight spaces
+  const maxLen=floor(lrp(8,30,p)+.5); // longer max = more space filled per arrow
 
   gridCols=cols;gridRows=rows;
 
@@ -456,7 +456,14 @@ function generateLevel(lvl,customSeed){
     placed.push(arrow);
   }
 
-  // No Pass 3 — clean empty cells are better than unsolvable arrows
+  // Pass 3: 1-cell arrows with valid escape lines (guaranteed solvable)
+  safety=3000;
+  while(safety-->0){
+    const arrow=tryBuildArrow(occ,rows,cols,rng,1,1);
+    if(!arrow)break;
+    for(const[r,c] of arrow.cells)occ[r][c]=placed.length;
+    placed.push(arrow);
+  }
 
   // Reverse so arrows[0] = first solved
   arrows=placed.reverse();
