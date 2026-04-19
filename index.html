@@ -320,31 +320,71 @@ let lastInterstitialTime=0; // timestamp of last interstitial shown
 const INTERSTITIAL_INTERVAL=300; // seconds between interstitials (5 min)
 let adRewardCallback=null; // callback after rewarded ad completes
 
-// Placeholder: replace with @capacitor-community/admob calls
+// Real AdMob integration via @capacitor-community/admob
+let admobReady=false;
+async function initAdMob(){
+  try{
+    if(typeof Capacitor==='undefined'||!Capacitor.Plugins.AdMob)return;
+    const AdMob=Capacitor.Plugins.AdMob;
+    await AdMob.initialize({
+      initializeForTesting:false,
+      requestTrackingAuthorization:false
+    });
+    // Prepare rewarded ad
+    await AdMob.prepareRewardVideoAd({
+      adId:'ca-app-pub-1164170950110129/7243043308',
+      isTesting:false
+    });
+    // Prepare interstitial
+    await AdMob.prepareInterstitial({
+      adId:'ca-app-pub-1164170950110129/6672197661',
+      isTesting:false
+    });
+    // Listen for reward
+    AdMob.addListener('onRewardedVideoAdReward',()=>{
+      if(adRewardCallback)adRewardCallback();
+      adRewardCallback=null;
+    });
+    // Re-prepare after close
+    AdMob.addListener('onRewardedVideoAdDismissed',()=>{
+      AdMob.prepareRewardVideoAd({adId:'ca-app-pub-1164170950110129/7243043308',isTesting:false}).catch(()=>{});
+    });
+    AdMob.addListener('onInterstitialAdDismissed',()=>{
+      AdMob.prepareInterstitial({adId:'ca-app-pub-1164170950110129/6672197661',isTesting:false}).catch(()=>{});
+    });
+    admobReady=true;
+  }catch(e){/* browser/no AdMob — silently continue */}
+}
+initAdMob();
+
 function showRewardedAd(onReward){
-  // TODO: replace with real AdMob rewarded ad
-  // AdMob.showRewardVideoAd().then(()=>onReward());
-  // For now, simulate: give reward immediately (remove in production!)
-  adRewardCallback=onReward;
-  // Simulate ad watched:
-  if(onReward)onReward();
+  if(admobReady&&typeof Capacitor!=='undefined'){
+    adRewardCallback=onReward;
+    Capacitor.Plugins.AdMob.showRewardVideoAd().catch(()=>{
+      // Ad failed — give reward anyway (don't punish player)
+      if(onReward)onReward();
+    });
+  }else{
+    // Browser fallback — give reward immediately
+    if(onReward)onReward();
+  }
 }
 function showInterstitialAd(){
   if(adsRemoved)return;
   const now=gt;
   if(now-lastInterstitialTime<INTERSTITIAL_INTERVAL)return;
   lastInterstitialTime=now;
-  // TODO: replace with real AdMob interstitial
-  // AdMob.showInterstitial();
+  if(admobReady&&typeof Capacitor!=='undefined'){
+    Capacitor.Plugins.AdMob.showInterstitial().catch(()=>{});
+  }
 }
 function buyRemoveAds(){
-  // TODO: replace with Google Play Billing
-  // For now, just set the flag
+  // TODO: connect to Google Play Billing when ready
   adsRemoved=true;
   localStorage.setItem('ae_noads','1');
 }
 function buyCoins(amount){
-  // TODO: replace with Google Play Billing
+  // TODO: connect to Google Play Billing when ready
   coins+=amount;
   totalCoinsEarned+=amount;
   save();
