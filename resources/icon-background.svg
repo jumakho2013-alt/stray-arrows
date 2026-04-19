@@ -1,9 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#4a6fa5"/>
-      <stop offset="100%" stop-color="#2d4a7a"/>
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#16213e"/>
     </linearGradient>
   </defs>
   <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- Subtle maze texture -->
+  <g stroke="rgba(255,255,255,0.03)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <polyline points="200,250 200,180 400,180 400,300"/>
+    <polyline points="620,180 820,180 820,350"/>
+    <polyline points="200,450 200,550 350,550"/>
+    <polyline points="670,550 820,550 820,700"/>
+    <polyline points="200,700 200,840 450,840"/>
+    <polyline points="580,840 820,840"/>
+  </g>
 </svg>

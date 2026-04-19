@@ -1,28 +1,72 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#4a6fa5"/>
-      <stop offset="100%" stop-color="#2d4a7a"/>
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#16213e"/>
     </linearGradient>
   </defs>
-  <rect width="1024" height="1024" rx="220" fill="url(#bg)"/>
-  <g stroke="rgba(255,255,255,0.08)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <polyline points="180,280 180,180 380,180"/>
-    <polyline points="480,180 680,180 680,300"/>
-    <polyline points="180,380 180,480 300,480"/>
-    <polyline points="680,400 680,520 780,520"/>
-    <polyline points="180,580 180,680 300,680"/>
-    <polyline points="480,680 680,680 680,580"/>
-    <polyline points="780,180 840,180 840,380"/>
-    <polyline points="840,480 840,780 680,780"/>
-    <polyline points="180,780 180,840 480,840"/>
+
+  <!-- Dark rounded background -->
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+
+  <!-- Dense maze pattern — many intertwined arrow paths -->
+  <!-- Layer 1: faint background arrows -->
+  <g stroke="rgba(255,255,255,0.06)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <polyline points="140,160 140,100 320,100 320,200 480,200"/>
+    <polyline points="560,100 740,100 740,240"/>
+    <polyline points="800,100 900,100 900,280"/>
+    <polyline points="140,280 140,360 280,360 280,260"/>
+    <polyline points="380,300 520,300 520,200"/>
+    <polyline points="620,260 740,260 740,380 620,380"/>
+    <polyline points="800,320 900,320 900,480 800,480"/>
+    <polyline points="140,440 140,520 240,520"/>
+    <polyline points="340,460 340,560 480,560 480,440"/>
+    <polyline points="560,440 560,520 680,520"/>
+    <polyline points="140,620 240,620 240,720 380,720"/>
+    <polyline points="480,640 480,740 620,740 620,640"/>
+    <polyline points="740,560 740,680 860,680"/>
+    <polyline points="140,800 280,800 280,900 460,900"/>
+    <polyline points="540,820 540,920 720,920"/>
+    <polyline points="800,780 900,780 900,920 800,920"/>
   </g>
-  <g stroke="white" stroke-width="52" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <polyline points="260,700 260,420 420,420 420,560 580,560 580,380 740,380"/>
+
+  <!-- Layer 2: medium arrows for depth -->
+  <g stroke="rgba(255,255,255,0.10)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <polyline points="180,200 180,300 340,300"/>
+    <polygon points="380,300 340,275 340,325" fill="rgba(255,255,255,0.10)"/>
+
+    <polyline points="600,160 600,280 760,280"/>
+    <polygon points="800,280 760,255 760,305" fill="rgba(255,255,255,0.10)"/>
+
+    <polyline points="700,440 700,560 840,560"/>
+    <polygon points="880,560 840,535 840,585" fill="rgba(255,255,255,0.10)"/>
+
+    <polyline points="180,680 180,780 340,780 340,680"/>
+    <polygon points="340,640 315,680 365,680" fill="rgba(255,255,255,0.10)"/>
+
+    <polyline points="560,780 700,780 700,880"/>
+    <polygon points="700,920 675,880 725,880" fill="rgba(255,255,255,0.10)"/>
+
+    <polyline points="160,500 300,500 300,600"/>
+    <polygon points="300,640 275,600 325,600" fill="rgba(255,255,255,0.10)"/>
   </g>
-  <polygon points="800,380 710,310 710,450" fill="white"/>
-  <g stroke="rgba(255,255,255,0.35)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <polyline points="560,760 700,760"/>
+
+  <!-- Main hero arrow — big, bold, central -->
+  <g stroke="#e8d5b7" stroke-width="52" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <polyline points="220,720 220,480 420,480 420,600 620,600 620,380 780,380"/>
   </g>
-  <polygon points="740,760 690,730 690,790" fill="rgba(255,255,255,0.35)"/>
+  <!-- Hero arrowhead -->
+  <polygon points="840,380 760,310 760,450" fill="#e8d5b7"/>
+
+  <!-- Secondary accent arrow -->
+  <g stroke="rgba(232,213,183,0.4)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <polyline points="440,820 620,820 620,740"/>
+  </g>
+  <polygon points="620,700 595,740 645,740" fill="rgba(232,213,183,0.4)"/>
+
+  <!-- Third small arrow -->
+  <g stroke="rgba(232,213,183,0.25)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <polyline points="760,620 860,620 860,720"/>
+  </g>
+  <polygon points="860,755 840,720 880,720" fill="rgba(232,213,183,0.25)"/>
 </svg>

@@ -1009,7 +1009,7 @@ function drawMenu(){
     window._bgArrows=[];
     for(let i=0;i<14;i++)window._bgArrows.push({
       x:rnd(0,W),y:rnd(0,H),dir:rndI(0,3),sz:rnd(25,55),
-      spd:rnd(15,40),life:rnd(0,1),dur:rnd(3,7),alpha:rnd(.04,.09)
+      spd:rnd(12,35),life:rnd(0,1),dur:rnd(4,8),alpha:rnd(.08,.18)
     });
   }
   for(const a of window._bgArrows){
@@ -1020,23 +1020,23 @@ function drawMenu(){
     const lp=a.life%1;
     const fade=lp<.2?lp/.2:(lp>.8?(1-lp)/.2:1);
     X.globalAlpha=a.alpha*fade;
-    drawArrow(a.x,a.y,a.dir,a.sz,TH.textDim,a.alpha*fade);
+    drawArrow(a.x,a.y,a.dir,a.sz,TH.arrow,a.alpha*fade);
     X.globalAlpha=1;
     // Reset when lifecycle ends or goes off screen
     if(a.life>=1||a.x<-60||a.x>W+60||a.y<-60||a.y>H+60){
       a.x=rnd(40,W-40);a.y=rnd(40,H-40);
-      a.dir=rndI(0,3);a.sz=rnd(25,55);a.spd=rnd(15,40);
-      a.life=0;a.dur=rnd(3,7);a.alpha=rnd(.04,.09);
+      a.dir=rndI(0,3);a.sz=rnd(25,55);a.spd=rnd(12,35);
+      a.life=0;a.dur=rnd(4,8);a.alpha=rnd(.08,.18);
     }
   }
 
   // Title — close to top, right under coins/settings bar
-  txtP('STRAY',W/2,H*.11,36,TH.text);
-  txtP('ARROWS',W/2,H*.17,36,TH.accent);
-  txt('puzzle game',W/2,H*.22,12,TH.textSec);
+  txtP('STRAY',W/2,H*.10,36,TH.text);
+  txtP('ARROWS',W/2,H*.16,36,TH.accent);
+  txt('puzzle game',W/2,H*.21,12,TH.textSec);
 
-  // Stats panel — tight under title
-  const spY=H*.30,spW=300,spH=66;
+  // Stats panel
+  const spY=H*.28,spW=300,spH=66;
   X.fillStyle=TH.cardBg;
   X.beginPath();X.roundRect(W/2-spW/2,spY-spH/2,spW,spH,14);X.fill();
   X.strokeStyle=TH.border;X.lineWidth=1;
@@ -1052,14 +1052,14 @@ function drawMenu(){
   txtP(achUnlockedCount()+'/'+ACHIEVEMENTS.length,col4,spY+9,13,TH.accent);
 
   // PLAY button
-  if(drawBigBtn('▶  PLAY',W/2,H*.62,210,56,TH.accent)){
+  if(drawBigBtn('▶  PLAY',W/2,H*.50,210,56,TH.accent)){
     goto('play',()=>{isDaily=false;isWeekly=false;level=maxLevel;generateLevel(level)});
   }
 
   // 2×2 grid of secondary buttons
   // Nav buttons — pushed down to bottom half
   const bW=138,bH=42,bGapX=16,bGapY=12;
-  const gX=W/2,gY1=H*.72,gY2=gY1+bH+bGapY;
+  const gX=W/2,gY1=H*.60,gY2=gY1+bH+bGapY;
   // Row 1
   if(drawBtn('LEVELS',gX-bW/2-bGapX/2,gY1,bW,bH)){
     goto('levels',()=>{levelsPage=floor((level-1)/25)});

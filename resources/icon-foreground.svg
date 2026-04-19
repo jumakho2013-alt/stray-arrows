@@ -1,12 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <!-- Foreground for adaptive icon — centered arrow path with safe zone -->
-  <g stroke="white" stroke-width="46" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <polyline points="300,680 300,440 440,440 440,560 560,560 560,400 700,400"/>
+  <defs>
+    <linearGradient id="arrow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e8d5b7"/>
+      <stop offset="100%" stop-color="#f5f0e8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Main arrow path centered for adaptive icon safe zone -->
+  <g stroke="url(#arrow)" stroke-width="50" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <polyline points="300,660 300,460 480,460 480,580 640,580 640,380"/>
   </g>
-  <polygon points="755,400 675,340 675,460" fill="white"/>
+  <polygon points="640,305 585,375 695,375" fill="url(#arrow)"/>
+
   <!-- Small accent -->
-  <g stroke="rgba(255,255,255,0.3)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <polyline points="520,720 640,720"/>
+  <g stroke="rgba(232,213,183,0.22)" stroke-width="24" stroke-linecap="round" fill="none">
+    <polyline points="520,730 680,730"/>
   </g>
-  <polygon points="675,720 635,696 635,744" fill="rgba(255,255,255,0.3)"/>
+  <polygon points="715,730 670,705 670,755" fill="rgba(232,213,183,0.22)"/>
 </svg>

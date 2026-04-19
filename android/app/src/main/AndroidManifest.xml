@@ -20,7 +20,10 @@
             </intent-filter>
         </activity>
 
-        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-1164170950110129~4787210866"/>
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-1164170950110129~4787210866"
+        />
 
         <provider
             android:name="androidx.core.content.FileProvider"
