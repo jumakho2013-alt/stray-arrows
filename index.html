@@ -91,39 +91,46 @@ function resize(){
 resize();addEventListener('resize',resize);
 
 // ================================================================
-//  AUDIO
+//  AUDIO — MP3 sound effects at 70% volume
 // ================================================================
-let actx=null,sndOn=localStorage.getItem('ae_sound')!=='0';
-function initA(){if(!actx)actx=new(AudioContext||webkitAudioContext)()}
-function playTone(freq,dur,vol,type){
-  if(!actx||!sndOn)return;
-  const o=actx.createOscillator(),g=actx.createGain();
-  o.type=type||'sine';o.frequency.value=freq;
-  g.gain.setValueAtTime(vol||.05,actx.currentTime);
-  g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);
-  o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+dur);
+let sndOn=localStorage.getItem('ae_sound')!=='0';
+const SND_VOL=0.7;
+function initA(){} // kept for compatibility with existing initA() calls
+
+// Preload all sound effects
+const sndCache={};
+function loadSnd(name,src){
+  const a=new Audio(src);
+  a.preload='auto';
+  a.volume=SND_VOL;
+  sndCache[name]=a;
 }
+loadSnd('swoosh','sounds/whoosh-effect.mp3');
+loadSnd('tap','sounds/click sound.mp3');
+loadSnd('blocked','sounds/error.mp3');
+loadSnd('complete','sounds/new-level.mp3');
+loadSnd('gameover','sounds/Game over.mp3');
+loadSnd('coin','sounds/coin reward.mp3');
+loadSnd('achievement','sounds/coin reward.mp3');
+
+function playSnd(name){
+  if(!sndOn)return;
+  const a=sndCache[name];
+  if(!a)return;
+  // Clone to allow overlapping plays
+  const c=a.cloneNode();
+  c.volume=SND_VOL;
+  c.play().catch(()=>{});
+}
+
 const sfx={
-  // Swoosh pitched by direction: right=high, up=highest, left=mid, down=lowest
-  swoosh(dir){
-    const base=[800,1000,700,550][dir||0];
-    playTone(base,.15,.04,'sine');
-    playTone(base*1.5,.1,.03,'sine');
-  },
-  blocked(){playTone(150,.12,.06,'square');playTone(100,.08,.04,'square')},
-  complete(){
-    playTone(523,.15,.06);
-    setTimeout(()=>playTone(659,.15,.05),100);
-    setTimeout(()=>playTone(784,.2,.06),200);
-    setTimeout(()=>playTone(1047,.25,.05),300);
-  },
-  tap(){playTone(1000,.03,.03,'square')},
-  achievement(){
-    playTone(659,.12,.05);
-    setTimeout(()=>playTone(784,.12,.05),80);
-    setTimeout(()=>playTone(988,.2,.06),160);
-    setTimeout(()=>playTone(1319,.25,.06),240);
-  },
+  swoosh(){playSnd('swoosh')},
+  blocked(){playSnd('blocked')},
+  complete(){playSnd('complete')},
+  tap(){playSnd('tap')},
+  achievement(){playSnd('achievement')},
+  gameover(){playSnd('gameover')},
+  coin(){playSnd('coin')},
 };
 
 // ================================================================
@@ -779,7 +786,7 @@ function tapArrowByIndex(idx){
     // Visual feedback: floating "-1 ❤" near the head
     spawnFloater(sx,sy-cs*.6,'-1',TH.arrowBlock);
     if(undosLeft<=0){
-      setTimeout(()=>{S='gameover';sfx.blocked()},500);
+      setTimeout(()=>{S='gameover';sfx.gameover()},500);
     }
   }
 }
