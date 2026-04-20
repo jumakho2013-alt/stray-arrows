@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Stray Arrows</title>
-<meta name="theme-color" content="#f5f2ed" id="themeColorMeta">
+<meta name="theme-color" content="#1a1a2e" id="themeColorMeta">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Stray Arrows">
@@ -44,15 +44,19 @@ let darkMode=localStorage.getItem('ae_theme')==='dark';
 function applyTheme(){
   document.body.className=darkMode?'dark':'light';
   // Match status bar / notch / nav bar to app theme
+  const col=darkMode?'#1a1a2e':'#f5f2ed';
   const m=document.getElementById('themeColorMeta');
-  if(m)m.content=darkMode?'#1a1a2e':'#f5f2ed';
-  // Capacitor StatusBar if available
-  if(typeof Capacitor!=='undefined'&&Capacitor.Plugins.StatusBar){
-    try{
-      Capacitor.Plugins.StatusBar.setBackgroundColor({color:darkMode?'#1a1a2e':'#f5f2ed'});
+  if(m)m.content=col;
+  // Capacitor StatusBar — changes with theme
+  try{
+    if(typeof Capacitor!=='undefined'&&Capacitor.Plugins.StatusBar){
+      Capacitor.Plugins.StatusBar.setBackgroundColor({color:col});
       Capacitor.Plugins.StatusBar.setStyle({style:darkMode?'DARK':'LIGHT'});
-    }catch(e){}
-  }
+    }
+    if(typeof Capacitor!=='undefined'&&Capacitor.Plugins.NavigationBar){
+      Capacitor.Plugins.NavigationBar.setColor({color:col});
+    }
+  }catch(e){}
 }
 applyTheme();
 
