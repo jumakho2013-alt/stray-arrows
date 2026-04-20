@@ -1209,7 +1209,7 @@ function drawPlay(){
 
       // Short dashed line (5-6 dashes) + small arrowhead at end
       const dir=ta.dir;
-      const lineLen=cs*4; // short — about 5-6 dashes
+      const lineLen=min(cs*2.5,60); // 5-6 dashes max, never goes past hearts
       const endX=hx+DX[dir]*lineLen,endY=hy+DY[dir]*lineLen;
       X.strokeStyle=TH.star;
       X.lineWidth=2;
