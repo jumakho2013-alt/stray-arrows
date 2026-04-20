@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Stray Arrows</title>
-<meta name="theme-color" content="#5c7caa">
+<meta name="theme-color" content="#f5f2ed" id="themeColorMeta">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Stray Arrows">
 <meta name="description" content="Untangle stray arrows! Tap arrows to escape in the right order.">
 <link rel="manifest" href="manifest.json">
@@ -41,7 +41,19 @@ const lrp=(a,b,t)=>a+(b-a)*t;
 //  THEME
 // ================================================================
 let darkMode=localStorage.getItem('ae_theme')==='dark';
-function applyTheme(){document.body.className=darkMode?'dark':'light'}
+function applyTheme(){
+  document.body.className=darkMode?'dark':'light';
+  // Match status bar / notch / nav bar to app theme
+  const m=document.getElementById('themeColorMeta');
+  if(m)m.content=darkMode?'#1a1a2e':'#f5f2ed';
+  // Capacitor StatusBar if available
+  if(typeof Capacitor!=='undefined'&&Capacitor.Plugins.StatusBar){
+    try{
+      Capacitor.Plugins.StatusBar.setBackgroundColor({color:darkMode?'#1a1a2e':'#f5f2ed'});
+      Capacitor.Plugins.StatusBar.setStyle({style:darkMode?'DARK':'LIGHT'});
+    }catch(e){}
+  }
+}
 applyTheme();
 
 const TH={
@@ -1188,39 +1200,39 @@ function drawPlay(){
       const head=ta.cells[ta.cells.length-1];
       const hx=gx+head[1]*cs+cs/2,hy=gy+head[0]*cs+cs/2;
 
-      // Soft spotlight effect — radial gradient from arrow position
-      const grad=X.createRadialGradient(hx,hy,cs*2,hx,hy,max(W,H)*.7);
-      grad.addColorStop(0,'rgba(0,0,0,0)');
-      grad.addColorStop(.4,'rgba(0,0,0,.05)');
-      grad.addColorStop(1,darkMode?'rgba(0,0,0,.4)':'rgba(0,0,0,.2)');
-      X.fillStyle=grad;
-      X.fillRect(0,60,W,H-60);
-
-      // Glow behind the arrow
+      // No dark overlay — just glow on the correct arrow
       X.save();
       X.shadowColor=TH.star;
-      X.shadowBlur=10+pulse*12;
-      drawArrowStatic(ta,cs,gx,gy,TH.star,.7,0);
+      X.shadowBlur=16+pulse*20;
+      drawArrowStatic(ta,cs,gx,gy,TH.star,.6,0);
       X.restore();
-      // Arrow itself crisp on top
-      drawArrowStatic(ta,cs,gx,gy,TH.arrow,1,0);
 
-      // Finger pointer — bouncing up and down
-      const fingerY=hy+cs*.9+pulse*8;
-      X.save();X.translate(hx,fingerY);
-      // Simple hand shape
-      X.fillStyle=darkMode?'#e0ddd5':'#4a4a4a';
-      X.globalAlpha=.7+pulse*.3;
+      // Short dashed line (5-6 dashes) + small arrowhead at end
+      const dir=ta.dir;
+      const lineLen=cs*4; // short — about 5-6 dashes
+      const endX=hx+DX[dir]*lineLen,endY=hy+DY[dir]*lineLen;
+      X.strokeStyle=TH.star;
+      X.lineWidth=2;
+      X.globalAlpha=.3+pulse*.4;
+      X.setLineDash([6,4]);
       X.beginPath();
-      X.arc(0,-2,8,0,TAU);X.fill(); // fingertip circle
-      X.fillRect(-4,-2,8,16); // finger body
-      X.beginPath();X.arc(0,14,6,0,PI);X.fill(); // rounded bottom
+      X.moveTo(hx+DX[dir]*cs*.5,hy+DY[dir]*cs*.5);
+      X.lineTo(endX,endY);
+      X.stroke();
+      X.setLineDash([]);
+      // Small arrowhead at end of dashed line
+      const aLen=8,aW=5;
+      X.fillStyle=TH.star;
+      X.beginPath();
+      X.moveTo(endX+DX[dir]*aLen,endY+DY[dir]*aLen);
+      X.lineTo(endX-DY[dir]*aW,endY+DX[dir]*aW);
+      X.lineTo(endX+DY[dir]*aW,endY-DX[dir]*aW);
+      X.closePath();X.fill();
       X.globalAlpha=1;
-      X.restore();
 
-      // Text — soft, elegant
-      txt('Tap this arrow',W/2,76,15,TH.star,'center','700');
-      txt('It has a clear path to the edge',W/2,96,11,darkMode?'#aaa':'#666');
+      // Text
+      txt('Tap this arrow',W/2,76,14,TH.star,'center','700');
+      txt('It has a clear path to the edge',W/2,94,11,darkMode?'#aaa':'#666');
     }else if(moves>0&&moves<4){
       txt('Great! Keep going!',W/2,76,14,TH.success,'center','700');
     }
