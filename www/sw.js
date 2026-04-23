@@ -1,5 +1,5 @@
-// Service Worker for Arrow Escape — enables offline play + app store packaging
-const CACHE_NAME = 'arrow-escape-v1';
+// Service Worker for Stray Arrows — enables offline play + app store packaging
+const CACHE_NAME = 'stray-arrows-v1';
 const ASSETS = ['/', '/index.html'];
 
 self.addEventListener('install', e => {

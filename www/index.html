@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Stray Arrows</title>
 <meta name="theme-color" content="#1a1a2e" id="themeColorMeta">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,9 +14,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-user-select:none;user-select:none;touch-action:none}
-html,body{width:100%;height:100%;overflow:hidden;display:flex;justify-content:center;align-items:center;font-family:'Nunito',sans-serif}
-body.light{background:#f5f2ed}
-body.dark{background:#1a1a2e}
+html,body{width:100%;height:100%;overflow:hidden;display:flex;justify-content:center;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Nunito',sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body.light{background:#f5f2ed;background-image:radial-gradient(at 20% 0%,#ece7dc 0%,#f5f2ed 55%)}
+body.dark{background:#1a1a2e;background-image:radial-gradient(at 20% 0%,#252545 0%,#1a1a2e 55%)}
 canvas{display:block}
 </style>
 </head>
@@ -79,6 +80,35 @@ const TH={
   get btnBg(){return darkMode?'rgba(255,255,255,.06)':'rgba(0,0,0,.04)'},
   get btnHover(){return darkMode?'rgba(255,255,255,.1)':'rgba(0,0,0,.07)'},
 };
+
+// ================================================================
+//  i18n — 9 languages
+// ================================================================
+const LANGS=[
+  {code:'en',name:'English'},
+  {code:'ru',name:'Русский'},
+  {code:'es',name:'Español'},
+  {code:'de',name:'Deutsch'},
+  {code:'fr',name:'Français'},
+  {code:'pt',name:'Português'},
+  {code:'it',name:'Italiano'},
+  {code:'tr',name:'Türkçe'},
+  {code:'ja',name:'日本語'},
+];
+const STR={
+  en:{title1:'STRAY',title2:'ARROWS',tagline:'puzzle game',play:'PLAY',levels:'LEVELS',daily:'DAILY',weekly:'WEEKLY',stats:'STATS',achievements:'ACHIEVEMENTS',settings:'SETTINGS',sound:'Sound',theme:'Theme',themeDark:'Dark',themeLight:'Light',language:'Language',removeAds:'Remove Ads',watchAd:'Watch Ad',coins:'Coins',resetProgress:'Reset Progress',areYouSure:'Are you sure?',yesReset:'YES, RESET',cancel:'CANCEL',back:'BACK',hint:'HINT',skip:'SKIP',level:'LEVEL',stars:'STARS',streak:'STREAK',trophy:'TROPHY',on:'ON',off:'OFF',adsRemoved:'Ads removed ★',nextLevel:'NEXT LEVEL',replay:'REPLAY',home:'HOME',gameOver:'GAME OVER',outOfHearts:'You ran out of hearts',retry:'RETRY',continueBtn:'CONTINUE',restorePurchases:'Restore Purchases'},
+  ru:{title1:'STRAY',title2:'ARROWS',tagline:'головоломка',play:'ИГРАТЬ',levels:'УРОВНИ',daily:'ДЕНЬ',weekly:'НЕДЕЛЯ',stats:'СТАТЫ',achievements:'ДОСТИЖЕНИЯ',settings:'НАСТРОЙКИ',sound:'Звук',theme:'Тема',themeDark:'Тёмная',themeLight:'Светлая',language:'Язык',removeAds:'Убрать рекламу',watchAd:'Смотреть рекламу',coins:'монет',resetProgress:'Сбросить прогресс',areYouSure:'Вы уверены?',yesReset:'ДА, СБРОСИТЬ',cancel:'ОТМЕНА',back:'НАЗАД',hint:'ПОДСК',skip:'ПРОПУСК',level:'УРОВ',stars:'ЗВЁЗД',streak:'СЕРИЯ',trophy:'КУБОК',on:'ВКЛ',off:'ВЫКЛ',adsRemoved:'Реклама убрана ★',nextLevel:'СЛЕД. УРОВЕНЬ',replay:'ЗАНОВО',home:'ДОМОЙ',gameOver:'ИГРА ОКОНЧЕНА',outOfHearts:'Закончились жизни',retry:'ПОВТОР',continueBtn:'ПРОДОЛЖИТЬ',restorePurchases:'Восстановить покупки'},
+  es:{title1:'STRAY',title2:'ARROWS',tagline:'juego de puzzle',play:'JUGAR',levels:'NIVELES',daily:'DIARIO',weekly:'SEMANAL',stats:'STATS',achievements:'LOGROS',settings:'AJUSTES',sound:'Sonido',theme:'Tema',themeDark:'Oscuro',themeLight:'Claro',language:'Idioma',removeAds:'Quitar anuncios',watchAd:'Ver anuncio',coins:'monedas',resetProgress:'Reiniciar',areYouSure:'¿Estás seguro?',yesReset:'SÍ, REINICIAR',cancel:'CANCELAR',back:'ATRÁS',hint:'PISTA',skip:'SALTAR',level:'NIVEL',stars:'ESTR',streak:'RACHA',trophy:'COPA',on:'ON',off:'OFF',adsRemoved:'Anuncios quitados ★',nextLevel:'SIGUIENTE',replay:'REPETIR',home:'INICIO',gameOver:'FIN',outOfHearts:'Sin vidas',retry:'REINTENTAR',continueBtn:'CONTINUAR',restorePurchases:'Restaurar compras'},
+  de:{title1:'STRAY',title2:'ARROWS',tagline:'Puzzlespiel',play:'SPIELEN',levels:'LEVEL',daily:'TAG',weekly:'WOCHE',stats:'STATS',achievements:'ERFOLGE',settings:'EINSTELL.',sound:'Ton',theme:'Theme',themeDark:'Dunkel',themeLight:'Hell',language:'Sprache',removeAds:'Werbung entfernen',watchAd:'Werbung ansehen',coins:'Münzen',resetProgress:'Zurücksetzen',areYouSure:'Sicher?',yesReset:'JA, RESET',cancel:'ABBR.',back:'ZURÜCK',hint:'TIPP',skip:'ÜBERSPR.',level:'LVL',stars:'STERNE',streak:'SERIE',trophy:'POKAL',on:'AN',off:'AUS',adsRemoved:'Werbung entfernt ★',nextLevel:'WEITER',replay:'NEU',home:'HOME',gameOver:'GAME OVER',outOfHearts:'Keine Herzen mehr',retry:'NEU',continueBtn:'WEITER',restorePurchases:'Käufe wiederherst.'},
+  fr:{title1:'STRAY',title2:'ARROWS',tagline:'jeu de puzzle',play:'JOUER',levels:'NIVEAUX',daily:'JOUR',weekly:'SEMAINE',stats:'STATS',achievements:'SUCCÈS',settings:'PARAM.',sound:'Son',theme:'Thème',themeDark:'Sombre',themeLight:'Clair',language:'Langue',removeAds:'Retirer pubs',watchAd:'Voir pub',coins:'pièces',resetProgress:'Réinitialiser',areYouSure:'Sûr ?',yesReset:'OUI, RESET',cancel:'ANNULER',back:'RETOUR',hint:'INDICE',skip:'PASSER',level:'NIV',stars:'ÉTOILES',streak:'SÉRIE',trophy:'COUPE',on:'ON',off:'OFF',adsRemoved:'Pubs retirées ★',nextLevel:'SUIVANT',replay:'REJOUER',home:'ACCUEIL',gameOver:'PERDU',outOfHearts:'Plus de vies',retry:'REJOUER',continueBtn:'CONTINUER',restorePurchases:'Restaurer achats'},
+  pt:{title1:'STRAY',title2:'ARROWS',tagline:'jogo de puzzle',play:'JOGAR',levels:'NÍVEIS',daily:'DIA',weekly:'SEMANA',stats:'STATS',achievements:'CONQUISTAS',settings:'AJUSTES',sound:'Som',theme:'Tema',themeDark:'Escuro',themeLight:'Claro',language:'Idioma',removeAds:'Remover anúncios',watchAd:'Ver anúncio',coins:'moedas',resetProgress:'Resetar',areYouSure:'Tem certeza?',yesReset:'SIM, RESET',cancel:'CANCELAR',back:'VOLTAR',hint:'DICA',skip:'PULAR',level:'NÍV',stars:'ESTR',streak:'SEQ',trophy:'TROFÉU',on:'ON',off:'OFF',adsRemoved:'Anúncios removidos ★',nextLevel:'PRÓXIMO',replay:'REPETIR',home:'INÍCIO',gameOver:'FIM',outOfHearts:'Sem vidas',retry:'TENTAR',continueBtn:'CONTINUAR',restorePurchases:'Restaurar compras'},
+  it:{title1:'STRAY',title2:'ARROWS',tagline:'gioco di puzzle',play:'GIOCA',levels:'LIVELLI',daily:'GIORNO',weekly:'SETT.',stats:'STATS',achievements:'TROFEI',settings:'IMPOST.',sound:'Audio',theme:'Tema',themeDark:'Scuro',themeLight:'Chiaro',language:'Lingua',removeAds:'Rimuovi pubblicità',watchAd:'Guarda pub',coins:'monete',resetProgress:'Reset',areYouSure:'Sei sicuro?',yesReset:'SÌ, RESET',cancel:'ANNULLA',back:'INDIETRO',hint:'AIUTO',skip:'SALTA',level:'LV',stars:'STELLE',streak:'SERIE',trophy:'COPPA',on:'ON',off:'OFF',adsRemoved:'Pubblicità rimossa ★',nextLevel:'PROSSIMO',replay:'RIGIOCA',home:'HOME',gameOver:'FINE',outOfHearts:'Niente vite',retry:'RIPROVA',continueBtn:'CONTINUA',restorePurchases:'Ripristina acquisti'},
+  tr:{title1:'STRAY',title2:'ARROWS',tagline:'bulmaca oyunu',play:'OYNA',levels:'BÖLÜMLER',daily:'GÜNLÜK',weekly:'HAFTALIK',stats:'STATS',achievements:'BAŞARIMLAR',settings:'AYARLAR',sound:'Ses',theme:'Tema',themeDark:'Koyu',themeLight:'Açık',language:'Dil',removeAds:'Reklamları kaldır',watchAd:'Reklam izle',coins:'jeton',resetProgress:'Sıfırla',areYouSure:'Emin misin?',yesReset:'EVET, SIFIRLA',cancel:'İPTAL',back:'GERİ',hint:'İPUCU',skip:'ATLA',level:'LV',stars:'YILDIZ',streak:'SERİ',trophy:'KUPA',on:'AÇIK',off:'KAPALI',adsRemoved:'Reklamlar kaldırıldı ★',nextLevel:'SONRAKİ',replay:'TEKRAR',home:'ANA',gameOver:'BİTTİ',outOfHearts:'Can kalmadı',retry:'TEKRAR',continueBtn:'DEVAM',restorePurchases:'Satın alımları geri yükle'},
+  ja:{title1:'STRAY',title2:'ARROWS',tagline:'パズルゲーム',play:'プレイ',levels:'レベル',daily:'デイリー',weekly:'ウィークリー',stats:'統計',achievements:'実績',settings:'設定',sound:'サウンド',theme:'テーマ',themeDark:'ダーク',themeLight:'ライト',language:'言語',removeAds:'広告を削除',watchAd:'広告を見る',coins:'コイン',resetProgress:'リセット',areYouSure:'よろしいですか?',yesReset:'はい、リセット',cancel:'キャンセル',back:'戻る',hint:'ヒント',skip:'スキップ',level:'LV',stars:'★',streak:'連続',trophy:'トロフィー',on:'オン',off:'オフ',adsRemoved:'広告削除済み ★',nextLevel:'次へ',replay:'リプレイ',home:'ホーム',gameOver:'ゲームオーバー',outOfHearts:'ライフ切れ',retry:'リトライ',continueBtn:'続ける',restorePurchases:'購入を復元'},
+};
+let lang=localStorage.getItem('ae_lang')||(navigator.language||'en').slice(0,2);
+if(!STR[lang])lang='en';
+function t(k){return (STR[lang]&&STR[lang][k])||STR.en[k]||k}
 
 // ================================================================
 //  DPR + RESIZE
@@ -958,6 +988,92 @@ function btnPressScale(x,y,w,h){
   return 1-dip*.05;
 }
 
+// Background with soft gradient + colored light blobs — gives the liquid-glass
+// buttons something to actually refract, which is the whole point of the material.
+function drawBg(){
+  // Base gradient
+  const bg=X.createLinearGradient(0,0,0,H);
+  if(darkMode){
+    bg.addColorStop(0,'#24244a');
+    bg.addColorStop(1,'#15152a');
+  }else{
+    bg.addColorStop(0,'#faf7f1');
+    bg.addColorStop(1,'#ece6d8');
+  }
+  X.fillStyle=bg;X.fillRect(0,0,W,H);
+
+  // Colored light blobs (simulate the wallpaper Liquid Glass refracts)
+  X.save();
+  X.globalAlpha=darkMode?.35:.22;
+  // Top-right warm blob
+  const b1=X.createRadialGradient(W*.85,H*.12,0,W*.85,H*.12,W*.7);
+  b1.addColorStop(0, darkMode?'#d48a4a':'#d4aa4a');
+  b1.addColorStop(1,'rgba(0,0,0,0)');
+  X.fillStyle=b1;X.fillRect(0,0,W,H);
+  // Bottom-left cool blob
+  const b2=X.createRadialGradient(W*.1,H*.85,0,W*.1,H*.85,W*.8);
+  b2.addColorStop(0, darkMode?'#5a7aaa':'#7a9cc8');
+  b2.addColorStop(1,'rgba(0,0,0,0)');
+  X.fillStyle=b2;X.fillRect(0,0,W,H);
+  // Mid pink blob
+  const b3=X.createRadialGradient(W*.7,H*.55,0,W*.7,H*.55,W*.55);
+  b3.addColorStop(0, darkMode?'#a66090':'#e88aa8');
+  b3.addColorStop(1,'rgba(0,0,0,0)');
+  X.fillStyle=b3;X.fillRect(0,0,W,H);
+  X.restore();
+}
+
+// iOS 26 "Liquid Glass" overlay. Call AFTER the base fill and BEFORE outer stroke.
+// Adds a visible glass material tint, a strong concave-lens top highlight,
+// inset lens shadow, bottom light-bleed, and bright dual rim lights.
+function glass(x,y,w,h,r){
+  const rr=max(0,r-.5);
+
+  X.save();
+  X.beginPath();X.roundRect(x,y,w,h,r);X.clip();
+
+  // 1) GLASS MATERIAL — translucent tint on top of existing backdrop
+  X.fillStyle=darkMode?'rgba(255,255,255,.1)':'rgba(255,255,255,.22)';
+  X.fillRect(x,y,w,h);
+
+  // 2) STRONG TOP SPECULAR — solid-white pulse along the top arc
+  const g1=X.createLinearGradient(0,y,0,y+h*.5);
+  g1.addColorStop(0,   darkMode?'rgba(255,255,255,.7)': 'rgba(255,255,255,1)');
+  g1.addColorStop(.35, darkMode?'rgba(255,255,255,.15)':'rgba(255,255,255,.25)');
+  g1.addColorStop(1,   'rgba(255,255,255,0)');
+  X.fillStyle=g1;X.fillRect(x,y,w,h*.5);
+
+  // 3) LENS INSET SHADOW — creates concave-glass volume
+  const g2=X.createLinearGradient(0,y+h*.4,0,y+h);
+  g2.addColorStop(0, 'rgba(0,0,0,0)');
+  g2.addColorStop(1, darkMode?'rgba(0,0,0,.25)':'rgba(0,0,0,.11)');
+  X.fillStyle=g2;X.fillRect(x,y+h*.4,w,h*.6);
+
+  // 4) BOTTOM LIGHT BLEED — bright refracted lens lip
+  const g3=X.createLinearGradient(0,y+h*.78,0,y+h);
+  g3.addColorStop(0, 'rgba(255,255,255,0)');
+  g3.addColorStop(1, darkMode?'rgba(255,255,255,.35)':'rgba(255,255,255,.65)');
+  X.fillStyle=g3;X.fillRect(x,y+h*.78,w,h*.22);
+
+  X.restore();
+
+  // 5) BRIGHT TOP RIM — 1.5px hairline specular following the upper curve
+  X.save();
+  X.beginPath();X.rect(x,y,w,h*.5);X.clip();
+  X.beginPath();X.roundRect(x+.75,y+.75,w-1.5,h-1.5,max(0,r-.75));
+  X.strokeStyle=darkMode?'rgba(255,255,255,.75)':'rgba(255,255,255,1)';
+  X.lineWidth=1.5;X.stroke();
+  X.restore();
+
+  // 6) BOTTOM RIM — refracted "lens lip" light
+  X.save();
+  X.beginPath();X.rect(x,y+h*.6,w,h*.4);X.clip();
+  X.beginPath();X.roundRect(x+.5,y+.5,w-1,h-1,rr);
+  X.strokeStyle=darkMode?'rgba(255,255,255,.4)':'rgba(255,255,255,.8)';
+  X.lineWidth=1;X.stroke();
+  X.restore();
+}
+
 function drawBtn(label,x,y,w,h,color){
   const hv=abs(mx-x)<w/2&&abs(my-y)<h/2;
   const sc=btnPressScale(x,y,w,h);
@@ -965,6 +1081,7 @@ function drawBtn(label,x,y,w,h,color){
   const r=dh/2;
   X.fillStyle=hv?TH.btnHover:TH.btnBg;
   X.beginPath();X.roundRect(x-dw/2,y-dh/2,dw,dh,r);X.fill();
+  glass(x-dw/2,y-dh/2,dw,dh,r);
   X.strokeStyle=hv?(color||TH.accent)+'60':TH.border;X.lineWidth=hv?1.5:1;
   X.beginPath();X.roundRect(x-dw/2,y-dh/2,dw,dh,r);X.stroke();
   txt(label,x,y,floor(h*.38),hv?TH.text:TH.textSec);
@@ -980,6 +1097,7 @@ function drawBigBtn(label,x,y,w,h,color){
   const c=color||TH.accent;
   X.fillStyle=hv?c+'25':c+'15';
   X.beginPath();X.roundRect(x-dw/2,y-dh/2,dw,dh,r);X.fill();
+  glass(x-dw/2,y-dh/2,dw,dh,r);
   X.strokeStyle=c+'50';X.lineWidth=1.5;
   X.beginPath();X.roundRect(x-dw/2,y-dh/2,dw,dh,r);X.stroke();
   txt(label,x,y,floor(h*.4),hv?TH.text:(darkMode?'rgba(255,255,255,.7)':'rgba(0,0,0,.5)'));
@@ -1024,7 +1142,7 @@ function drawCoin(x,y,r){
 
 // --- MENU ---
 function drawMenu(){
-  X.fillStyle=TH.bg;X.fillRect(0,0,W,H);
+  drawBg();
 
   // Animated background: many arrows drifting across the screen
   // Each arrow has its own position, direction, speed, size, and lifecycle
@@ -1054,28 +1172,29 @@ function drawMenu(){
   }
 
   // Title — close to top, right under coins/settings bar
-  txtP('STRAY',W/2,H*.10,36,TH.text);
-  txtP('ARROWS',W/2,H*.16,36,TH.accent);
-  txt('puzzle game',W/2,H*.21,12,TH.textSec);
+  txtP(t('title1'),W/2,H*.10,36,TH.text);
+  txtP(t('title2'),W/2,H*.16,36,TH.accent);
+  txt(t('tagline'),W/2,H*.21,12,TH.textSec);
 
   // Stats panel
   const spY=H*.28,spW=300,spH=66;
   X.fillStyle=TH.cardBg;
   X.beginPath();X.roundRect(W/2-spW/2,spY-spH/2,spW,spH,14);X.fill();
+  glass(W/2-spW/2,spY-spH/2,spW,spH,14);
   X.strokeStyle=TH.border;X.lineWidth=1;
   X.beginPath();X.roundRect(W/2-spW/2,spY-spH/2,spW,spH,14);X.stroke();
   const col1=W/2-spW/2+spW*.125,col2=W/2-spW/2+spW*.375,col3=W/2-spW/2+spW*.625,col4=W/2-spW/2+spW*.875;
-  txtP('LEVEL',col1,spY-13,9,TH.textSec);
+  txtP(t('level'),col1,spY-13,9,TH.textSec);
   txtP(maxLevel+'',col1,spY+9,17,TH.text);
-  txtP('STARS',col2,spY-13,9,TH.textSec);
+  txtP(t('stars'),col2,spY-13,9,TH.textSec);
   txtP(totalStars+'',col2,spY+9,17,TH.star);
-  txtP('STREAK',col3,spY-13,9,TH.textSec);
+  txtP(t('streak'),col3,spY-13,9,TH.textSec);
   txtP(streakDays+'d',col3,spY+9,17,TH.warning);
-  txtP('TROPHY',col4,spY-13,9,TH.textSec);
+  txtP(t('trophy'),col4,spY-13,9,TH.textSec);
   txtP(achUnlockedCount()+'/'+ACHIEVEMENTS.length,col4,spY+9,13,TH.accent);
 
   // PLAY button
-  if(drawBigBtn('▶  PLAY',W/2,H*.50,210,56,TH.accent)){
+  if(drawBigBtn('▶  '+t('play'),W/2,H*.50,210,56,TH.accent)){
     goto('play',()=>{isDaily=false;isWeekly=false;level=maxLevel;generateLevel(level)});
   }
 
@@ -1084,21 +1203,21 @@ function drawMenu(){
   const bW=138,bH=42,bGapX=16,bGapY=12;
   const gX=W/2,gY1=H*.60,gY2=gY1+bH+bGapY;
   // Row 1
-  if(drawBtn('LEVELS',gX-bW/2-bGapX/2,gY1,bW,bH)){
+  if(drawBtn(t('levels'),gX-bW/2-bGapX/2,gY1,bW,bH)){
     goto('levels',()=>{levelsPage=floor((level-1)/25)});
   }
   const dailyDone=isDailyDone();
-  if(drawBtn(dailyDone?'DAILY ★':'DAILY',gX+bW/2+bGapX/2,gY1,bW,bH)){
+  if(drawBtn(dailyDone?t('daily')+' ★':t('daily'),gX+bW/2+bGapX/2,gY1,bW,bH)){
     goto('play',()=>{isDaily=true;isWeekly=false;dailySeed=getDailySeed();generateLevel(1,dailySeed*31+7)});
   }
   // Row 2
   const weeklyDone=isWeeklyDone();
-  if(drawBtn(weeklyDone?'WEEKLY ★':'WEEKLY',gX-bW/2-bGapX/2,gY2,bW,bH,TH.warning)){
+  if(drawBtn(weeklyDone?t('weekly')+' ★':t('weekly'),gX-bW/2-bGapX/2,gY2,bW,bH,TH.warning)){
     goto('play',()=>{isWeekly=true;isDaily=false;const ws=getWeeklySeed();generateLevel(60,ws*131+71)});
   }
-  if(drawBtn('STATS',gX+bW/2+bGapX/2,gY2,bW,bH)){goto('stats')}
+  if(drawBtn(t('stats'),gX+bW/2+bGapX/2,gY2,bW,bH)){goto('stats')}
   // Wide achievements button
-  if(drawBtn('ACHIEVEMENTS ('+achUnlockedCount()+'/'+ACHIEVEMENTS.length+')',W/2,gY2+bH+bGapY+8,bW*2+bGapX,bH)){
+  if(drawBtn(t('achievements')+' ('+achUnlockedCount()+'/'+ACHIEVEMENTS.length+')',W/2,gY2+bH+bGapY+8,bW*2+bGapX,bH)){
     goto('achievements');
   }
 
@@ -1123,7 +1242,7 @@ function drawMenu(){
 
 // --- PLAY ---
 function drawPlay(){
-  X.fillStyle=TH.bg;X.fillRect(0,0,W,H);
+  drawBg();
 
   const cs=getCellSize(),gx=getGridX(),gy=getGridY();
 
@@ -1307,9 +1426,10 @@ function drawPlay(){
   const canHint=coins>=HINT_COST&&hintTime<=0;
   X.fillStyle=canHint?(hbhv?TH.star+'35':TH.star+'20'):TH.btnBg;
   X.beginPath();X.roundRect(hbx-bw/2,by-bh/2,bw,bh,bh/2);X.fill();
+  glass(hbx-bw/2,by-bh/2,bw,bh,bh/2);
   X.strokeStyle=canHint?TH.star+'60':TH.border;X.lineWidth=1;
   X.beginPath();X.roundRect(hbx-bw/2,by-bh/2,bw,bh,bh/2);X.stroke();
-  txt('HINT',hbx-bw*.26,by,11,canHint?TH.text:TH.textDim);
+  txt(t('hint'),hbx-bw*.26,by,11,canHint?TH.text:TH.textDim);
   drawCoin(hbx+bw*.05,by,5);
   txt(HINT_COST+'',hbx+bw*.15,by,10,canHint?TH.star:TH.textDim,'left');
   if(tapped&&abs(tapX-hbx)<bw/2&&abs(tapY-by)<bh/2){
@@ -1322,9 +1442,10 @@ function drawPlay(){
   const canSkip=coins>=SKIP_COST&&!isDaily;
   X.fillStyle=canSkip?(sbhv?TH.warning+'35':TH.warning+'20'):TH.btnBg;
   X.beginPath();X.roundRect(sbx-bw/2,by-bh/2,bw,bh,bh/2);X.fill();
+  glass(sbx-bw/2,by-bh/2,bw,bh,bh/2);
   X.strokeStyle=canSkip?TH.warning+'60':TH.border;X.lineWidth=1;
   X.beginPath();X.roundRect(sbx-bw/2,by-bh/2,bw,bh,bh/2);X.stroke();
-  txt('SKIP',sbx-bw*.26,by,11,canSkip?TH.text:TH.textDim);
+  txt(t('skip'),sbx-bw*.26,by,11,canSkip?TH.text:TH.textDim);
   drawCoin(sbx+bw*.05,by,5);
   txt(SKIP_COST+'',sbx+bw*.13,by,10,canSkip?TH.star:TH.textDim,'left');
   if(tapped&&abs(tapX-sbx)<bw/2&&abs(tapY-by)<bh/2){
@@ -1341,7 +1462,7 @@ function drawPlay(){
 
 // --- COMPLETE ---
 function drawComplete(){
-  X.fillStyle=TH.bg;X.fillRect(0,0,W,H);
+  drawBg();
 
   // Confetti
   for(let i=confetti.length-1;i>=0;i--){
@@ -1393,14 +1514,14 @@ function drawComplete(){
       goto('menu',()=>{isDaily=false;isWeekly=false});
     }
   }else{
-    if(drawBigBtn('NEXT LEVEL',W/2,H*.67,200,50,TH.accent)){
+    if(drawBigBtn(t('nextLevel'),W/2,H*.67,200,50,TH.accent)){
       showInterstitialAd(); // timed interstitial every 5 min
       goto('play',()=>{level++;save();generateLevel(level)});
     }
-    if(drawBtn('REPLAY',W/2,H*.74,140,36)){
+    if(drawBtn(t('replay'),W/2,H*.74,140,36)){
       goto('play',()=>{generateLevel(level)});
     }
-    if(drawBtn('HOME',W/2,H*.80,140,36)){goto('menu')}
+    if(drawBtn(t('home'),W/2,H*.80,140,36)){goto('menu')}
   }
 
   if(tapped)tapped=false;
@@ -1408,8 +1529,8 @@ function drawComplete(){
 
 // --- STATS ---
 function drawStats(){
-  X.fillStyle=TH.bg;X.fillRect(0,0,W,H);
-  txtP('STATS',W/2,50,22,TH.text);
+  drawBg();
+  txtP(t('stats'),W/2,50,22,TH.text);
 
   // Coins top-right
   drawCoin(W-50,36,7);
@@ -1450,13 +1571,13 @@ function drawStats(){
     txtP(rows[i][1],W-36,y+rowH/2-2,14,TH.text,'right');
   }
 
-  if(drawBtn('← BACK',W/2,H-50,140,38)){goto('menu')}
+  if(drawBtn('← '+t('back'),W/2,H-50,140,38)){goto('menu')}
   if(tapped)tapped=false;
 }
 
 // --- ACHIEVEMENTS LIST ---
 function drawAchievements(){
-  X.fillStyle=TH.bg;X.fillRect(0,0,W,H);
+  drawBg();
   txtP('ACHIEVEMENTS',W/2,50,22,TH.text);
   txt(achUnlockedCount()+' / '+ACHIEVEMENTS.length+' unlocked',W/2,74,12,TH.textSec);
 
@@ -1474,6 +1595,7 @@ function drawAchievements(){
     // Card
     X.fillStyle=done?TH.star+'18':TH.cardBg;
     X.beginPath();X.roundRect(20,y,cardW,cardH,10);X.fill();
+    glass(20,y,cardW,cardH,10);
     X.strokeStyle=done?TH.star+'50':TH.border;X.lineWidth=1;
     X.beginPath();X.roundRect(20,y,cardW,cardH,10);X.stroke();
     // Trophy icon (filled circle with star inside) or dim
@@ -1491,7 +1613,7 @@ function drawAchievements(){
     txt('+'+a.reward,cardW+2,y+cardH/2,10,done?TH.star:TH.textDim,'left');
   }
 
-  if(drawBtn('← BACK',W/2,H-50,140,38)){goto('menu')}
+  if(drawBtn('← '+t('back'),W/2,H-50,140,38)){goto('menu')}
   if(tapped)tapped=false;
 }
 
@@ -1516,6 +1638,7 @@ function drawAchPopup(){
   X.fillStyle=TH.surface;
   X.beginPath();X.roundRect(px,py,pw,ph,14);X.fill();
   X.restore();
+  glass(px,py,pw,ph,14);
   X.strokeStyle=TH.star+'80';X.lineWidth=2;
   X.beginPath();X.roundRect(px,py,pw,ph,14);X.stroke();
   // Star icon
@@ -1530,7 +1653,7 @@ function drawAchPopup(){
 
 // --- GAME OVER ---
 function drawGameOver(){
-  X.fillStyle=TH.bg;X.fillRect(0,0,W,H);
+  drawBg();
 
   // Broken heart icon
   X.fillStyle='#e05555';
@@ -1544,11 +1667,11 @@ function drawGameOver(){
   X.beginPath();X.moveTo(-1,-2);X.lineTo(1,3);X.lineTo(-1,6);X.lineTo(1,10);X.stroke();
   X.restore();
 
-  txtP('GAME OVER',W/2,H*.38,28,TH.text);
-  txt('You ran out of hearts',W/2,H*.44,13,TH.textSec);
+  txtP(t('gameOver'),W/2,H*.38,28,TH.text);
+  txt(t('outOfHearts'),W/2,H*.44,13,TH.textSec);
 
   // Buttons
-  if(drawBigBtn('RETRY',W/2,H*.50,200,48,TH.accent)){
+  if(drawBigBtn(t('retry'),W/2,H*.50,200,48,TH.accent)){
     showInterstitialAd(); // show ad between retries
     goto('play',()=>{generateLevel(level)});
   }
@@ -1559,9 +1682,10 @@ function drawGameOver(){
   const cbhv=abs(mx-W/2)<cbw/2&&abs(my-cby)<cbh/2;
   X.fillStyle=canContinue?(cbhv?TH.star+'35':TH.star+'20'):TH.btnBg;
   X.beginPath();X.roundRect(W/2-cbw/2,cby-cbh/2,cbw,cbh,cbh/2);X.fill();
+  glass(W/2-cbw/2,cby-cbh/2,cbw,cbh,cbh/2);
   X.strokeStyle=canContinue?TH.star+'70':TH.border;X.lineWidth=1.5;
   X.beginPath();X.roundRect(W/2-cbw/2,cby-cbh/2,cbw,cbh,cbh/2);X.stroke();
-  txt('CONTINUE',W/2-28,cby,14,canContinue?TH.text:TH.textDim);
+  txt(t('continueBtn'),W/2-28,cby,14,canContinue?TH.text:TH.textDim);
   drawCoin(W/2+22,cby,7);
   txt(CONTINUE_COST+'',W/2+33,cby,12,canContinue?TH.star:TH.textDim,'left');
   if(tapped&&abs(tapX-W/2)<cbw/2&&abs(tapY-cby)<cbh/2){
@@ -1582,7 +1706,7 @@ function drawGameOver(){
     }
   }
 
-  if(drawBtn('HOME',W/2,H*.81,140,38)){goto('menu')}
+  if(drawBtn(t('home'),W/2,H*.81,140,38)){goto('menu')}
 
   // Coins display top-right
   drawCoin(W-50,36,7);
@@ -1594,37 +1718,45 @@ function drawGameOver(){
 // --- SETTINGS ---
 let resetConfirm=false;
 function drawSettings(){
-  X.fillStyle=TH.bg;X.fillRect(0,0,W,H);
-  txtP('SETTINGS',W/2,50,22,TH.text);
+  drawBg();
+  txtP(t('settings'),W/2,50,22,TH.text);
+
+  // Language — cycles through LANGS on tap
+  const curLang=LANGS.find(l=>l.code===lang)||LANGS[0];
+  if(drawBtn(t('language')+': '+curLang.name,W/2,110,260,44)){
+    const i=LANGS.findIndex(l=>l.code===lang);
+    lang=LANGS[(i+1)%LANGS.length].code;
+    localStorage.setItem('ae_lang',lang);
+  }
 
   // Sound
-  if(drawBtn('Sound: '+(sndOn?'ON':'OFF'),W/2,140,200,44)){
+  if(drawBtn(t('sound')+': '+(sndOn?t('on'):t('off')),W/2,165,260,44)){
     sndOn=!sndOn;localStorage.setItem('ae_sound',sndOn?'1':'0');
   }
   // Dark mode
-  if(drawBtn('Theme: '+(darkMode?'Dark':'Light'),W/2,200,200,44)){
+  if(drawBtn(t('theme')+': '+(darkMode?t('themeDark'):t('themeLight')),W/2,220,260,44)){
     darkMode=!darkMode;localStorage.setItem('ae_theme',darkMode?'dark':'light');applyTheme();
   }
-  // Remove Ads — $3.99
+  // Remove Ads — $9.99
   if(!adsRemoved){
-    if(drawBtn('Remove Ads — $3.99',W/2,280,220,44,TH.accent)){
-      buyRemoveAds(); // TODO: connect to Google Play Billing
+    if(drawBtn(t('removeAds')+' — $9.99',W/2,295,260,44,TH.accent)){
+      buyRemoveAds();
     }
   }else{
-    txt('Ads removed ★',W/2,280,13,TH.success);
+    txt(t('adsRemoved'),W/2,295,13,TH.success);
   }
 
   // Watch Ad for Coins
-  if(drawBtn('Watch Ad → +'+AD_COIN_REWARD+' Coins',W/2,340,220,44,TH.star)){
-    showRewardedAd(()=>{coins+=AD_COIN_REWARD;totalCoinsEarned+=AD_COIN_REWARD;save();spawnFloater(W/2,340,'+'+AD_COIN_REWARD)});
+  if(drawBtn(t('watchAd')+' → +'+AD_COIN_REWARD+' '+t('coins'),W/2,350,260,44,TH.star)){
+    showRewardedAd(()=>{coins+=AD_COIN_REWARD;totalCoinsEarned+=AD_COIN_REWARD;save();spawnFloater(W/2,350,'+'+AD_COIN_REWARD)});
   }
 
   // Reset — two-tap confirmation (no native dialogs)
   if(!resetConfirm){
-    if(drawBtn('Reset Progress',W/2,420,200,44,TH.warning)){resetConfirm=true}
+    if(drawBtn(t('resetProgress'),W/2,425,200,44,TH.warning)){resetConfirm=true}
   }else{
-    txt('Are you sure?',W/2,410,13,TH.warning);
-    if(drawBtn('YES, RESET',W/2-60,450,110,40,TH.arrowBlock)){
+    txt(t('areYouSure'),W/2,415,13,TH.warning);
+    if(drawBtn(t('yesReset'),W/2-60,455,110,40,TH.arrowBlock)){
       localStorage.clear();level=1;maxLevel=1;coins=60;stars={};totalStars=0;
       achUnlocked={};totalPerfect=0;totalDailies=0;noHintCount=0;
       totalCoinsEarned=0;streakDays=0;totalPlayTime=0;fastestLevel=99999;
@@ -1632,10 +1764,10 @@ function drawSettings(){
       adsRemoved=false;resetConfirm=false;save();
       goto('menu');
     }
-    if(drawBtn('CANCEL',W/2+60,450,110,40)){resetConfirm=false}
+    if(drawBtn(t('cancel'),W/2+60,455,110,40)){resetConfirm=false}
   }
 
-  if(drawBtn('← BACK',W/2,H-60,140,38)){resetConfirm=false;goto('menu')}
+  if(drawBtn('← '+t('back'),W/2,H-60,140,38)){resetConfirm=false;goto('menu')}
   if(tapped)tapped=false;
 }
 
@@ -1644,10 +1776,10 @@ function drawSettings(){
 // the level number, stars earned, and lock state.
 const LEVELS_PER_PAGE=25;
 function drawLevels(){
-  X.fillStyle=TH.bg;X.fillRect(0,0,W,H);
+  drawBg();
 
   // Header
-  txtP('LEVELS',W/2,48,22,TH.text);
+  txtP(t('levels'),W/2,48,22,TH.text);
 
   const fromLv=levelsPage*LEVELS_PER_PAGE+1;
   const toLv=fromLv+LEVELS_PER_PAGE-1;
@@ -1688,6 +1820,7 @@ function drawLevels(){
       X.fillStyle=TH.cardBg;
     }
     X.beginPath();X.roundRect(x-cardW/2,y-cardH/2,cardW,cardH,10);X.fill();
+    glass(x-cardW/2,y-cardH/2,cardW,cardH,10);
     // Border
     X.strokeStyle=current?TH.accent:(done?TH.star+'60':TH.border);
     X.lineWidth=current?2:1;
@@ -1729,7 +1862,7 @@ function drawLevels(){
   }
 
   // Back to menu
-  if(drawBtn('← BACK',W/2,H-55,140,36)){goto('menu')}
+  if(drawBtn('← '+t('back'),W/2,H-55,140,36)){goto('menu')}
   if(tapped)tapped=false;
 }
 
