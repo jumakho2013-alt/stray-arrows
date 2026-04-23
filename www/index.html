@@ -42,6 +42,9 @@ const lrp=(a,b,t)=>a+(b-a)*t;
 //  THEME
 // ================================================================
 let darkMode=localStorage.getItem('ae_theme')==='dark';
+// Platform detection — Liquid Glass looks great on iOS, too harsh on Android dark mode
+const IS_IOS=(typeof Capacitor!=='undefined'&&Capacitor.getPlatform&&Capacitor.getPlatform()==='ios');
+const IS_ANDROID=(typeof Capacitor!=='undefined'&&Capacitor.getPlatform&&Capacitor.getPlatform()==='android');
 function applyTheme(){
   document.body.className=darkMode?'dark':'light';
   // Match status bar / notch / nav bar to app theme
@@ -1023,10 +1026,23 @@ function drawBg(){
   X.restore();
 }
 
-// iOS 26 "Liquid Glass" overlay. Call AFTER the base fill and BEFORE outer stroke.
-// Adds a visible glass material tint, a strong concave-lens top highlight,
-// inset lens shadow, bottom light-bleed, and bright dual rim lights.
+// Glass overlay. Full iOS 26 Liquid Glass on iOS; subtle Material-style tint on Android.
+// Call AFTER the base fill and BEFORE outer stroke.
 function glass(x,y,w,h,r){
+  if(IS_ANDROID){
+    // Android: soft, minimal — just a gentle top highlight, no harsh specular.
+    // Avoids the overbright "plastic" look in dark mode.
+    X.save();
+    X.beginPath();X.roundRect(x,y,w,h,r);X.clip();
+    const g=X.createLinearGradient(0,y,0,y+h);
+    g.addColorStop(0, darkMode?'rgba(255,255,255,.07)':'rgba(255,255,255,.18)');
+    g.addColorStop(1, darkMode?'rgba(255,255,255,0)':'rgba(255,255,255,0)');
+    X.fillStyle=g;X.fillRect(x,y,w,h);
+    X.restore();
+    return;
+  }
+
+  // iOS + web: full Liquid Glass
   const rr=max(0,r-.5);
 
   X.save();
@@ -1605,12 +1621,23 @@ function drawAchievements(){
       X.fillStyle=TH.textDim;
       X.beginPath();X.arc(42,y+cardH/2,10,0,TAU);X.fill();
     }
-    // Name + desc
+    // Reward (right-aligned, measured so it stays inside card)
+    const rewardRightX=20+cardW-14; // 14px padding from card right edge
+    const rewardStr='+'+a.reward;
+    X.save();
+    X.font='700 11px Nunito,sans-serif';
+    const rewardW=X.measureText(rewardStr).width;
+    X.restore();
+    const coinX=rewardRightX-rewardW-10; // 10px gap between coin and text
+    drawCoin(coinX,y+cardH/2,6);
+    txt(rewardStr,rewardRightX,y+cardH/2,11,done?TH.star:TH.textDim,'right','700');
+    // Name + desc — stop before reward block
+    const nameMaxW=coinX-6-65;
+    X.save();
+    X.beginPath();X.rect(65,y,nameMaxW,cardH);X.clip();
     txt(a.name,65,y+18,12,done?TH.text:TH.textSec,'left','700');
     txt(a.desc,65,y+36,10,done?TH.textSec:TH.textDim,'left');
-    // Reward — inside card bounds
-    drawCoin(cardW-10,y+cardH/2,6);
-    txt('+'+a.reward,cardW+2,y+cardH/2,10,done?TH.star:TH.textDim,'left');
+    X.restore();
   }
 
   if(drawBtn('← '+t('back'),W/2,H-50,140,38)){goto('menu')}
@@ -1717,16 +1744,19 @@ function drawGameOver(){
 
 // --- SETTINGS ---
 let resetConfirm=false;
+let langPickerOpen=false;
 function drawSettings(){
   drawBg();
   txtP(t('settings'),W/2,50,22,TH.text);
 
-  // Language — cycles through LANGS on tap
+  // If language picker is open, suppress taps on underlying buttons
+  const savedTapped=tapped;
+  if(langPickerOpen)tapped=false;
+
+  // Language — opens picker popup on tap
   const curLang=LANGS.find(l=>l.code===lang)||LANGS[0];
   if(drawBtn(t('language')+': '+curLang.name,W/2,110,260,44)){
-    const i=LANGS.findIndex(l=>l.code===lang);
-    lang=LANGS[(i+1)%LANGS.length].code;
-    localStorage.setItem('ae_lang',lang);
+    langPickerOpen=true;
   }
 
   // Sound
@@ -1768,6 +1798,76 @@ function drawSettings(){
   }
 
   if(drawBtn('← '+t('back'),W/2,H-60,140,38)){resetConfirm=false;goto('menu')}
+
+  // Restore tap so the picker overlay can consume it
+  if(langPickerOpen)tapped=savedTapped;
+
+  // Language picker popup — rendered LAST so it overlays everything
+  if(langPickerOpen){
+    // Dim backdrop
+    X.fillStyle='rgba(0,0,0,.55)';X.fillRect(0,0,W,H);
+    // Tap outside to close
+    if(tapped){
+      const pw=Math.min(320,W-32),rowH=44,ph=Math.min(LANGS.length*rowH+70,H-80);
+      const px=(W-pw)/2,py=(H-ph)/2;
+      if(tapX<px||tapX>px+pw||tapY<py||tapY>py+ph){
+        langPickerOpen=false;tapped=false;
+      }
+    }
+    // Panel
+    const pw=Math.min(320,W-32);
+    const rowH=44;
+    const ph=Math.min(LANGS.length*rowH+70,H-80);
+    const px=(W-pw)/2,py=(H-ph)/2;
+    X.save();
+    X.shadowColor='rgba(0,0,0,.4)';X.shadowBlur=20;X.shadowOffsetY=6;
+    X.fillStyle=TH.surface;
+    X.beginPath();X.roundRect(px,py,pw,ph,16);X.fill();
+    X.restore();
+    glass(px,py,pw,ph,16);
+    X.strokeStyle=TH.border;X.lineWidth=1;
+    X.beginPath();X.roundRect(px,py,pw,ph,16);X.stroke();
+    // Title
+    txtP(t('language'),W/2,py+24,14,TH.text);
+    // Language rows
+    const listTop=py+48;
+    for(let i=0;i<LANGS.length;i++){
+      const L=LANGS[i];
+      const ry=listTop+i*rowH;
+      if(ry+rowH>py+ph-6)break;
+      const isCur=L.code===lang;
+      const hv=mx>px+12&&mx<px+pw-12&&my>ry&&my<ry+rowH;
+      // Row bg
+      if(isCur){
+        X.fillStyle=TH.accent+'22';
+        X.beginPath();X.roundRect(px+10,ry+3,pw-20,rowH-6,8);X.fill();
+      }else if(hv){
+        X.fillStyle=TH.border;
+        X.beginPath();X.roundRect(px+10,ry+3,pw-20,rowH-6,8);X.fill();
+      }
+      // Name
+      txt(L.name,px+24,ry+rowH/2,13,isCur?TH.accent:TH.text,'left',isCur?'700':'600');
+      // Checkmark
+      if(isCur){
+        X.strokeStyle=TH.accent;X.lineWidth=2;X.lineCap='round';
+        X.beginPath();
+        X.moveTo(px+pw-30,ry+rowH/2);
+        X.lineTo(px+pw-22,ry+rowH/2+5);
+        X.lineTo(px+pw-14,ry+rowH/2-6);
+        X.stroke();
+      }
+      // Tap detect
+      if(tapped&&tapX>px+10&&tapX<px+pw-10&&tapY>ry&&tapY<ry+rowH){
+        lang=L.code;
+        localStorage.setItem('ae_lang',lang);
+        sfx.tap();
+        langPickerOpen=false;
+        tapped=false;
+      }
+    }
+    if(tapped)tapped=false;
+  }
+
   if(tapped)tapped=false;
 }
 
