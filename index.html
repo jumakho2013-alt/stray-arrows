@@ -52,7 +52,9 @@ const IS_ANDROID=(typeof Capacitor!=='undefined'&&Capacitor.getPlatform&&Capacit
 // Android doesn't — adding padding creates a visible background frame.
 if(IS_IOS)document.body.classList.add('ios-safe');
 function applyTheme(){
-  document.body.className=darkMode?'dark':'light';
+  // Preserve ios-safe class when toggling theme; only swap theme classes.
+  document.body.classList.remove('light','dark');
+  document.body.classList.add(darkMode?'dark':'light');
   // Match status bar / notch / nav bar to app theme
   const col=darkMode?'#1a1a2e':'#f5f2ed';
   const m=document.getElementById('themeColorMeta');
