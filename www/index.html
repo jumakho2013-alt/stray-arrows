@@ -15,6 +15,10 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-user-select:none;user-select:none;touch-action:none}
 html,body{width:100%;height:100%;overflow:hidden;display:flex;justify-content:center;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Nunito',sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+/* iOS only: add safe-area padding so UI isn't hidden under notch/Dynamic Island/home indicator.
+   Body bg matches theme, so the strip looks like a natural extension of status bar (native iOS look).
+   On Android the class is not applied, so no padding → no visible frame between status bar and canvas. */
+body.ios-safe{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
 body.light{background:#f5f2ed}
 body.dark{background:#1a1a2e}
 canvas{display:block}
@@ -44,6 +48,9 @@ let darkMode=localStorage.getItem('ae_theme')==='dark';
 // Platform detection — Liquid Glass looks great on iOS, too harsh on Android dark mode
 const IS_IOS=(typeof Capacitor!=='undefined'&&Capacitor.getPlatform&&Capacitor.getPlatform()==='ios');
 const IS_ANDROID=(typeof Capacitor!=='undefined'&&Capacitor.getPlatform&&Capacitor.getPlatform()==='android');
+// iOS needs safe-area padding so notch/Dynamic Island/home indicator don't cover UI.
+// Android doesn't — adding padding creates a visible background frame.
+if(IS_IOS)document.body.classList.add('ios-safe');
 function applyTheme(){
   document.body.className=darkMode?'dark':'light';
   // Match status bar / notch / nav bar to app theme
@@ -118,11 +125,17 @@ function t(k){return (STR[lang]&&STR[lang][k])||STR.en[k]||k}
 let dpr=1;
 function resize(){
   dpr=window.devicePixelRatio||1;
-  // Canvas fills the viewport (letterboxed to target aspect). Body has no
-  // padding anymore — safe-area padding created a visible frame in light mode.
-  // The status bar/nav bar on mobile are tinted to match the theme via the
-  // Capacitor StatusBar plugin (see applyTheme), so full-bleed canvas is fine.
-  const r=W/H;let cw=innerWidth,ch=innerHeight;
+  // Read body padding (0 on Android, env(safe-area-inset-*) on iOS via .ios-safe class)
+  // and subtract from the viewport so the letterboxed canvas fits inside the safe area.
+  // On Android this is a no-op; on iOS notch/Dynamic Island devices it keeps
+  // top/bottom UI (coins, settings gear, back buttons) visible above/below system chrome.
+  const bs=getComputedStyle(document.body);
+  const sit=parseFloat(bs.paddingTop)||0;
+  const sib=parseFloat(bs.paddingBottom)||0;
+  const sil=parseFloat(bs.paddingLeft)||0;
+  const sir=parseFloat(bs.paddingRight)||0;
+  const r=W/H;
+  let cw=innerWidth-sil-sir,ch=innerHeight-sit-sib;
   if(cw/ch>r)cw=ch*r;else ch=cw/r;
   C.width=W*dpr;C.height=H*dpr;
   C.style.width=cw+'px';C.style.height=ch+'px';
