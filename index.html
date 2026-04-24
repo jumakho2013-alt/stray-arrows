@@ -388,8 +388,12 @@ const SKIP_COST=200;
 const WEEKLY_REWARD=200;
 const AD_COIN_REWARD=60; // coins earned from watching a rewarded ad
 
-// Ads system — placeholder functions, swap with real AdMob later
-let adsRemoved=localStorage.getItem('ae_noads')==='1';
+// Ads system — placeholder functions, swap with real AdMob later.
+// NOTE: adsRemoved is hard-coded to false. There is no real IAP yet; the fake
+// "Remove Ads — $9.99" button was removed (Google Play Payments Policy
+// violation / Apple Guideline 3.1.1). When real Google Play Billing / StoreKit
+// is wired in, flip this to read from a verified purchase state.
+let adsRemoved=false;
 let lastInterstitialTime=0; // timestamp of last interstitial shown
 const INTERSTITIAL_INTERVAL=300; // seconds between interstitials (5 min)
 let adRewardCallback=null; // callback after rewarded ad completes
@@ -453,9 +457,10 @@ function showInterstitialAd(){
   }
 }
 function buyRemoveAds(){
-  // TODO: connect to Google Play Billing when ready
-  adsRemoved=true;
-  localStorage.setItem('ae_noads','1');
+  // TODO: connect to Google Play Billing when ready.
+  // Previously this flipped adsRemoved=true without a real purchase —
+  // violates Play/App Store payment policies. Kept as no-op so any lingering
+  // caller is safe; no UI currently invokes it.
 }
 function buyCoins(amount){
   // TODO: connect to Google Play Billing when ready
@@ -1789,18 +1794,13 @@ function drawSettings(){
   if(drawBtn(t('theme')+': '+(darkMode?t('themeDark'):t('themeLight')),W/2,220,260,44)){
     darkMode=!darkMode;localStorage.setItem('ae_theme',darkMode?'dark':'light');applyTheme();
   }
-  // Remove Ads — $9.99
-  if(!adsRemoved){
-    if(drawBtn(t('removeAds')+' — $9.99',W/2,295,260,44,TH.accent)){
-      buyRemoveAds();
-    }
-  }else{
-    txt(t('adsRemoved'),W/2,295,13,TH.success);
-  }
 
-  // Watch Ad for Coins
-  if(drawBtn(t('watchAd')+' → +'+AD_COIN_REWARD+' '+t('coins'),W/2,350,260,44,TH.star)){
-    showRewardedAd(()=>{coins+=AD_COIN_REWARD;totalCoinsEarned+=AD_COIN_REWARD;save();spawnFloater(W/2,350,'+'+AD_COIN_REWARD)});
+  // "Remove Ads — $9.99" button was removed (Play/App Store policy: no fake
+  // IAP). Re-add here when real billing is wired in.
+
+  // Watch Ad for Coins — moved up to y=295 to fill the gap cleanly
+  if(drawBtn(t('watchAd')+' → +'+AD_COIN_REWARD+' '+t('coins'),W/2,295,260,44,TH.star)){
+    showRewardedAd(()=>{coins+=AD_COIN_REWARD;totalCoinsEarned+=AD_COIN_REWARD;save();spawnFloater(W/2,295,'+'+AD_COIN_REWARD)});
   }
 
   // Reset — two-tap confirmation (no native dialogs)
