@@ -84,7 +84,7 @@ const C=document.getElementById('c'),X=C.getContext('2d');
 const W=390,H=844;
 // Single source of truth for the displayed app version. Bump alongside
 // CFBundleShortVersionString in ios/App/App.xcodeproj/project.pbxproj.
-const APP_VERSION='v1.0.13';
+const APP_VERSION='v1.0.7';
 const PI=Math.PI,TAU=PI*2,sin=Math.sin,cos=Math.cos,abs=Math.abs,floor=Math.floor,min=Math.min,max=Math.max,sqrt=Math.sqrt;
 const rnd=(a=0,b=1)=>Math.random()*(b-a)+a;
 const rndI=(a,b)=>floor(rnd(a,b+1));
@@ -555,6 +555,11 @@ const INTERSTITIAL_ID=()=>_isIOS()
   : 'ca-app-pub-1164170950110129/6672197661';  /* Android Interstitial — real */
 
 let admobReady=false;
+let _rewardedPrepared=false;
+let _interstitialPrepared=false;
+function _logAdErr(stage,e){
+  try{localStorage.setItem('ae_admob_err',stage+': '+String((e&&e.message)||e));}catch(_){}
+}
 async function initAdMob(){
   try{
     if(typeof Capacitor==='undefined'||!Capacitor.Plugins.AdMob)return;
@@ -579,33 +584,43 @@ async function initAdMob(){
       initializeForTesting:false,
       requestTrackingAuthorization:false  // already handled explicitly above
     });
-    // Prepare rewarded ad
-    await AdMob.prepareRewardVideoAd({
-      adId:REWARDED_ID(),
-      isTesting:false
-    });
-    // Prepare interstitial
-    await AdMob.prepareInterstitial({
-      adId:INTERSTITIAL_ID(),
-      isTesting:false
-    });
-    // Listen for reward
+
+    // CRITICAL: mark SDK ready as soon as initialize() succeeds. The PREVIOUS
+    // build only flipped this flag after both prepareRewardVideoAd AND
+    // prepareInterstitial succeeded — and on a fresh AdMob account or with
+    // a transient "no fill" response, prepare throws → admobReady stays
+    // false forever → showRewardedAd silently grants the reward without
+    // ever attempting to show an ad. That's the bug shipped in 1.0.6.
+    admobReady=true;
+
+    // Prepare ads in the background. On failure we'll lazily re-prepare in
+    // showRewardedAd / showInterstitialAd.
+    AdMob.prepareRewardVideoAd({adId:REWARDED_ID(),isTesting:false})
+      .then(()=>{_rewardedPrepared=true})
+      .catch(e=>_logAdErr('prepareRewarded',e));
+    AdMob.prepareInterstitial({adId:INTERSTITIAL_ID(),isTesting:false})
+      .then(()=>{_interstitialPrepared=true})
+      .catch(e=>_logAdErr('prepareInterstitial',e));
+
+    // Listen for reward — fired after the user watches the full rewarded ad.
     AdMob.addListener('onRewardedVideoAdReward',()=>{
       if(adRewardCallback)adRewardCallback();
       adRewardCallback=null;
     });
-    // Re-prepare after close. Also clear adRewardCallback — if user dismissed
-    // without earning the reward, the callback should NOT fire later when the
-    // next ad's reward event arrives.
+    // Re-prepare after close. Also clear adRewardCallback — if the user
+    // dismissed without earning the reward, the callback must NOT fire later.
     AdMob.addListener('onRewardedVideoAdDismissed',()=>{
       adRewardCallback=null;
-      AdMob.prepareRewardVideoAd({adId:REWARDED_ID(),isTesting:false}).catch(()=>{});
+      _rewardedPrepared=false;
+      AdMob.prepareRewardVideoAd({adId:REWARDED_ID(),isTesting:false})
+        .then(()=>{_rewardedPrepared=true}).catch(()=>{});
     });
     AdMob.addListener('onInterstitialAdDismissed',()=>{
-      AdMob.prepareInterstitial({adId:INTERSTITIAL_ID(),isTesting:false}).catch(()=>{});
+      _interstitialPrepared=false;
+      AdMob.prepareInterstitial({adId:INTERSTITIAL_ID(),isTesting:false})
+        .then(()=>{_interstitialPrepared=true}).catch(()=>{});
     });
-    admobReady=true;
-  }catch(e){/* browser/no AdMob — silently continue */}
+  }catch(e){_logAdErr('init',e)}
 }
 
 // Defer AdMob init until AFTER the splash screen has dismissed and the
@@ -618,27 +633,54 @@ function _scheduleAdMobInit(){
 if(document.readyState==='complete') _scheduleAdMobInit();
 else window.addEventListener('load',_scheduleAdMobInit);
 
-function showRewardedAd(onReward){
-  if(admobReady&&typeof Capacitor!=='undefined'){
-    adRewardCallback=onReward;
-    Capacitor.Plugins.AdMob.showRewardVideoAd().catch(()=>{
-      // Ad failed — give reward anyway (don't punish player) and CLEAR the
-      // pending callback so a later successful ad doesn't fire it twice.
+async function showRewardedAd(onReward){
+  if(!admobReady||typeof Capacitor==='undefined'||!Capacitor.Plugins.AdMob){
+    // Browser / no plugin — give reward immediately
+    if(onReward)onReward();
+    return;
+  }
+  const AdMob=Capacitor.Plugins.AdMob;
+  adRewardCallback=onReward;
+  try{
+    if(!_rewardedPrepared){
+      await AdMob.prepareRewardVideoAd({adId:REWARDED_ID(),isTesting:false});
+      _rewardedPrepared=true;
+    }
+    await AdMob.showRewardVideoAd();
+    // Reward / dismiss listeners take it from here.
+  }catch(e){
+    _logAdErr('showRewarded',e);
+    // Try ONE on-demand prepare+show retry — e.g., the cached ad expired.
+    try{
+      await AdMob.prepareRewardVideoAd({adId:REWARDED_ID(),isTesting:false});
+      _rewardedPrepared=true;
+      await AdMob.showRewardVideoAd();
+    }catch(e2){
+      _logAdErr('showRewardedRetry',e2);
+      // Genuinely no ad available — grant reward so player isn't punished,
+      // and clear the pending callback so a future successful ad doesn't
+      // fire it twice.
       adRewardCallback=null;
       if(onReward)onReward();
-    });
-  }else{
-    // Browser fallback — give reward immediately
-    if(onReward)onReward();
+    }
   }
 }
-function showInterstitialAd(){
+async function showInterstitialAd(){
   if(adsRemoved)return;
   const now=gt;
   if(now-lastInterstitialTime<INTERSTITIAL_INTERVAL)return;
   lastInterstitialTime=now;
-  if(admobReady&&typeof Capacitor!=='undefined'){
-    Capacitor.Plugins.AdMob.showInterstitial().catch(()=>{});
+  if(!admobReady||typeof Capacitor==='undefined'||!Capacitor.Plugins.AdMob)return;
+  const AdMob=Capacitor.Plugins.AdMob;
+  try{
+    if(!_interstitialPrepared){
+      await AdMob.prepareInterstitial({adId:INTERSTITIAL_ID(),isTesting:false});
+      _interstitialPrepared=true;
+    }
+    await AdMob.showInterstitial();
+  }catch(e){
+    _logAdErr('showInterstitial',e);
+    // Don't retry interstitials — they're noisy and timed; just skip this slot.
   }
 }
 function useHint(){
