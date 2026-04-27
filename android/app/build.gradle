@@ -1,5 +1,16 @@
 apply plugin: 'com.android.application'
 
+// Load signing credentials from `android/keystore.properties` (gitignored).
+// If the file is missing, release builds will fail with a clear error rather
+// than silently falling back to debug signing. See keystore.properties.example
+// for the template.
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+def keystorePropertiesAvailable = keystorePropertiesFile.exists()
+if (keystorePropertiesAvailable) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.strayarrows.puzzle"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -18,10 +29,15 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file('../../arrow-escape.keystore')
-            storePassword 'ArrowEscape2024'
-            keyAlias 'arrow-escape'
-            keyPassword 'ArrowEscape2024'
+            if (keystorePropertiesAvailable) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+            // If keystore.properties is missing this signingConfig stays empty
+            // and `./gradlew bundleRelease` will fail with "keystore not set" —
+            // which is the correct, loud failure mode (not silent debug signing).
         }
     }
     buildTypes {

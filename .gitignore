@@ -8,3 +8,7 @@ ios/App/build/
 *.apk
 *.aab
 *.keystore
+
+# Android signing config — passwords live here, never in build.gradle.
+# Use android/keystore.properties.example as a template for setup.
+android/keystore.properties
