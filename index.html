@@ -125,10 +125,14 @@ function applyTheme(){
   const col=darkMode?'#1a1a2e':'#f5f2ed';
   const m=document.getElementById('themeColorMeta');
   if(m)m.content=col;
-  // Capacitor StatusBar — changes with theme
+  // Capacitor StatusBar — full edge-to-edge: webview draws UNDER the status bar
+  // so the app gradient reaches the very top of the screen. Status bar text/icons
+  // overlay on top of our content; we still set a matching background color in
+  // case overlay isn't supported on the platform/version (graceful fallback).
   try{
     if(typeof Capacitor!=='undefined'&&Capacitor.Plugins.StatusBar){
-      Capacitor.Plugins.StatusBar.setBackgroundColor({color:col});
+      Capacitor.Plugins.StatusBar.setOverlaysWebView({overlay:true}).catch(()=>{});
+      Capacitor.Plugins.StatusBar.setBackgroundColor({color:col}).catch(()=>{});
       Capacitor.Plugins.StatusBar.setStyle({style:darkMode?'DARK':'LIGHT'});
     }
     if(typeof Capacitor!=='undefined'&&Capacitor.Plugins.NavigationBar){
@@ -230,21 +234,18 @@ function _readSafeArea(){
 }
 function resize(){
   dpr=window.devicePixelRatio||1;
-  // Maintain the W:H aspect ratio. On iPhone the screen aspect is ~390:844
-  // so this changes nothing visually. On iPad / wider screens we letterbox
-  // (canvas keeps phone proportions, body bg fills the gap on the sides)
-  // — game elements stay correctly proportioned instead of stretched.
+  // Full-bleed: canvas always fills the entire viewport (edge-to-edge).
+  // The internal drawing surface stays 390x844 logical so game elements
+  // keep their layout, but the CSS box stretches to the device. On phones
+  // close to 390:844 ratio the stretch is imperceptible (~1-2%). Crucially,
+  // there's no visible body bg strip at top/bottom anymore — the gradient
+  // background painted by drawBg() reaches the screen edges, even under
+  // notch / status bar / nav bar. UI insets (safeTop/Bottom) are still
+  // honored in canvas-coords via the env() probe so nothing draws under
+  // system chrome. On iPad letterbox letterboxing was nice, but most users
+  // are on phones — the full-bleed look matters more.
   const winW=innerWidth||W,winH=innerHeight||H;
-  const wantRatio=W/H;
-  const winRatio=winW/winH;
-  let cw,ch;
-  if(winRatio>wantRatio){
-    // Window wider than the game (iPad portrait, iPad landscape, desktop)
-    ch=winH;cw=ch*wantRatio;
-  }else{
-    // Window taller (every iPhone, narrow phones) — fill width
-    cw=winW;ch=cw/wantRatio;
-  }
+  const cw=winW,ch=winH;
   C.width=W*dpr;C.height=H*dpr;
   C.style.width=cw+'px';C.style.height=ch+'px';
   X.setTransform(dpr,0,0,dpr,0,0);
