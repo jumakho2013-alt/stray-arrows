@@ -125,18 +125,24 @@ function applyTheme(){
   const col=darkMode?'#1a1a2e':'#f5f2ed';
   const m=document.getElementById('themeColorMeta');
   if(m)m.content=col;
-  // Capacitor StatusBar — full edge-to-edge: webview draws UNDER the status bar
-  // so the app gradient reaches the very top of the screen. Status bar text/icons
-  // overlay on top of our content; we still set a matching background color in
-  // case overlay isn't supported on the platform/version (graceful fallback).
+  // Capacitor StatusBar — full edge-to-edge.
+  //   1. setOverlaysWebView({overlay:true}) — webview draws UNDER the status bar
+  //      so the app gradient reaches the very top of the screen.
+  //   2. setBackgroundColor({color:'#00000000'}) — transparent. With overlay=true,
+  //      any non-transparent color would paint OVER our gradient on Android <15,
+  //      re-introducing the visible top strip we're trying to remove.
+  //   3. setStyle({DARK|LIGHT}) — controls only the icon/text color drawn by the
+  //      system on top of our content (no background effect).
+  // NavigationBar plugin similarly takes a transparent color so the gradient
+  // shows through on devices with 3-button nav.
   try{
     if(typeof Capacitor!=='undefined'&&Capacitor.Plugins.StatusBar){
       Capacitor.Plugins.StatusBar.setOverlaysWebView({overlay:true}).catch(()=>{});
-      Capacitor.Plugins.StatusBar.setBackgroundColor({color:col}).catch(()=>{});
+      Capacitor.Plugins.StatusBar.setBackgroundColor({color:'#00000000'}).catch(()=>{});
       Capacitor.Plugins.StatusBar.setStyle({style:darkMode?'DARK':'LIGHT'});
     }
     if(typeof Capacitor!=='undefined'&&Capacitor.Plugins.NavigationBar){
-      Capacitor.Plugins.NavigationBar.setColor({color:col});
+      Capacitor.Plugins.NavigationBar.setColor({color:'#00000000'}).catch(()=>{});
     }
   }catch(e){}
 }
