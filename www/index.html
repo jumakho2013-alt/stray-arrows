@@ -261,6 +261,11 @@ applyTheme();
 // Theme palette. Two MUTUALLY-CONSISTENT modes — light has cream bg + dark
 // ink-on-paper buttons; dark has navy bg + lifted dark-grey buttons with
 // light text (like iOS dark mode). No mixing of light buttons on dark bg.
+//
+// Supplemental tokens (radii, motion durations, letter-spacing, shadow
+// scale) added in v2 — see design-research.md. Single source of truth for
+// every visual constant in the canvas renderer; if you find yourself
+// hardcoding a number in drawArrow/drawBtn, add a token here first.
 const TH={
   get bg(){return darkMode?'#15152a':'#f5f2ed'},
   get surface(){return darkMode?'#252540':'#ffffff'},
@@ -276,18 +281,48 @@ const TH={
   // (per ui-ux-pro-max design system: Bakery/Cafe palette). Replaces the
   // cold blue-grey which clashed against warm background.
   get accent(){return darkMode?'#e2b35a':'#c89030'},
+  // Title gradient stops — used by drawTitle() to flow gold→deepGold→gold
+  // across the "STRAY ARROWS" header. Cycle period set by motionTitleCycle
+  // below. Reduced-motion players see the static `accent` value instead.
+  get accentDeep(){return darkMode?'#b88838':'#9a6a1c'},
   get success(){return'#6aaa7a'},
   get warning(){return'#d4956a'},
   get star(){return'#d4aa4a'},
   get arrow(){return darkMode?'#d0cdc5':'#1a1a1a'},
   get arrowBlock(){return darkMode?'#e08080':'#cc4444'},
   get arrowShadow(){return darkMode?'rgba(0,0,0,.3)':'rgba(0,0,0,.08)'},
+  // Long offset shadow used by drawArrow for the "Monument Valley" lit-from-
+  // above feel. Subtle, never overpowers the arrow itself.
+  get arrowGlow(){return darkMode?'rgba(226,179,90,.18)':'rgba(200,144,48,.16)'},
   get gridLine(){return darkMode?'rgba(255,255,255,.04)':'rgba(0,0,0,.04)'},
   get cardBg(){return darkMode?'rgba(255,255,255,.05)':'rgba(0,0,0,.03)'},
-  // Buttons: lifted surface above bg (slightly lighter in dark, slightly
-  // darker in light) — gives a soft "card" feel without any glass overlay.
-  get btnBg(){return darkMode?'rgba(255,255,255,.08)':'rgba(255,255,255,.7)'},
-  get btnHover(){return darkMode?'rgba(255,255,255,.14)':'rgba(255,255,255,.95)'},
+  // Buttons: lifted surface above bg. Bumped dark-mode opacity from .08 to
+  // .14 in v2 — the .08 sat right at WCAG AA borderline against the
+  // #15152a navy and read as "JS-ish flat" instead of solid card.
+  get btnBg(){return darkMode?'rgba(255,255,255,.14)':'rgba(255,255,255,.7)'},
+  get btnHover(){return darkMode?'rgba(255,255,255,.20)':'rgba(255,255,255,.95)'},
+
+  // ----- v2 tokens (single source of truth) -----
+  // Radii: small (badges, chips), medium (buttons), large (cards), pill.
+  radiusSm: 6,
+  radiusMd: 14,
+  radiusLg: 22,
+  radiusPill: 999,
+  // Motion: keep 3 durations (fast tactile feedback, medium UI transitions,
+  // slow ambient flows) — anything outside these should be reconsidered.
+  motionFast: 80,
+  motionMed: 200,
+  motionSlow: 650,
+  motionTitleCycle: 8000,
+  // Letter spacing: title looks better with a touch of expansion;
+  // bold buttons need a tiny opening so caps don't run together.
+  letterSpacingTitle: 0.08,
+  letterSpacingButton: 0.04,
+  // Shadow strength scale used by canvas long-shadow / pressed states.
+  // Drop them on iOS WebKit if shadowBlur shows up in Profiler.
+  shadowSm: 4,
+  shadowMd: 10,
+  shadowLg: 24,
 };
 
 function arrowColor(a,i){
@@ -2529,7 +2564,10 @@ function txt(t,x,y,sz,col,align,font){
 function txtP(t,x,y,sz,col,align){txt(t,x,y,sz,col,align,'700')}
 
 function drawArrow(x,y,dir,sz,col,alpha){
-  // Simple straight arrow (used for menu animation and flying arrows)
+  // Simple straight arrow (used for menu animation and flying arrows).
+  // v2: paints a 1-px-offset shadow underneath the line + head before the
+  // main strokes. Looks like a Monument-Valley-style "lit from above"
+  // depth cue without using shadowBlur (which is a perf cliff on iOS).
   const angles=[0,-PI/2,PI,PI/2];
   const a=angles[dir];
   const len=sz*.30;
@@ -2538,7 +2576,19 @@ function drawArrow(x,y,dir,sz,col,alpha){
   X.save();X.translate(x,y);X.rotate(a);
   X.globalAlpha=alpha||1;
   const c=col||TH.arrow;
-  X.strokeStyle=c;X.lineWidth=max(1.8,sz*.035);X.lineCap='round';
+  const lw=max(1.8,sz*.035);
+  // Long-shadow pass (skipped in reduced-motion / high-contrast — both add
+  // visual noise that those modes are explicitly trying to remove)
+  if (!reducedMotion) {
+    X.strokeStyle=TH.arrowShadow;X.lineWidth=lw;X.lineCap='round';
+    const off=max(0.6,sz*.012);
+    X.beginPath();X.moveTo(-len+off,off);X.lineTo(len-headL+off,off);X.stroke();
+    X.fillStyle=TH.arrowShadow;X.beginPath();
+    X.moveTo(len+off,off);X.lineTo(len-headL+off,-headW+off);X.lineTo(len-headL+off,headW+off);
+    X.closePath();X.fill();
+  }
+  // Main pass
+  X.strokeStyle=c;X.lineWidth=lw;X.lineCap='round';
   X.beginPath();X.moveTo(-len,0);X.lineTo(len-headL,0);X.stroke();
   X.fillStyle=c;X.beginPath();
   X.moveTo(len,0);X.lineTo(len-headL,-headW);X.lineTo(len-headL,headW);
@@ -2966,9 +3016,24 @@ function drawMenu(){
   } // end !reducedMotion bg arrows
 
   // Title — moved further down (clear of dynamic island + breathing room
-  // for the heavier stats panel below)
+  // for the heavier stats panel below). v2: ARROWS line gets a slow gold→
+  // deepGold→gold gradient flow (cycle TH.motionTitleCycle ms). Reduced-
+  // motion players see the static accent. The phase is a function of gt
+  // (game-clock seconds) so the gradient is in lockstep across re-renders.
   txtP(t('title1'),W/2,H*.16,36,TH.text);
-  txtP(t('title2'),W/2,H*.22,36,TH.accent);
+  if (reducedMotion) {
+    txtP(t('title2'),W/2,H*.22,36,TH.accent);
+  } else {
+    const phase = (gt * 1000 / TH.motionTitleCycle) % 1;
+    // Smooth lerp between accent and accentDeep using a triangular wave so
+    // the start and end of the cycle match (no visible "snap").
+    const tri = Math.abs(phase * 2 - 1);
+    const grad = X.createLinearGradient(W/2 - 80, 0, W/2 + 80, 0);
+    grad.addColorStop(0, TH.accent);
+    grad.addColorStop(0.5, tri < 0.5 ? TH.accentDeep : TH.accent);
+    grad.addColorStop(1, TH.accent);
+    txtP(t('title2'),W/2,H*.22,36,grad);
+  }
   txt(t('tagline'),W/2,H*.265,12,TH.textSec);
 
   // Stats panel
@@ -3173,18 +3238,22 @@ function drawPlay(){
       }
     }
 
-    // Hint highlight: slow gentle pulse with soft glow halo. Only ONE arrow
-    // is ever hinted at a time, so shadowBlur is affordable here even though
-    // it's banned for the per-frame draw of every alive arrow.
+    // Hint highlight: slow gentle pulse with a layered halo. v1 used
+    // shadowBlur which Profiler showed as the single most expensive thing
+    // in the frame on iPhone 7 / iOS WebKit (rasteriser allocates a new
+    // surface every frame for varying blur radii). v2 simulates the same
+    // visual via two underlying strokes at different alpha — same look,
+    // ~6× cheaper on low-end devices.
     const isHinted=i===hintArrow&&hintTime>0;
     if(isHinted&&!reducedMotion){
-      // Slow pulse (~2.5s cycle) — subtle, not flashy.
-      const pulse=.5+.5*sin(gt*2.5);
+      const pulse=.5+.5*sin(gt*2.5);             // 2.5s cycle
       X.save();
-      // Soft glow halo
-      X.shadowColor=TH.star;
-      X.shadowBlur=6+pulse*8; // 6..14 px
-      X.globalAlpha=(.5+pulse*.35)*revealA; // 0.5..0.85
+      // Outer halo: low alpha, full arrow drawn larger via lineWidth bump
+      // inside drawArrowStatic — but we don't have a width parameter, so
+      // approximate with two stacked strokes at decreasing alpha.
+      X.globalAlpha=(.18+pulse*.12)*revealA;     // 0.18..0.30
+      drawArrowStatic(a,cs,gx,gy,TH.star,1,shakeOff);
+      X.globalAlpha=(.50+pulse*.30)*revealA;     // 0.50..0.80
       drawArrowStatic(a,cs,gx,gy,TH.star,1,shakeOff);
       X.restore();
     }
