@@ -8,12 +8,20 @@ const CACHE_NAME = 'stray-arrows-v1.0.17';
 // reach the level-1 board. handcrafted-levels.js is included because it owns
 // the tutorial (1-10) and milestone levels — without it offline players would
 // silently drop into procedural fallback for level 1.
+//
+// Imported chunks (levels/imported-NNN.js) are NOT precached. Only chunk-000
+// is, because levels 11-100 are the most commonly hit. Later chunks are
+// fetched on demand by the runtime loader and cached by the runtime cache
+// path below — by the time the player gets to chunk 002 they have visited
+// chunks 000-001 already, so it's all warm.
 const ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
   '/levels-baked.js',
   '/handcrafted-levels.js',
+  '/levels/imported-meta.js',
+  '/levels/imported-000.js',
 ];
 
 self.addEventListener('install', e => {

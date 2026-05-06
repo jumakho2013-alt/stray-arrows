@@ -82,6 +82,13 @@ body.letterboxed canvas{
      player taps "play", DOMContentLoaded has fired and HANDCRAFTED_LEVELS
      is populated — generateLevel() never sees it undefined in practice. -->
 <script src="handcrafted-levels.js?v=25" defer></script>
+<!-- Imported levels: 600+ Rush Hour boards from fogleman/rush (MIT) converted
+     to our format. Split into ~70KB chunks of 200 levels each so the cold
+     start only pulls what's actually needed. The meta file (1KB) lists
+     which chunk owns which level range — loaded eagerly with `defer`. The
+     chunks themselves are pulled on demand by `_ensureImportedChunk()`
+     when the player approaches a level inside that chunk. -->
+<script src="levels/imported-meta.js" defer></script>
 <script>
 // Surface any uncaught error visibly — without this a JS error gives a blank
 // white screen with no clue. Persists in localStorage for post-mortem.
@@ -148,6 +155,45 @@ function _devWarn(stage, err){
     if (log.length > 20) log.splice(0, log.length - 20);
     localStorage.setItem('ae_errlog', JSON.stringify(log));
   } catch(_) { /* localStorage unusable — drop the warning silently */ }
+}
+
+// On-demand loader for imported-NNN.js level chunks. Each chunk holds 200
+// levels (~70KB) — loading them upfront would bloat cold start with data
+// the first 100 levels never need. We:
+//   1. Look up the chunk that owns `lvl` in window.IMPORTED_LEVELS_META
+//      (populated by levels/imported-meta.js, loaded eagerly with `defer`).
+//   2. If the chunk isn't already loaded, inject a <script> for it and a
+//      <script> for the NEXT chunk (so that lvl+1 is also pre-warmed).
+//   3. Track in-flight loads in `_chunkPending` so we don't fire duplicate
+//      requests when generateLevel is called repeatedly during a session.
+// This is fire-and-forget: the caller checks IMPORTED_LEVELS[lvl] right
+// after calling. If the script hasn't landed yet, the lookup falls through
+// to BAKED/procedural for THIS render and the chunk arrives for next time.
+const _chunkLoaded = new Set();
+const _chunkPending = new Set();
+function _ensureImportedChunk(lvl){
+  const meta = window.IMPORTED_LEVELS_META;
+  if(!meta || !Array.isArray(meta)) return;
+  const _loadOne = (chunkIdx, file) => {
+    if (_chunkLoaded.has(chunkIdx) || _chunkPending.has(chunkIdx)) return;
+    _chunkPending.add(chunkIdx);
+    const s = document.createElement('script');
+    s.src = 'levels/' + file;
+    s.async = true;
+    s.onload = () => { _chunkLoaded.add(chunkIdx); _chunkPending.delete(chunkIdx); };
+    s.onerror = e => { _chunkPending.delete(chunkIdx); _devWarn('importedChunk:'+file, e); };
+    document.head.appendChild(s);
+  };
+  for (let i = 0; i < meta.length; i++) {
+    const m = meta[i];
+    if (lvl >= m.levelStart && lvl <= m.levelEnd) {
+      _loadOne(m.chunkIdx, m.file);
+      // Prefetch the next chunk so transitioning across the boundary is seamless.
+      const next = meta[i + 1];
+      if (next) _loadOne(next.chunkIdx, next.file);
+      return;
+    }
+  }
 }
 // Single source of truth for the displayed app version. Bump alongside
 // CFBundleShortVersionString in ios/App/App.xcodeproj/project.pbxproj.
@@ -1424,6 +1470,34 @@ function generateLevel(lvl,customSeed){
     const key='ae_best_'+lvl;
     bestTime=+localStorage.getItem(key)||0;
     return;
+  }
+
+  // Imported-level fast path: 600+ Rush Hour boards converted to our format,
+  // split across chunks of 200 in levels/imported-NNN.js. We trigger a
+  // background fetch for the matching chunk via _ensureImportedChunk(); if
+  // it's already loaded we use it immediately, otherwise we fall through
+  // to BAKED/procedural for THIS render and the chunk lands in time for
+  // the next attempt. The chain order matters: HANDCRAFTED still wins so
+  // tutorial + milestone showcases never get overwritten by an import.
+  if(!FORCE_FRESH_LEVELS&&customSeed==null&&typeof window!=='undefined'){
+    _ensureImportedChunk(lvl);
+    if(window.IMPORTED_LEVELS&&window.IMPORTED_LEVELS[lvl]){
+      const im=window.IMPORTED_LEVELS[lvl];
+      const _check=im.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d}));
+      // Same defense-in-depth as for BAKED below: re-validate at runtime so
+      // a future importer regression can't ship a deadlock to players.
+      if(_isLevelSolvable(_check,im.rows,im.cols)){
+        gridCols=im.cols;gridRows=im.rows;
+        arrows=im.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d,alive:true}));
+        _recordCells();
+        minMoves=arrows.length;
+        moves=0;timer=0;undosLeft=3;
+        _startZoomIntro();
+        const key='ae_best_'+lvl;
+        bestTime=+localStorage.getItem(key)||0;
+        return;
+      }
+    }
   }
 
   // Baked-level fast path: levels 1..500 (regular play only — daily/weekly

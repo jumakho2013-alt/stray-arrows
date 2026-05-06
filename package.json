@@ -5,13 +5,16 @@
   "main": "sw.js",
   "scripts": {
     "prebuild": "node tools/sync-sw-version.js",
-    "build": "mkdir -p www/sounds && cp index.html manifest.json sw.js levels-baked.js handcrafted-levels.js www/ && cp sounds/*.mp3 www/sounds/ && echo 'Build done'",
+    "build": "mkdir -p www/sounds www/levels && cp index.html manifest.json sw.js levels-baked.js handcrafted-levels.js www/ && cp sounds/*.mp3 www/sounds/ && cp levels/*.js www/levels/ 2>/dev/null || true && echo 'Build done'",
     "sync": "npm run build && npx cap sync",
     "open:android": "npx cap open android",
     "open:ios": "npx cap open ios",
     "regen-assets": "npx --yes @capacitor/assets@^3 generate --iconBackgroundColor '#f5f2ed' --iconBackgroundColorDark '#1a1a2e' --splashBackgroundColor '#f5f2ed' --splashBackgroundColorDark '#1a1a2e'",
     "audit:check": "npm audit --audit-level=high",
-    "validate": "node tools/validate-handcrafted.js",
+    "validate": "node tools/validate-handcrafted.js && node tools/validate-imported.js",
+    "validate:handcrafted": "node tools/validate-handcrafted.js",
+    "validate:imported": "node tools/validate-imported.js",
+    "import-rushhour": "node tools/import-rushhour.js",
     "lint": "eslint tools/ sw.js"
   },
   "keywords": [],
