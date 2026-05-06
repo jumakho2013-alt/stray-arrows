@@ -213,6 +213,12 @@ const lrp=(a,b,t)=>a+(b-a)*t;
 // frame regenerates the offscreen background canvas instead of reusing it.
 let _bgCacheDirty=true;
 let darkMode=localStorage.getItem('ae_theme')==='dark';
+// Optional accessibility toggle. When on, the theme palette flips to maximum
+// contrast — pure black/white surfaces, saturated accents, no rgba overlays.
+// Sits orthogonally to darkMode (you can have HC light or HC dark). Same idea
+// as iOS Increase Contrast / WCAG AAA pairings. Persists in localStorage so
+// the flag survives reload.
+let highContrast=localStorage.getItem('ae_contrast')==='high';
 // prefers-reduced-motion: when true, code paths that draw decorative motion
 // (background floating arrows, hint pulse, confetti, slide-in animations)
 // either skip or use a reduced variant. Game-essential motion (arrow swoosh
@@ -267,20 +273,26 @@ applyTheme();
 // every visual constant in the canvas renderer; if you find yourself
 // hardcoding a number in drawArrow/drawBtn, add a token here first.
 const TH={
-  get bg(){return darkMode?'#15152a':'#f5f2ed'},
-  get surface(){return darkMode?'#252540':'#ffffff'},
-  get border(){return darkMode?'rgba(255,255,255,.10)':'rgba(0,0,0,.08)'},
+  // bg/surface/text/btn etc. all special-case `highContrast` so the toggle
+  // is one-stop: flip the flag, palette inverts to pure-contrast variants.
+  // Non-affected keys (success, warning, star, gridLine, cardBg, shadow
+  // tokens) keep their normal-mode values — those are decoration, not
+  // legibility-critical.
+  get bg(){return highContrast?(darkMode?'#000000':'#ffffff'):(darkMode?'#15152a':'#f5f2ed')},
+  get surface(){return highContrast?(darkMode?'#0a0a0a':'#ffffff'):(darkMode?'#252540':'#ffffff')},
+  get border(){return highContrast?(darkMode?'#ffffff':'#000000'):(darkMode?'rgba(255,255,255,.10)':'rgba(0,0,0,.08)')},
   // Screen-level text (titles, stats labels)
-  get text(){return darkMode?'#f0eee8':'#2a2a2a'},
-  get textSec(){return darkMode?'#a8a8b8':'#888888'},
-  get textDim(){return darkMode?'rgba(255,255,255,.35)':'rgba(0,0,0,.2)'},
+  get text(){return highContrast?(darkMode?'#ffffff':'#000000'):(darkMode?'#f0eee8':'#2a2a2a')},
+  get textSec(){return highContrast?(darkMode?'#cccccc':'#333333'):(darkMode?'#a8a8b8':'#888888')},
+  get textDim(){return highContrast?(darkMode?'#999999':'#666666'):(darkMode?'rgba(255,255,255,.35)':'rgba(0,0,0,.2)')},
   // Button-local: text always contrasts the button bg (dark btn → light text)
-  get btnText(){return darkMode?'#f0eee8':'#2a2a2a'},
-  get btnTextSec(){return darkMode?'#a0a0b0':'#6a6a6a'},
+  get btnText(){return highContrast?(darkMode?'#ffffff':'#000000'):(darkMode?'#f0eee8':'#2a2a2a')},
+  get btnTextSec(){return highContrast?(darkMode?'#cccccc':'#333333'):(darkMode?'#a0a0b0':'#6a6a6a')},
   // Warm amber accent — matches the cream "paper" bg + earth-tone palette
   // (per ui-ux-pro-max design system: Bakery/Cafe palette). Replaces the
   // cold blue-grey which clashed against warm background.
-  get accent(){return darkMode?'#e2b35a':'#c89030'},
+  // High-contrast variant uses pure complementary tones for max legibility.
+  get accent(){return highContrast?(darkMode?'#ffd700':'#0033cc'):(darkMode?'#e2b35a':'#c89030')},
   // Title gradient stops — used by drawTitle() to flow gold→deepGold→gold
   // across the "STRAY ARROWS" header. Cycle period set by motionTitleCycle
   // below. Reduced-motion players see the static `accent` value instead.
@@ -288,9 +300,9 @@ const TH={
   get success(){return'#6aaa7a'},
   get warning(){return'#d4956a'},
   get star(){return'#d4aa4a'},
-  get arrow(){return darkMode?'#d0cdc5':'#1a1a1a'},
-  get arrowBlock(){return darkMode?'#e08080':'#cc4444'},
-  get arrowShadow(){return darkMode?'rgba(0,0,0,.3)':'rgba(0,0,0,.08)'},
+  get arrow(){return highContrast?(darkMode?'#ffffff':'#000000'):(darkMode?'#d0cdc5':'#1a1a1a')},
+  get arrowBlock(){return highContrast?'#ff0000':(darkMode?'#e08080':'#cc4444')},
+  get arrowShadow(){return highContrast?'rgba(0,0,0,0)':(darkMode?'rgba(0,0,0,.3)':'rgba(0,0,0,.08)')},
   // Long offset shadow used by drawArrow for the "Monument Valley" lit-from-
   // above feel. Subtle, never overpowers the arrow itself.
   get arrowGlow(){return darkMode?'rgba(226,179,90,.18)':'rgba(200,144,48,.16)'},
@@ -299,8 +311,9 @@ const TH={
   // Buttons: lifted surface above bg. Bumped dark-mode opacity from .08 to
   // .14 in v2 — the .08 sat right at WCAG AA borderline against the
   // #15152a navy and read as "JS-ish flat" instead of solid card.
-  get btnBg(){return darkMode?'rgba(255,255,255,.14)':'rgba(255,255,255,.7)'},
-  get btnHover(){return darkMode?'rgba(255,255,255,.20)':'rgba(255,255,255,.95)'},
+  // High-contrast: solid surfaces, no transparency — required for AAA.
+  get btnBg(){return highContrast?(darkMode?'#1a1a1a':'#f0f0f0'):(darkMode?'rgba(255,255,255,.14)':'rgba(255,255,255,.7)')},
+  get btnHover(){return highContrast?(darkMode?'#2a2a2a':'#e0e0e0'):(darkMode?'rgba(255,255,255,.20)':'rgba(255,255,255,.95)')},
 
   // ----- v2 tokens (single source of truth) -----
   // Radii: small (badges, chips), medium (buttons), large (cards), pill.
@@ -344,8 +357,8 @@ const LANGS=[
   {code:'ja',name:'日本語'},
 ];
 const STR={
-  en:{title1:'STRAY',title2:'ARROWS',tagline:'puzzle game',play:'PLAY',levels:'LEVELS',daily:'DAILY',weekly:'WEEKLY',stats:'STATS',achievements:'ACHIEVEMENTS',settings:'SETTINGS',sound:'Sound',theme:'Theme',themeDark:'Dark',themeLight:'Light',language:'Language',watchAd:'Watch Ad',coins:'Coins',resetProgress:'Reset Progress',areYouSure:'Are you sure?',yesReset:'YES, RESET',cancel:'CANCEL',back:'BACK',hint:'HINT',skip:'SKIP',level:'LEVEL',stars:'STARS',streak:'STREAK',trophy:'TROPHY',on:'ON',off:'OFF',nextLevel:'NEXT LEVEL',replay:'REPLAY',home:'HOME',gameOver:'GAME OVER',outOfHearts:'You ran out of hearts',retry:'RETRY',continueBtn:'CONTINUE',adUnavailable:'Ad unavailable, try later',updateAvailable:'Update available',},
-  ru:{title1:'STRAY',title2:'ARROWS',tagline:'головоломка',play:'ИГРАТЬ',levels:'УРОВНИ',daily:'ДЕНЬ',weekly:'НЕДЕЛЯ',stats:'СТАТЫ',achievements:'ДОСТИЖЕНИЯ',settings:'НАСТРОЙКИ',sound:'Звук',theme:'Тема',themeDark:'Тёмная',themeLight:'Светлая',language:'Язык',watchAd:'Смотреть рекламу',coins:'монет',resetProgress:'Сбросить прогресс',areYouSure:'Вы уверены?',yesReset:'ДА, СБРОСИТЬ',cancel:'ОТМЕНА',back:'НАЗАД',hint:'ПОДСКАЗКА',skip:'ПРОПУСК',level:'УРОВЕНЬ',stars:'ЗВЁЗДЫ',streak:'СЕРИЯ',trophy:'КУБОК',on:'ВКЛ',off:'ВЫКЛ',nextLevel:'СЛЕД. УРОВЕНЬ',replay:'ЗАНОВО',home:'ДОМОЙ',gameOver:'ИГРА ОКОНЧЕНА',outOfHearts:'Закончились жизни',retry:'ПОВТОР',continueBtn:'ПРОДОЛЖИТЬ',adUnavailable:'Реклама недоступна',updateAvailable:'Доступно обновление',},
+  en:{title1:'STRAY',title2:'ARROWS',tagline:'puzzle game',play:'PLAY',levels:'LEVELS',daily:'DAILY',weekly:'WEEKLY',stats:'STATS',achievements:'ACHIEVEMENTS',settings:'SETTINGS',sound:'Sound',theme:'Theme',themeDark:'Dark',themeLight:'Light',language:'Language',watchAd:'Watch Ad',coins:'Coins',resetProgress:'Reset Progress',areYouSure:'Are you sure?',yesReset:'YES, RESET',cancel:'CANCEL',back:'BACK',hint:'HINT',skip:'SKIP',level:'LEVEL',stars:'STARS',streak:'STREAK',trophy:'TROPHY',on:'ON',off:'OFF',nextLevel:'NEXT LEVEL',replay:'REPLAY',home:'HOME',gameOver:'GAME OVER',outOfHearts:'You ran out of hearts',retry:'RETRY',continueBtn:'CONTINUE',adUnavailable:'Ad unavailable, try later',updateAvailable:'Update available',contrast:'Contrast',},
+  ru:{title1:'STRAY',title2:'ARROWS',tagline:'головоломка',play:'ИГРАТЬ',levels:'УРОВНИ',daily:'ДЕНЬ',weekly:'НЕДЕЛЯ',stats:'СТАТЫ',achievements:'ДОСТИЖЕНИЯ',settings:'НАСТРОЙКИ',sound:'Звук',theme:'Тема',themeDark:'Тёмная',themeLight:'Светлая',language:'Язык',watchAd:'Смотреть рекламу',coins:'монет',resetProgress:'Сбросить прогресс',areYouSure:'Вы уверены?',yesReset:'ДА, СБРОСИТЬ',cancel:'ОТМЕНА',back:'НАЗАД',hint:'ПОДСКАЗКА',skip:'ПРОПУСК',level:'УРОВЕНЬ',stars:'ЗВЁЗДЫ',streak:'СЕРИЯ',trophy:'КУБОК',on:'ВКЛ',off:'ВЫКЛ',nextLevel:'СЛЕД. УРОВЕНЬ',replay:'ЗАНОВО',home:'ДОМОЙ',gameOver:'ИГРА ОКОНЧЕНА',outOfHearts:'Закончились жизни',retry:'ПОВТОР',continueBtn:'ПРОДОЛЖИТЬ',adUnavailable:'Реклама недоступна',updateAvailable:'Доступно обновление',contrast:'Контраст',},
   es:{title1:'STRAY',title2:'ARROWS',tagline:'juego de puzzle',play:'JUGAR',levels:'NIVELES',daily:'DIARIO',weekly:'SEMANAL',stats:'STATS',achievements:'LOGROS',settings:'AJUSTES',sound:'Sonido',theme:'Tema',themeDark:'Oscuro',themeLight:'Claro',language:'Idioma',watchAd:'Ver anuncio',coins:'monedas',resetProgress:'Reiniciar',areYouSure:'¿Estás seguro?',yesReset:'SÍ, REINICIAR',cancel:'CANCELAR',back:'ATRÁS',hint:'PISTA',skip:'SALTAR',level:'NIVEL',stars:'ESTR',streak:'RACHA',trophy:'COPA',on:'ON',off:'OFF',nextLevel:'SIGUIENTE',replay:'REPETIR',home:'INICIO',gameOver:'FIN',outOfHearts:'Sin vidas',retry:'REINTENTAR',continueBtn:'CONTINUAR',adUnavailable:'Anuncio no disponible',updateAvailable:'Actualización disponible',},
   de:{title1:'STRAY',title2:'ARROWS',tagline:'Puzzlespiel',play:'SPIELEN',levels:'LEVEL',daily:'TAG',weekly:'WOCHE',stats:'STATS',achievements:'ERFOLGE',settings:'EINSTELL.',sound:'Ton',theme:'Theme',themeDark:'Dunkel',themeLight:'Hell',language:'Sprache',watchAd:'Werbung ansehen',coins:'Münzen',resetProgress:'Zurücksetzen',areYouSure:'Sicher?',yesReset:'JA, RESET',cancel:'ABBR.',back:'ZURÜCK',hint:'TIPP',skip:'ÜBERSPR.',level:'LVL',stars:'STERNE',streak:'SERIE',trophy:'POKAL',on:'AN',off:'AUS',nextLevel:'WEITER',replay:'NEU',home:'HOME',gameOver:'GAME OVER',outOfHearts:'Keine Herzen mehr',retry:'NEU',continueBtn:'WEITER',adUnavailable:'Werbung nicht verfügbar',updateAvailable:'Update verfügbar',},
   fr:{title1:'STRAY',title2:'ARROWS',tagline:'jeu de puzzle',play:'JOUER',levels:'NIVEAUX',daily:'JOUR',weekly:'SEMAINE',stats:'STATS',achievements:'SUCCÈS',settings:'PARAM.',sound:'Son',theme:'Thème',themeDark:'Sombre',themeLight:'Clair',language:'Langue',watchAd:'Voir pub',coins:'pièces',resetProgress:'Réinitialiser',areYouSure:'Sûr ?',yesReset:'OUI, RESET',cancel:'ANNULER',back:'RETOUR',hint:'INDICE',skip:'PASSER',level:'NIV',stars:'ÉTOILES',streak:'SÉRIE',trophy:'COUPE',on:'ON',off:'OFF',nextLevel:'SUIVANT',replay:'REJOUER',home:'ACCUEIL',gameOver:'PERDU',outOfHearts:'Plus de vies',retry:'REJOUER',continueBtn:'CONTINUER',adUnavailable:'Pub indisponible',updateAvailable:'Mise à jour dispo',},
@@ -3866,8 +3879,14 @@ function drawSettings(){
   if(drawBtn(t('theme')+': '+(darkMode?t('themeDark'):t('themeLight')),W/2,220,260,44)){
     darkMode=!darkMode;_safeSet('ae_theme',darkMode?'dark':'light');applyTheme();
   }
+  // High-contrast accessibility toggle. Persisted under ae_contrast='high'/''.
+  // Repaints immediately because TH getters read the flag — no need to
+  // invalidate the bg cache (applyTheme does that).
+  if(drawBtn(t('contrast')+': '+(highContrast?t('on'):t('off')),W/2,275,260,44)){
+    highContrast=!highContrast;_safeSet('ae_contrast',highContrast?'high':'normal');applyTheme();
+  }
   // Watch Ad for Coins
-  if(drawBtn(t('watchAd')+' +'+AD_COIN_REWARD+' '+t('coins'),W/2,295,260,44,TH.star)){
+  if(drawBtn(t('watchAd')+' +'+AD_COIN_REWARD+' '+t('coins'),W/2,350,260,44,TH.star)){
     showRewardedAd(()=>{coins+=AD_COIN_REWARD;totalCoinsEarned+=AD_COIN_REWARD;save();spawnFloater(W/2,295,'+'+AD_COIN_REWARD)});
   }
 

@@ -4,7 +4,8 @@
   "description": "",
   "main": "sw.js",
   "scripts": {
-    "prebuild": "node tools/sync-sw-version.js",
+    "version": "node tools/sync-versions.js && git add package.json sw.js index.html android/app/build.gradle ios/App/App.xcodeproj/project.pbxproj",
+    "prebuild": "node tools/sync-versions.js",
     "build": "mkdir -p www/sounds www/levels && cp index.html manifest.json sw.js levels-baked.js handcrafted-levels.js www/ && cp sounds/*.mp3 www/sounds/ && cp levels/*.js www/levels/ 2>/dev/null || true && echo 'Build done'",
     "sync": "npm run build && npx cap sync",
     "open:android": "npx cap open android",

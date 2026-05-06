@@ -1,17 +1,28 @@
 # Stray Arrows
 
 Sliding-arrow puzzle game for iOS and Android. Vanilla JS + HTML5 Canvas wrapped in
-Capacitor 8. Single-file `index.html` (~3958 lines), 461 hand-tuned levels +
-500 baked levels + procedural fallback after that.
+Capacitor 8. Single-file `index.html` (~4000 lines), **461 hand-tuned levels +
+605 imported (Rush Hour) + 500 baked + procedural fallback** — total ~1500
+unique boards before the procedural generator takes over.
 
 ## Quick start
 
 ```sh
 npm install              # Capacitor + AdMob plugin
-npm run build            # copy index.html, levels, sw.js, sounds → www/
+npm run build            # auto-syncs versions then copies to www/
 npm run sync             # build + npx cap sync (updates iOS/Android)
 npm run open:ios         # opens Xcode for iOS build
 npm run open:android     # opens Android Studio
+```
+
+Other useful scripts:
+
+```sh
+npm run lint             # ESLint flat config (tools/ + sw.js)
+npm run audit:check      # npm audit, fail on high+ severity
+npm run validate         # handcrafted + imported level data
+npm run regen-assets     # regenerate icons/splashes from resources/*.svg
+npm run import-rushhour  # re-run Rush Hour importer (needs tools/data/rush.txt)
 ```
 
 To run locally in a browser:
@@ -60,15 +71,25 @@ To validate everything still solvable: `node tools/validate-handcrafted.js`.
 
 ## Versioning
 
-When releasing, bump these together:
-- `index.html` → `APP_VERSION = 'v1.0.X'` constant near top
-- `package.json` → `"version"`
-- `android/app/build.gradle` → `versionCode` (+1) and `versionName`
-- `sw.js` → `CACHE_NAME = 'stray-arrows-v1.0.X'`
-- iOS Xcode → `CFBundleShortVersionString` and `CFBundleVersion` in `Info.plist`
+`package.json` is the single source of truth. `tools/sync-versions.js`
+propagates the version to:
 
-(See `AUDIT-2026-05-05.md` — there's a TODO to put all five behind a single
-`version.json` and `npm run bump-version` script.)
+- `sw.js` → `CACHE_NAME = 'stray-arrows-vX.Y.Z'`
+- `index.html` → `APP_VERSION = 'vX.Y.Z'`
+- `android/app/build.gradle` → `versionName + versionCode`
+- iOS pbxproj → `MARKETING_VERSION + CURRENT_PROJECT_VERSION`
+
+The script runs as the `prebuild` and `version` npm hooks, so any of:
+
+```sh
+npm version patch       # bumps package.json + auto-syncs the rest + git stages
+npm version minor       # 1.0.x → 1.1.0
+npm version major       # 1.x.y → 2.0.0
+npm run build           # also syncs (for plain-build cases)
+```
+
+CI verifies the working tree stays clean after running `sync-versions.js`,
+so a manually-edited mismatch fails build instead of shipping.
 
 ## Storage
 
@@ -88,12 +109,34 @@ you can't sign the next release.
 
 ## Ship checklist
 
-1. `npm run sync` finishes clean
-2. `node tools/validate-handcrafted.js` shows ✓ for every level
-3. Bump version in all five places (above)
-4. iOS: archive in Xcode → upload to TestFlight
-5. Android: `./gradlew bundleRelease` → upload AAB to Play Console internal track
-6. Screenshots and store description live in `STORE_LISTING.md`
+1. `node tools/release-checklist.js` — runs every gate (working tree clean,
+   versions in sync, CHANGELOG mentions current version, lint, audit,
+   level validate, build) and exits non-zero if anything's wrong.
+2. Update `CHANGELOG.md` with the new version's entry (move items from
+   `[Unreleased]` to `[X.Y.Z] — YYYY-MM-DD`).
+3. `npm version patch|minor|major` — bumps every version field, runs the
+   `version` git hook to stage them, and creates the version commit + tag.
+4. `git push --follow-tags` — pushing the `v*` tag triggers the
+   `release-android.yml` workflow, which builds + signs the AAB and
+   attaches it to a GitHub Release.
+5. **iOS (still manual):** open Xcode → Archive → upload to App Store Connect.
+   Documented gap; full automation is a v2.1 task (Apple credentials in CI).
+6. Download the AAB from the GitHub Release → upload to Play Console
+   Production. (Optional: enable the commented Play Console auto-upload
+   step in `.github/workflows/release-android.yml` once you have a
+   service-account JSON.)
+
+### Required GitHub Secrets
+
+For the Android release workflow (`Settings → Secrets and variables → Actions`):
+
+| Secret | What |
+|--------|------|
+| `ANDROID_KEYSTORE_BASE64` | `base64 -i arrow-escape.keystore \| pbcopy` |
+| `ANDROID_KEYSTORE_PASSWORD` | from `android/keystore.properties` |
+| `ANDROID_KEY_ALIAS` | from `android/keystore.properties` |
+| `ANDROID_KEY_PASSWORD` | from `android/keystore.properties` |
+| `PLAY_STORE_SERVICE_ACCOUNT_JSON` | optional, for auto-Play-Console upload |
 
 ## Audits
 
