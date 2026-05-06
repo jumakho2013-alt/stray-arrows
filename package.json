@@ -1,13 +1,18 @@
 {
   "name": "stray-arrows",
-  "version": "1.0.15",
+  "version": "1.0.17",
   "description": "",
   "main": "sw.js",
   "scripts": {
+    "prebuild": "node tools/sync-sw-version.js",
     "build": "mkdir -p www/sounds && cp index.html manifest.json sw.js levels-baked.js handcrafted-levels.js www/ && cp sounds/*.mp3 www/sounds/ && echo 'Build done'",
     "sync": "npm run build && npx cap sync",
     "open:android": "npx cap open android",
-    "open:ios": "npx cap open ios"
+    "open:ios": "npx cap open ios",
+    "regen-assets": "npx --yes @capacitor/assets@^3 generate --iconBackgroundColor '#f5f2ed' --iconBackgroundColorDark '#1a1a2e' --splashBackgroundColor '#f5f2ed' --splashBackgroundColorDark '#1a1a2e'",
+    "audit:check": "npm audit --audit-level=high",
+    "validate": "node tools/validate-handcrafted.js",
+    "lint": "eslint tools/ sw.js"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +27,6 @@
     "@capacitor/status-bar": "^8.0.2"
   },
   "devDependencies": {
-    "@capacitor/assets": "^3.0.5"
+    "eslint": "^9.39.4"
   }
 }

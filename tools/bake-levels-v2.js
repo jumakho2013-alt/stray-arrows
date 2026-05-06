@@ -749,11 +749,36 @@ function bake(numLevels){
     if(!best&&bestSoftFallback){
       best=bestSoftFallback;
     }
+    // Last-resort progressive seed expansion. Previously this path used to
+    // ship the first seed RAW (i.e. unsolvable) with a console warning,
+    // which silently produced ~1.6% deadlocked levels in the bake (e.g.
+    // levels 18,20-23,298,407,415 in v1.0.15). Now we keep trying random
+    // seeds across all lock profiles until we find a solvable+!dead level.
+    // Hard-fail (throw) only after exhausting a huge budget — so a CI
+    // failure replaces a silent runtime brick.
     if(!best){
-      // None of 8 seeds was solvable — extreme rare. Fall back to first
-      // seed regardless so baker doesn't crash; player can use Skip.
-      best=generateLevel(lvl, seeds[0]);
-      process.stderr.write('WARNING: lvl '+lvl+' all seeds deadlocked, using first anyway\n');
+      outer:for(let extra=0; extra<20; extra++){
+        for(let i=0;i<50;i++){
+          const seed=lvl*7919+31337+(24+extra*50+i)*104729+(i%7)*4231;
+          for(const profile of lockProfiles){
+            _lockHeadBonus=profile.bonus;
+            _lockHeadPenalty=profile.penalty;
+            const lev=generateLevel(lvl, seed);
+            if(!isSolvable(lev))continue;
+            const dep=dependencyStats(lev);
+            if(dep.dead)continue;
+            best=lev;
+            process.stderr.write('  lvl '+lvl+' rescued via expansion (extra batch '+extra+')\n');
+            break outer;
+          }
+        }
+      }
+    }
+    if(!best){
+      // 24 + 1000 seeds × 4 profiles = 4096 attempts and still nothing.
+      // Something is wrong with the level parameters — fail loud rather
+      // than ship an unsolvable level to players.
+      throw new Error('lvl '+lvl+' could not be generated solvable after 4096 attempts — generator parameters are broken');
     }
     out.push({cols:best.cols, rows:best.rows, arrows:best.arrows.map(a=>({c:a.cells, d:a.dir}))});
     if(lvl%20===0)process.stderr.write('baked '+lvl+'/'+numLevels+' (score '+bestScore.toFixed(1)+')\n');

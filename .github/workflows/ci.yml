@@ -1,0 +1,60 @@
+# CI for Stray Arrows. Runs on every push and pull request.
+#
+# Three checks, each cheap (under a minute) and each catches a class of
+# bug we have shipped before:
+#   1. validate-handcrafted — geometric and solvability checks on the level
+#      data; v1.0.15 shipped with 7 unsolvable baked levels.
+#   2. sync-versions --check — fail if package.json bumped without sw.js /
+#      index.html APP_VERSION getting bumped to match. We've lost a day to
+#      "users still see the old build" caused by this drift.
+#   3. build — exercise the actual `npm run build` so a typo or missing file
+#      in the script breaks CI rather than the next release attempt.
+#
+# Native iOS / Android builds are NOT in CI on purpose: they need signing
+# secrets and add 5-10 minutes per run. They're run locally before each
+# store submission.
+
+name: CI
+
+on:
+  push:
+    branches: [main, claude/**]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Check version sync (package.json ↔ sw.js ↔ index.html)
+        # `node tools/sync-sw-version.js` would auto-fix the drift on a dev
+        # machine. In CI we want it to FAIL when out of sync, so we run it
+        # then assert the working tree is still clean.
+        run: |
+          node tools/sync-sw-version.js
+          if ! git diff --quiet sw.js index.html; then
+            echo "::error::Versions out of sync. Run \`node tools/sync-sw-version.js\` and commit."
+            git diff sw.js index.html
+            exit 1
+          fi
+      - name: Lint tools/ and sw.js
+        run: npm run lint
+      - name: NPM audit (high+ only)
+        run: npm run audit:check
+      - name: Validate handcrafted levels
+        run: npm run validate
+      - name: Build www/ bundle
+        run: npm run build
+      - name: Verify build output
+        run: |
+          test -f www/index.html || (echo "build did not produce www/index.html"; exit 1)
+          test -f www/sw.js || (echo "build did not produce www/sw.js"; exit 1)
+          test -f www/levels-baked.js || (echo "build did not produce www/levels-baked.js"; exit 1)
+          test -f www/handcrafted-levels.js || (echo "build did not produce www/handcrafted-levels.js"; exit 1)
+          test -d www/sounds || (echo "build did not produce www/sounds/"; exit 1)

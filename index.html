@@ -10,13 +10,18 @@
      versa) for one frame during app launch. -->
 <meta name="theme-color" content="#f5f2ed" id="themeColorMeta">
 <script>
+// Pre-IIFE flash-of-wrong-theme guard. Runs before stylesheet parse so the
+// initial paint matches the user's saved theme. localStorage may throw in
+// Safari Private Mode — we fall back to the default light theme silently
+// because there is no error logging available this early in the page (the
+// _devWarn helper is defined later, inside the main IIFE).
 (function(){
   try{
     var dark=localStorage.getItem('ae_theme')==='dark';
     var col=dark?'#1a1a2e':'#f5f2ed';
     var m=document.getElementById('themeColorMeta');if(m)m.content=col;
     document.documentElement.style.colorScheme=dark?'dark':'light';
-  }catch(e){}
+  }catch(e){/* localStorage unavailable — default theme is fine */}
 })();
 </script>
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -71,11 +76,18 @@ body.letterboxed canvas{
 <script src="levels-baked.js?v=1777684736"></script>
 <!-- Handcrafted milestone levels — tutorial (1-10) plus picture/showcase
      levels at key milestones. These take priority over procedural / baked
-     when their level number matches. -->
-<script src="handcrafted-levels.js?v=25"></script>
+     when their level number matches.
+     `defer` lets the browser parse this 3.5 MB blob in parallel with the
+     inline IIFE below instead of blocking initial render. By the time the
+     player taps "play", DOMContentLoaded has fired and HANDCRAFTED_LEVELS
+     is populated — generateLevel() never sees it undefined in practice. -->
+<script src="handcrafted-levels.js?v=25" defer></script>
 <script>
 // Surface any uncaught error visibly — without this a JS error gives a blank
 // white screen with no clue. Persists in localStorage for post-mortem.
+// The empty inner catches here are deliberate: if the error handler itself
+// throws, re-throwing would cascade into the same handler, and since this
+// runs before _devWarn is defined we have no central logger to call.
 window.addEventListener('error', function(e){
   try{
     localStorage.setItem('ae_lasterror', (e.message||'?')+' @ '+(e.filename||'?')+':'+(e.lineno||'?')+':'+(e.colno||'?'));
@@ -83,10 +95,10 @@ window.addEventListener('error', function(e){
     div.style.cssText='position:fixed;top:0;left:0;right:0;background:#c00;color:#fff;font:12px monospace;padding:10px;z-index:99999;white-space:pre-wrap';
     div.textContent='JS ERROR: '+(e.message||'?')+'\n@ '+(e.filename||'?')+':'+(e.lineno||'?');
     document.body.appendChild(div);
-  }catch(_){}
+  }catch(_){/* secondary failure inside the error reporter — give up to avoid recursion */}
 });
 window.addEventListener('unhandledrejection', function(e){
-  try{ localStorage.setItem('ae_lastreject', String(e.reason||'?')); }catch(_){}
+  try{ localStorage.setItem('ae_lastreject', String(e.reason||'?')); }catch(_){/* localStorage unusable */}
 });
 </script>
 <script>
@@ -117,9 +129,29 @@ if(!CanvasRenderingContext2D.prototype.roundRect){
 // ================================================================
 const C=document.getElementById('c'),X=C.getContext('2d');
 const W=390,H=844;
+
+// Centralised swallow-and-record for non-fatal errors. Replaces what used
+// to be 18 empty `catch(e){}` blocks scattered through this file. Each
+// call records {time, stage, message} into localStorage (ring buffer of
+// the last 20 entries) so a real-device crash report can pull recent
+// pre-crash warnings, and surfaces to console when ae_debug='1' is set
+// — which is how QA toggles verbose mode without a separate build flag.
+// The inner try/catch is the one place an empty catch is justified: if
+// localStorage itself is throwing (quota / private mode), there's nothing
+// useful we can do, and re-throwing would brick the caller.
+function _devWarn(stage, err){
+  try{
+    const msg = ((err && err.message) || err);
+    if (localStorage.getItem('ae_debug') === '1') console.warn('[ae]', stage, msg);
+    const log = JSON.parse(localStorage.getItem('ae_errlog') || '[]');
+    log.push({t: Date.now(), s: stage, m: String(msg).slice(0, 200)});
+    if (log.length > 20) log.splice(0, log.length - 20);
+    localStorage.setItem('ae_errlog', JSON.stringify(log));
+  } catch(_) { /* localStorage unusable — drop the warning silently */ }
+}
 // Single source of truth for the displayed app version. Bump alongside
 // CFBundleShortVersionString in ios/App/App.xcodeproj/project.pbxproj.
-const APP_VERSION='v1.0.15';
+const APP_VERSION='v1.0.17';
 // App Store deep link — used by the in-app "update available" nudge.
 const APP_STORE_URL='https://apps.apple.com/app/stray-arrows/id6763406927';
 const PI=Math.PI,TAU=PI*2,sin=Math.sin,cos=Math.cos,abs=Math.abs,floor=Math.floor,min=Math.min,max=Math.max,sqrt=Math.sqrt;
@@ -145,7 +177,7 @@ try{
   const _rm=matchMedia('(prefers-reduced-motion: reduce)');
   reducedMotion=_rm.matches;
   _rm.addEventListener?.('change',e=>{reducedMotion=e.matches});
-}catch(e){}
+}catch(e){_devWarn('prefers-reduced-motion',e);}
 function applyTheme(){
   document.body.className=darkMode?'dark':'light';
   // color-scheme tells the browser to render native UI (scrollbars, form
@@ -169,14 +201,14 @@ function applyTheme(){
   // shows through on devices with 3-button nav.
   try{
     if(typeof Capacitor!=='undefined'&&Capacitor.Plugins.StatusBar){
-      Capacitor.Plugins.StatusBar.setOverlaysWebView({overlay:true}).catch(()=>{});
-      Capacitor.Plugins.StatusBar.setBackgroundColor({color:'#00000000'}).catch(()=>{});
+      Capacitor.Plugins.StatusBar.setOverlaysWebView({overlay:true}).catch(e=>_devWarn('StatusBar.setOverlaysWebView',e));
+      Capacitor.Plugins.StatusBar.setBackgroundColor({color:'#00000000'}).catch(e=>_devWarn('StatusBar.setBackgroundColor',e));
       Capacitor.Plugins.StatusBar.setStyle({style:darkMode?'DARK':'LIGHT'});
     }
     if(typeof Capacitor!=='undefined'&&Capacitor.Plugins.NavigationBar){
-      Capacitor.Plugins.NavigationBar.setColor({color:'#00000000'}).catch(()=>{});
+      Capacitor.Plugins.NavigationBar.setColor({color:'#00000000'}).catch(e=>_devWarn('NavigationBar.setColor',e));
     }
-  }catch(e){}
+  }catch(e){_devWarn('applyTheme.statusBar',e);}
 }
 applyTheme();
 
@@ -335,7 +367,7 @@ const sndBuf={}; // name -> AudioBuffer (decoded)
 function initA(){
   // Must be called from a user-gesture handler on iOS to unlock the context.
   if(audioCtx){
-    if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+    if(audioCtx.state==='suspended')audioCtx.resume().catch(e=>_devWarn('audioCtx.resume',e));
     return;
   }
   try{
@@ -348,7 +380,7 @@ function initA(){
     // Decode any buffers fetched before the context existed.
     for(const item of _pendingDecode)_decodeInto(item.name,item.buf);
     _pendingDecode.length=0;
-  }catch(e){}
+  }catch(e){_devWarn('initA.createContext',e);}
 }
 
 // Fetch at startup so bytes are in memory by the time the user taps.
@@ -358,13 +390,13 @@ function _decodeInto(name,buf){
   if(!audioCtx)return;
   // decodeAudioData on iOS Safari needs a fresh copy because the ArrayBuffer
   // is detached after the call. We already hold one reference so just pass it.
-  audioCtx.decodeAudioData(buf,b=>{sndBuf[name]=b},()=>{});
+  audioCtx.decodeAudioData(buf,b=>{sndBuf[name]=b},e=>_devWarn('decodeAudioData:'+name,e));
 }
 function loadSnd(name,src){
   fetch(src).then(r=>r.arrayBuffer()).then(buf=>{
     if(audioCtx)_decodeInto(name,buf);
     else _pendingDecode.push({name,buf});
-  }).catch(()=>{});
+  }).catch(e=>_devWarn('loadSnd:'+name,e));
 }
 loadSnd('swoosh','sounds/whoosh-effect.mp3');
 loadSnd('tap','sounds/click sound.mp3');
@@ -382,12 +414,12 @@ function playSnd(name){
       src.buffer=sndBuf[name];
       src.connect(masterGain);
       src.start(0);
-    }catch(e){}
+    }catch(e){_devWarn('playSnd:'+name,e);}
   };
   // If iOS suspended the context (app backgrounded, inactivity), resume is
   // async — we must wait for it to complete before scheduling the buffer,
   // otherwise the first post-toggle play silently drops.
-  if(audioCtx.state==='suspended')audioCtx.resume().then(go).catch(()=>{});
+  if(audioCtx.state==='suspended')audioCtx.resume().then(go).catch(e=>_devWarn('audioCtx.resume(playSnd)',e));
   else go();
 }
 
@@ -434,7 +466,7 @@ async function checkForUpdate(){
     if(cached&&_semverGt(cached,myVersion)){
       availableUpdate=cached;
     }else if(cached){
-      try{localStorage.removeItem('ae_update_avail')}catch(e){}
+      try{localStorage.removeItem('ae_update_avail')}catch(e){_devWarn('updateCache.clear',e);}
     }
     return;
   }
@@ -444,18 +476,18 @@ async function checkForUpdate(){
     const storeVersion=data.results&&data.results[0]&&data.results[0].version;
     if(storeVersion&&_semverGt(storeVersion,myVersion)){
       availableUpdate=storeVersion;
-      try{localStorage.setItem('ae_update_avail',storeVersion)}catch(e){}
+      try{localStorage.setItem('ae_update_avail',storeVersion)}catch(e){_devWarn('updateCache.setAvail',e);}
     }else{
-      try{localStorage.removeItem('ae_update_avail')}catch(e){}
+      try{localStorage.removeItem('ae_update_avail')}catch(e){_devWarn('updateCache.clearAfterCheck',e);}
     }
-    try{localStorage.setItem('ae_update_check',String(Date.now()))}catch(e){}
+    try{localStorage.setItem('ae_update_check',String(Date.now()))}catch(e){_devWarn('updateCache.setLastCheck',e);}
   }catch(e){/* offline / blocked / iTunes lag — silent */}
 }
 // Defer so it doesn't compete with first-render or AdMob init
 setTimeout(checkForUpdate,3000);
 function openAppStore(){
   // window.open redirects iOS to the App Store app via apps.apple.com URL
-  try{window.open(APP_STORE_URL,'_blank')}catch(e){}
+  try{window.open(APP_STORE_URL,'_blank')}catch(e){_devWarn('openAppStore',e);}
 }
 
 // ================================================================
@@ -719,18 +751,18 @@ C.addEventListener('touchcancel',()=>{
   _pinchStartDist=0;_pinchStartMid=null;_pinchStartWorld=null;_tapStart=null;_onePanLast=null;
 });
 
-function haptic(ms){try{navigator.vibrate(ms)}catch(e){}}
+function haptic(ms){try{navigator.vibrate(ms)}catch(e){_devWarn('haptic',e);}}
 
 // ================================================================
 //  GAME STATE
 // ================================================================
 // Parse JSON from localStorage, fall back to {} if missing or corrupted —
 // hand-edited or partially-written values would otherwise crash app startup.
-function _safeJSON(k){try{return JSON.parse(localStorage.getItem(k)||'{}')}catch(e){return {}}}
+function _safeJSON(k){try{return JSON.parse(localStorage.getItem(k)||'{}')}catch(e){_devWarn('_safeJSON:'+k,e);return {};}}
 // Guard against Safari Private Browsing (setItem throws QuotaExceededError),
 // disk full, or any other localStorage failure. We'd rather lose a save than
 // crash the running game. Used everywhere instead of bare localStorage.setItem.
-function _safeSet(k,v){try{localStorage.setItem(k,String(v))}catch(e){}}
+function _safeSet(k,v){try{localStorage.setItem(k,String(v))}catch(e){_devWarn('_safeSet:'+k,e);}}
 let S='menu'; // menu|play|complete|levels|settings|daily|challenge
 let level=+localStorage.getItem('ae_level')||1;
 let FORCE_FRESH_LEVELS=false; // QA flag: bypass levels-baked.js with ?fresh=1
@@ -893,7 +925,7 @@ try{
   ALLOW_DOT_FILL=_u.searchParams.get('dots')==='1';
   if(_u.searchParams.has('chains'))CHAIN_MODE=_u.searchParams.get('chains')==='1';
   if(_u.searchParams.has('clusters'))CLUSTERS_MODE=_u.searchParams.get('clusters')==='1';
-}catch(e){}
+}catch(e){_devWarn('parseQAFlags',e);}
 let stars=_safeJSON('ae_stars');
 let totalStars=Object.values(stars).reduce((a,b)=>a+b,0);
 // maxLevel = highest level ever reached. Recover from stars if ae_maxlevel missing.
@@ -1126,8 +1158,26 @@ const INTERSTITIAL_ID=()=>_isIOS()
 let admobReady=false;
 let _rewardedPrepared=false;
 let _interstitialPrepared=false;
+// Dev/QA toggle for AdMob test mode. Production never has the flag set, so
+// this returns false and real ads serve as before. To verify ad-loading UX
+// on a real device without burning real impressions, attach Safari Web
+// Inspector / chrome://inspect, run `localStorage.ae_admob_test='1'` and
+// relaunch the app. If we ever see this flag on in production (e.g. set
+// accidentally by a debug build), we record a warning so it shows up in
+// post-mortem next launch.
+function _admobTestMode(){
+  try{
+    const on = localStorage.getItem('ae_admob_test')==='1';
+    if(on) _devWarn('admob.testMode','test ads enabled via ae_admob_test');
+    return on;
+  }catch(e){return false;}
+}
 function _logAdErr(stage,e){
-  try{localStorage.setItem('ae_admob_err',stage+': '+String((e&&e.message)||e));}catch(_){}
+  // Persist the latest AdMob failure separately from the general _devWarn ring
+  // buffer — Settings -> About surfaces this single field for quick triage of
+  // "no ads on device X" reports.
+  try{localStorage.setItem('ae_admob_err',stage+': '+String((e&&e.message)||e));}catch(_){/* localStorage unusable */}
+  _devWarn('admob:'+stage,e);
 }
 async function initAdMob(){
   try{
@@ -1136,7 +1186,7 @@ async function initAdMob(){
     // Defensive: if initAdMob() ever runs twice (resume-from-background flow,
     // future refactor, retry path) the listeners would stack and reward
     // callbacks would fire N times. Strip any prior listeners up front.
-    try{await AdMob.removeAllListeners()}catch(_){}
+    try{await AdMob.removeAllListeners()}catch(e){_devWarn('admob.removeAllListeners',e);}
 
     // On iOS: explicitly request ATT permission FIRST, BEFORE initializing AdMob.
     // Apple rejected v1.0 because the ATT prompt was missing. The plugin's
@@ -1154,7 +1204,7 @@ async function initAdMob(){
     }
 
     await AdMob.initialize({
-      initializeForTesting:false,
+      initializeForTesting:_admobTestMode(),
       requestTrackingAuthorization:false  // already handled explicitly above
     });
 
@@ -1168,10 +1218,10 @@ async function initAdMob(){
 
     // Prepare ads in the background. On failure we'll lazily re-prepare in
     // showRewardedAd / showInterstitialAd.
-    AdMob.prepareRewardVideoAd({adId:REWARDED_ID(),isTesting:false})
+    AdMob.prepareRewardVideoAd({adId:REWARDED_ID(),isTesting:_admobTestMode()})
       .then(()=>{_rewardedPrepared=true})
       .catch(e=>_logAdErr('prepareRewarded',e));
-    AdMob.prepareInterstitial({adId:INTERSTITIAL_ID(),isTesting:false})
+    AdMob.prepareInterstitial({adId:INTERSTITIAL_ID(),isTesting:_admobTestMode()})
       .then(()=>{_interstitialPrepared=true})
       .catch(e=>_logAdErr('prepareInterstitial',e));
 
@@ -1185,13 +1235,13 @@ async function initAdMob(){
     AdMob.addListener('onRewardedVideoAdDismissed',()=>{
       adRewardCallback=null;
       _rewardedPrepared=false;
-      AdMob.prepareRewardVideoAd({adId:REWARDED_ID(),isTesting:false})
-        .then(()=>{_rewardedPrepared=true}).catch(()=>{});
+      AdMob.prepareRewardVideoAd({adId:REWARDED_ID(),isTesting:_admobTestMode()})
+        .then(()=>{_rewardedPrepared=true}).catch(e=>_logAdErr('reprepareRewarded',e));
     });
     AdMob.addListener('onInterstitialAdDismissed',()=>{
       _interstitialPrepared=false;
-      AdMob.prepareInterstitial({adId:INTERSTITIAL_ID(),isTesting:false})
-        .then(()=>{_interstitialPrepared=true}).catch(()=>{});
+      AdMob.prepareInterstitial({adId:INTERSTITIAL_ID(),isTesting:_admobTestMode()})
+        .then(()=>{_interstitialPrepared=true}).catch(e=>_logAdErr('reprepareInterstitial',e));
     });
   }catch(e){_logAdErr('init',e)}
 }
@@ -1233,7 +1283,7 @@ async function showRewardedAd(onReward){
   adRewardCallback=safeReward;
   try{
     if(!_rewardedPrepared){
-      await AdMob.prepareRewardVideoAd({adId:REWARDED_ID(),isTesting:false});
+      await AdMob.prepareRewardVideoAd({adId:REWARDED_ID(),isTesting:_admobTestMode()});
       _rewardedPrepared=true;
     }
     await AdMob.showRewardVideoAd();
@@ -1242,7 +1292,7 @@ async function showRewardedAd(onReward){
     _logAdErr('showRewarded',e);
     // Try ONE on-demand prepare+show retry — e.g., the cached ad expired.
     try{
-      await AdMob.prepareRewardVideoAd({adId:REWARDED_ID(),isTesting:false});
+      await AdMob.prepareRewardVideoAd({adId:REWARDED_ID(),isTesting:_admobTestMode()});
       _rewardedPrepared=true;
       await AdMob.showRewardVideoAd();
     }catch(e2){
@@ -1270,7 +1320,7 @@ async function showInterstitialAd(){
   const AdMob=Capacitor.Plugins.AdMob;
   try{
     if(!_interstitialPrepared){
-      await AdMob.prepareInterstitial({adId:INTERSTITIAL_ID(),isTesting:false});
+      await AdMob.prepareInterstitial({adId:INTERSTITIAL_ID(),isTesting:_admobTestMode()});
       _interstitialPrepared=true;
     }
     await AdMob.showInterstitial();
@@ -1383,15 +1433,26 @@ function generateLevel(lvl,customSeed){
   if(!FORCE_FRESH_LEVELS&&customSeed==null&&lvl>=1&&lvl<=500&&typeof window!=='undefined'&&window.BAKED_LEVELS){
     const baked=window.BAKED_LEVELS[lvl-1];
     if(baked){
-      gridCols=baked.cols;gridRows=baked.rows;
-      arrows=baked.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d,alive:true}));
-      _recordCells();
-      minMoves=arrows.length;
-      moves=0;timer=0;undosLeft=3;
-      _startZoomIntro();
-      const key='ae_best_'+lvl;
-      bestTime=+localStorage.getItem(key)||0;
-      return;
+      // Defense-in-depth: previous baker shipped a handful of unsolvable
+      // levels (18,20-23,298,407,415 in v1.0.15) when its seed search
+      // exhausted. The baker is now fixed, but we also gate the runtime
+      // on the same solvability check used at bake time — so any future
+      // bake regression falls through to procedural generation instead
+      // of bricking the player on a deadlocked board.
+      const _check=baked.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d}));
+      if(_isLevelSolvable(_check,baked.rows,baked.cols)){
+        gridCols=baked.cols;gridRows=baked.rows;
+        arrows=baked.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d,alive:true}));
+        _recordCells();
+        minMoves=arrows.length;
+        moves=0;timer=0;undosLeft=3;
+        _startZoomIntro();
+        const key='ae_best_'+lvl;
+        bestTime=+localStorage.getItem(key)||0;
+        return;
+      }
+      // Unsolvable baked level — fall through to procedural path below,
+      // which has its own retry-on-deadlock loop.
     }
   }
 
@@ -1752,16 +1813,36 @@ function generateLevel(lvl,customSeed){
   }
 
   // Solvability check: simulate "tap an arrow whose escape is clear" until
-  // all are removed. If we get stuck, the seed produced a deadlock (cycle
-  // in the chain dependency graph) — retry with a different seed.
-  // BUG FIX: previously this retry only ran when customSeed==null, but
-  // the recursive call ALWAYS passes a customSeed for the perturbed
-  // seed — so it never recursed past depth 1. Track depth in arguments[2]
-  // independent of customSeed so we get the full 5 retries we intended.
+  // all are removed. The check is greedy (always pops the FIRST clear arrow
+  // it finds), so a `false` here means "this greedy walk got stuck", not
+  // "no walk exists" — there are seeds that fail the check yet are solvable
+  // by a smarter player. We still retry on a `false` because the cheapest
+  // fix is to find a seed where the greedy proof works.
+  //
+  // Two things changed from the previous 5-retry pass which shipped weekly
+  // levels that players reported "won't solve":
+  //   1. Bumped the cap to 30. The weekly seed is fixed for an entire week
+  //      — if we lose to bad luck on 5 perturbations, a whole cohort gets
+  //      a stuck board for 7 days. 30 attempts at micro-cost is worth it.
+  //   2. Replaced the linear `+97*depth` perturbation with a Weyl-sequence
+  //      step (`+ 0x9E3779B1 * (depth+1)`) so each retry lands in a far
+  //      corner of seed space rather than walking 97 cells over. The
+  //      previous step was small enough that bake/snake decisions often
+  //      stayed identical across retries.
   const _retryDepth=arguments.length>=3?arguments[2]:0;
-  if(!_isLevelSolvable(placed,rows,cols)&&_retryDepth<5&&lvl>=1){
+  const MAX_RETRIES=30;
+  if(!_isLevelSolvable(placed,rows,cols)&&_retryDepth<MAX_RETRIES&&lvl>=1){
     const baseSeed=customSeed!=null?customSeed:(lvl*7919+31337);
-    return generateLevel(lvl,baseSeed+97*(_retryDepth+1),_retryDepth+1);
+    // 0x9E3779B1 ≈ 2^32 / phi — Knuth's golden-ratio multiplier, classic
+    // tool for spreading sequential indices across a 32-bit space.
+    const perturbed=(baseSeed+(0x9E3779B1*(_retryDepth+1))|0);
+    return generateLevel(lvl,perturbed,_retryDepth+1);
+  }
+  if(_retryDepth>=MAX_RETRIES){
+    // We exhausted retries and are about to ship a board the greedy solver
+    // couldn't crack. Most often this is a false negative (player CAN solve
+    // it), but log it so weekly-seed regressions are visible in post-mortem.
+    if(typeof _devWarn==='function')_devWarn('generateLevel.retriesExhausted','lvl='+lvl+' seed='+customSeed);
   }
 
   // Reverse so arrows[0] = first solved
@@ -3892,7 +3973,7 @@ requestAnimationFrame(loop);
 // serves assets from the app bundle; a SW would intercept those fetches and
 // can serve stale content across app updates (we burned a build on this).
 if('serviceWorker' in navigator && typeof Capacitor==='undefined'){
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  navigator.serviceWorker.register('sw.js').catch(e=>_devWarn('serviceWorker.register',e));
 }
 window._ae={
   generateLevel,
