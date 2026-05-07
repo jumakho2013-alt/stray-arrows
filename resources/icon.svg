@@ -1,58 +1,49 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <!--
-    Stray Arrows app icon — v2.
-    Visual language matches the in-game palette and the cell-marker
-    sparkle glyph drawn on the play board:
-      • Navy gradient background (#24244a → #15152a) — same as the
-        dark-mode in-game bg gradient.
-      • Soft warm glow behind the hero so the gold reads vivid even
-        when iOS / Android render the icon at very small sizes.
-      • Hero is a 4-pointed sparkle (the same r(θ) shape used in
-        drawPlay) sitting over a single bold golden arrow.
-      • Two ambient sparkles (top-right and bottom-left) to imply
-        "many sparkles to clear" without crowding the silhouette.
+    Stray Arrows app icon — v3 (Sunset Macaron).
+    Warm earthy palette per design research:
+      • Aubergine gradient bg (#4a3a37 → #3a2c2a) — same as the in-game
+        dark mode in v2.5.
+      • Soft coral / salmon glow centred on the hero so the colours
+        read alive at small sizes.
+      • Hero is a 4-pointed sparkle in dusty coral over a single bold
+        coral arrow.
+      • Ambient mini-sparkles in soft peach.
   -->
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#24244a"/>
-      <stop offset="100%" stop-color="#15152a"/>
+      <stop offset="0%" stop-color="#4a3a37"/>
+      <stop offset="100%" stop-color="#3a2c2a"/>
     </linearGradient>
     <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#e2b35a" stop-opacity="0.35"/>
-      <stop offset="60%" stop-color="#e2b35a" stop-opacity="0.10"/>
-      <stop offset="100%" stop-color="#e2b35a" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#f0a890" stop-opacity="0.40"/>
+      <stop offset="60%" stop-color="#f0a890" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#f0a890" stop-opacity="0"/>
     </radialGradient>
-    <!-- 4-pointed sparkle path with concave waists between arms.
-         Centred on (0,0), normalised to a 100-unit "radius". -->
     <path id="sparkle" d="M 0,-100 C 25,-30 25,-25 100,0 C 25,25 25,30 0,100 C -25,30 -25,25 -100,0 C -25,-25 -25,-30 0,-100 Z"/>
   </defs>
 
-  <!-- Background — rounded square, full bleed -->
   <rect width="1024" height="1024" rx="220" ry="220" fill="url(#bg)"/>
-
-  <!-- Soft warm glow behind the hero -->
   <rect width="1024" height="1024" rx="220" ry="220" fill="url(#glow)"/>
 
-  <!-- Ambient mini-sparkles -->
-  <g fill="#e2b35a" opacity="0.45">
+  <g fill="#f0a890" opacity="0.55">
     <use href="#sparkle" transform="translate(780 260) scale(0.55)"/>
     <use href="#sparkle" transform="translate(230 820) scale(0.42)"/>
   </g>
-  <g fill="#e2b35a" opacity="0.25">
+  <g fill="#f0c8b8" opacity="0.30">
     <use href="#sparkle" transform="translate(840 780) scale(0.30)"/>
     <use href="#sparkle" transform="translate(200 300) scale(0.28)"/>
   </g>
 
-  <!-- Hero arrow — single bold curve, passes diagonally with a head -->
-  <g stroke="#e2b35a" stroke-width="64" stroke-linecap="round" stroke-linejoin="round" fill="none">
+  <!-- Hero arrow — coral, turning up -->
+  <g stroke="#f0a890" stroke-width="64" stroke-linecap="round" stroke-linejoin="round" fill="none">
     <polyline points="240,720 240,440 560,440 560,300"/>
   </g>
-  <polygon points="560,200 480,300 640,300" fill="#e2b35a"/>
+  <polygon points="560,200 480,300 640,300" fill="#f0a890"/>
 
-  <!-- Hero sparkle — sits above the arrow's elbow, anchors the icon -->
-  <g fill="#f0c47a">
+  <!-- Hero sparkle in dusty coral -->
+  <g fill="#ffc8b0">
     <use href="#sparkle" transform="translate(640 640) scale(2.2)"/>
   </g>
-  <!-- Inner highlight on the hero sparkle for the "polished gem" feel -->
-  <circle cx="615" cy="615" r="40" fill="#ffffff" opacity="0.35"/>
+  <circle cx="615" cy="615" r="40" fill="#ffffff" opacity="0.40"/>
 </svg>
