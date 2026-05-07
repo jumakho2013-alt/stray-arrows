@@ -3213,8 +3213,10 @@ function drawMenu(){
     X.beginPath();X.roundRect(W/2-bW/2,bY-bH/2,bW,bH,bH/2);X.fill();
     X.strokeStyle=TH.warning;X.lineWidth=2;
     X.beginPath();X.roundRect(W/2-bW/2,bY-bH/2,bW,bH,bH/2);X.stroke();
-    // Up-arrow glyph on the left + label + tap-to-update hint
-    txtP('↑',W/2-bW*.40,bY,18,TH.warning,'center');
+    // Up-pointing chevron + label. drawChevron is canvas-stroked so it
+    // matches the rest of the glyph family rather than depending on a
+    // unicode arrow that font fallback can render inconsistently.
+    _drawChevron(W/2-bW*.40, bY, 9, TH.warning, 'up');
     txtP(t('updateAvailable')+'  v'+availableUpdate,W/2+bW*.04,bY,14,TH.text,'center');
     X.restore();
     if(tapped&&abs(tapX-W/2)<bW/2&&abs(tapY-bY)<bH/2){
@@ -3744,7 +3746,7 @@ function drawStats(){
     txtP(rows[i][1],W-36,y+rowH/2-2,14,TH.text,'right');
   }
 
-  if(drawBtn('← '+t('back'),W/2,H-50,140,38)){goto('menu')}
+  if(drawBtn(t('back'),W/2,H-50,140,38)){goto('menu')}
 
 }
 
@@ -3899,7 +3901,7 @@ function drawAchievements(){
     }
   }
 
-  if(drawBtn('← '+t('back'),W/2,H-50,140,38)){goto('menu')}
+  if(drawBtn(t('back'),W/2,H-50,140,38)){goto('menu')}
 
 }
 
@@ -4120,16 +4122,26 @@ function _drawToggle(cx, cy, on){
   X.beginPath(); X.arc(thumbX, cy + 1, r - 3, 0, TAU); X.fill('evenodd');
 }
 
-// Chevron > glyph for navigational rows (Language, Watch ad).
-function _drawChevron(cx, cy, sz, col){
+// Chevron glyph in any of 4 directions. `dir` = 'right' (default) /
+// 'left' / 'up' / 'down'. Used for navigation rows (›), the Back link
+// (‹), the update banner (↑), and any future drop-down toggles (∨).
+function _drawChevron(cx, cy, sz, col, dir){
+  X.save();
   X.strokeStyle = col || TH.textSec;
   X.lineWidth = 2;
   X.lineCap = 'round'; X.lineJoin = 'round';
+  X.translate(cx, cy);
+  // Rotate the canvas so we can write a single "right-pointing" path
+  // and let the transform handle the other three directions.
+  if (dir === 'left')      X.rotate(PI);
+  else if (dir === 'up')   X.rotate(-PI/2);
+  else if (dir === 'down') X.rotate(PI/2);
   X.beginPath();
-  X.moveTo(cx - sz * 0.3, cy - sz * 0.5);
-  X.lineTo(cx + sz * 0.3, cy);
-  X.lineTo(cx - sz * 0.3, cy + sz * 0.5);
+  X.moveTo(-sz * 0.3, -sz * 0.5);
+  X.lineTo( sz * 0.3, 0);
+  X.lineTo(-sz * 0.3,  sz * 0.5);
   X.stroke();
+  X.restore();
 }
 
 // Icon strip — minimal stroke glyphs matching the heart/star/coin family.
@@ -4316,9 +4328,10 @@ function drawSettings(){
     }, false)) resetConfirm = false;
   }
 
-  // Back arrow — small, lives in top-left, doesn't compete with the title.
+  // Back arrow — left-pointing chevron in the top-left, paired with
+  // the localized "BACK" label.
   if (_settingsRow(12, 36, 90, 44, (rx, ry, rw, rh) => {
-    _drawChevron(rx + 16, ry + rh / 2, 7, TH.text);
+    _drawChevron(rx + 16, ry + rh / 2, 7, TH.text, 'left');
     txt(t('back'), rx + 30, ry + rh / 2, 13, TH.text, 'left');
   }, false)) { resetConfirm = false; goto('menu'); }
 }
@@ -4458,7 +4471,7 @@ function drawLevels(){
   }
 
   // Back to menu
-  if(drawBtn('← '+t('back'),W/2,H-55,140,36)){goto('menu')}
+  if(drawBtn(t('back'),W/2,H-55,140,36)){goto('menu')}
 
 }
 
