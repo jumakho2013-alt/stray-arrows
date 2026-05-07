@@ -606,15 +606,22 @@ const MIN_ZOOM=0.4, MAX_ZOOM=4;
 // _zoomIntroDur seconds — gives the player a sense of scale before the
 // puzzle settles into its playable view.
 let _zoomFrom=1, _zoomTarget=1, _zoomIntroT=0, _zoomIntroDur=0.65;
-// Target on-screen cell size in CSS px. When a fresh level loads with cells
-// smaller than this (big imported levels on a phone), we auto-zoom so the
-// arrows are tappable without manual pinch. Capped at 1.7× so the player
-// still sees most of the maze without panning.
-const AUTO_ZOOM_TARGET_PX=14, AUTO_ZOOM_CAP=1.3;
+// Auto-fit zoom so the grid actually fills the play area regardless of
+// how small the level is. Imported Rush Hour boards are all 6×6 — at the
+// previous flat 14 px target they barely used a third of the canvas
+// (cell size ~50 px on a 390-wide viewport, so the auto-zoom branch
+// never fired). Now we compute a target cell size that lets the larger
+// of {cols, rows} fill ~80% of the stage width, capped so even a 4×4
+// doesn't blow up beyond the viewport edges.
+const AUTO_ZOOM_CAP=2.4;
 function _autoFitZoom(){
   const cs=getCellSize();
-  if(cs>=AUTO_ZOOM_TARGET_PX)return 1;
-  return min(AUTO_ZOOM_CAP, AUTO_ZOOM_TARGET_PX/cs);
+  if(cs<=0)return 1;
+  const gridMax=max(gridCols,gridRows);
+  // 80% of canvas width / grid dimension = ideal cell size
+  const idealCs=(W*0.80)/gridMax;
+  if(cs>=idealCs)return 1;
+  return min(AUTO_ZOOM_CAP, idealCs/cs);
 }
 // Set up the level-start zoom intro: begin at a wide view, animate to the
 // auto-fit zoom over _zoomIntroDur. The "start" zoom is chosen so the entire
@@ -1046,7 +1053,11 @@ let _levelCells=new Set();
 // Each level's smaller maze is centered inside the stage; surrounding cells
 // render as background dots only. Cells shrink to fit the stage, so as levels
 // grow they fill more of the stage rather than redrawing the whole field.
-const STAGE_COLS=10, STAGE_ROWS=14;
+// Floor for the play area. Was 10×14 — that minimum forced 6×6 imported
+// boards into a tiny third-of-screen square because cell size was capped
+// by the larger of the two. Lowered to 6×8 so the smallest grid we ship
+// (6×6 Rush Hour imports) gets ~60 px cells and fills the canvas.
+const STAGE_COLS=6, STAGE_ROWS=8;
 let moves=0,minMoves=0;
 let timer=0;
 let undosLeft=3;
@@ -1622,6 +1633,13 @@ function generateLevel(lvl,customSeed){
   // Tutorial: NO chain blockers — pure "tap clear arrow" gameplay so
   // brand-new players grasp the basic rule before any dependencies.
   _maxBlockers=tut?0:1;
+  // Late-game ramp (extended in v2): caps were 24 clusters / 2.5
+  // lateExtra, which meant by lvl 3500 every parameter saturated and a
+  // lvl-6000 board looked the same as a lvl-3500 one. User flagged
+  // this. New ceiling pushes max clusters to 40 and lateExtra to 5.0,
+  // both reached around lvl 8000-10000 — every 25-level block past
+  // 1500 still adds a cluster, so a player grinding 50 levels feels
+  // the difficulty shift rather than seeing a wall.
   let numClusters, lateExtra;
   if(lvl<=1500){
     const q=Math.max(0,(lvl-75)/1425);
@@ -1629,10 +1647,10 @@ function generateLevel(lvl,customSeed){
     lateExtra=q;
   }else{
     numClusters=12+floor((lvl-1500)/25);
-    lateExtra=1+(lvl-1500)/2000;
+    lateExtra=1+(lvl-1500)/1500;
   }
-  numClusters=Math.min(24,numClusters);
-  lateExtra=Math.min(2.5,lateExtra);
+  numClusters=Math.min(40,numClusters);
+  lateExtra=Math.min(5.0,lateExtra);
 
   // Pattern centers: same cluster mechanic, different attractor layouts.
   // This is the visual variety layer (spiral, mosaic, pitons, diagonals,
@@ -1955,11 +1973,20 @@ function generateLevel(lvl,customSeed){
     const perturbed=(baseSeed+(0x9E3779B1*(_retryDepth+1))|0);
     return generateLevel(lvl,perturbed,_retryDepth+1);
   }
-  if(_retryDepth>=MAX_RETRIES){
-    // We exhausted retries and are about to ship a board the greedy solver
-    // couldn't crack. Most often this is a false negative (player CAN solve
-    // it), but log it so weekly-seed regressions are visible in post-mortem.
-    if(typeof _devWarn==='function')_devWarn('generateLevel.retriesExhausted','lvl='+lvl+' seed='+customSeed);
+  if(_retryDepth>=MAX_RETRIES&&!_isLevelSolvable(placed,rows,cols)){
+    // We exhausted retries and the greedy solver still can't crack the
+    // board. For daily/weekly this is unacceptable — a whole cohort of
+    // players gets a stuck puzzle for the day or week. Drop the
+    // difficulty by half and retry with a fresh perturbed seed. lvl is
+    // strictly halved (so lvl=120 weekly -> lvl=60 first attempt ->
+    // lvl=30 if THAT also fails -> ...). At lvl<=2 generation cannot
+    // realistically deadlock, so this terminates.
+    if(typeof _devWarn==='function')_devWarn('generateLevel.retriesExhausted','lvl='+lvl+' seed='+customSeed+' -> falling back to lvl='+max(2,floor(lvl/2)));
+    if(lvl>2){
+      const fallbackLvl=max(2,floor(lvl/2));
+      const fallbackSeed=(customSeed!=null?customSeed:(lvl*7919+31337))^0xCAFEBABE|0;
+      return generateLevel(fallbackLvl,fallbackSeed,0);
+    }
   }
 
   // Reverse so arrows[0] = first solved
@@ -2131,10 +2158,13 @@ function tryBuildArrow(occ,rows,cols,rng,minLen,maxLen,placed,opts){
           if(blockerCount===1)s+=10;
           else s-=4;
         }
-        // Direction-variance bonus: the level should have a healthy
-        // mix of all four exit directions, otherwise the player can
-        // spam-tap one column. Reward under-represented directions,
-        // penalise the currently-most-common one.
+        // Direction-variance bonus: every level should present all four
+        // exit directions or the player can spam-tap a single column
+        // and clear the board with no thinking. v2 strengthens the
+        // bonus/penalty AND introduces a hard kick for any direction
+        // that's been completely skipped — the first arrow in an unused
+        // direction lands a +18 bonus so the algorithm reliably plants
+        // one of each before piling onto the popular sides.
         if(placed&&placed.length>3){
           const dirCounts=[0,0,0,0];
           for(const o of placed)dirCounts[o.dir]++;
@@ -2143,8 +2173,10 @@ function tryBuildArrow(occ,rows,cols,rng,minLen,maxLen,placed,opts){
             if(dirCounts[dd]<minC)minC=dirCounts[dd];
             if(dirCounts[dd]>maxC)maxC=dirCounts[dd];
           }
-          if(dirCounts[d]===minC&&maxC>minC)s+=7;
-          else if(dirCounts[d]===maxC&&maxC>minC+1)s-=5;
+          // Hard kick for never-seen directions
+          if(dirCounts[d]===0)s+=18;
+          else if(dirCounts[d]===minC&&maxC>minC)s+=12;     // was +7
+          else if(dirCounts[d]===maxC&&maxC>minC+1)s-=10;   // was -5
         }
         // Variant E — clusters mode penalty: arrow heads far from any
         // cluster center get strongly docked, so heads gather around the
@@ -2999,9 +3031,14 @@ function drawMenu(){
   if(!reducedMotion){
   if(!window._bgArrows){
     window._bgArrows=[];
-    for(let i=0;i<14;i++)window._bgArrows.push({
-      x:rnd(0,W),y:rnd(0,H),dir:rndI(0,3),sz:rnd(25,55),
-      spd:rnd(12,35),life:rnd(0,1),dur:rnd(4,8),alpha:rnd(.08,.18)
+    // v2: dimmer + fewer + slower. The previous 14 arrows at .08-.18
+    // alpha read as "look at me, decoration!" — user wanted them to be
+    // barely-perceptible texture, not a layer competing with the title.
+    // Dropped count 14 -> 8, alpha 0.08-0.18 -> 0.03-0.07, speed
+    // 12-35 -> 6-18 px/s.
+    for(let i=0;i<8;i++)window._bgArrows.push({
+      x:rnd(0,W),y:rnd(0,H),dir:rndI(0,3),sz:rnd(28,52),
+      spd:rnd(6,18),life:rnd(0,1),dur:rnd(8,14),alpha:rnd(.03,.07)
     });
   }
   for(const a of window._bgArrows){
@@ -3183,15 +3220,28 @@ function drawPlay(){
   X.scale(zoomLevel,zoomLevel);
   X.translate(-_zoomC.x,-_zoomC.y);
 
-  // Dot grid background — small dots at the center of every grid cell. Stays
-  // visible after arrows clear (graph-paper aesthetic per audit + competitor
-  // reference). Drawn before arrows so live cells overlap the dot but cleared
-  // cells expose it.
-  // Dot grid — drawn per-cell so the win wave can pulse each dot's radius
-  // based on its distance from the wave origin (replaces the old ring
-  // ripple per user request: dots themselves swell briefly and settle).
-  X.fillStyle=darkMode?'rgba(255,255,255,.10)':'rgba(0,0,0,.10)';
-  const _dotR=max(1,cs*.06);
+  // v2: Light grid lines INSIDE the play area, no board card. The
+  // earlier "board with drop shadow" version made the grid look like a
+  // pasted card on top of the screen — the user wanted the entire
+  // canvas to feel like one continuous surface, with the grid lines
+  // being the only structural cue. The bg gradient + drifting arrows
+  // we already paint on the menu/play bg do the rest.
+  X.strokeStyle=TH.gridLine;X.lineWidth=1;
+  X.beginPath();
+  for(let i=1;i<gridCols;i++){
+    X.moveTo(gx+i*cs,gy);X.lineTo(gx+i*cs,gy+gridRows*cs);
+  }
+  for(let i=1;i<gridRows;i++){
+    X.moveTo(gx,gy+i*cs);X.lineTo(gx+gridCols*cs,gy+i*cs);
+  }
+  X.stroke();
+
+  // Dot grid background — visible dots at the center of every grid cell.
+  // v2 sizing: was cs*.06 (≈3 px on a 60-px cell — barely visible). Now
+  // cs*.11 ≈ 6.5 px, with stronger alpha so the graph-paper texture
+  // actually reads on a phone screen.
+  X.fillStyle=darkMode?'rgba(255,255,255,.18)':'rgba(0,0,0,.16)';
+  const _dotR=max(2,cs*.11);
   const _hasWave=!!_winWave;
   let _waveP=0,_waveX=0,_waveY=0,_waveSpeed=0;
   if(_hasWave){
@@ -3202,6 +3252,17 @@ function drawPlay(){
     _waveSpeed=max(W,H)*1.1;
     if(_waveP>=1)_winWave=null;
   }
+  // Dots on EVERY cell (not just occupied) so the grid keeps a graph-
+  // paper texture under empty cells too. The wave pulse only animates
+  // dots inside _levelCells. v2 bumped alpha .05 -> .12 and dot size
+  // ratio .55 -> .80 so empty cells read clearly on the bg.
+  X.fillStyle=darkMode?'rgba(255,255,255,.12)':'rgba(0,0,0,.10)';
+  for(let r=0;r<gridRows;r++){
+    for(let c=0;c<gridCols;c++){
+      X.beginPath();X.arc(gx+c*cs+cs/2,gy+r*cs+cs/2,_dotR*0.80,0,TAU);X.fill();
+    }
+  }
+  X.fillStyle=darkMode?'rgba(255,255,255,.18)':'rgba(0,0,0,.16)';
   for(const k of _levelCells){
     const i=k.indexOf(',');
     const r=+k.slice(0,i),c=+k.slice(i+1);
@@ -3246,22 +3307,33 @@ function drawPlay(){
       }
     }
 
-    // Hint highlight: slow gentle pulse with a layered halo. v1 used
-    // shadowBlur which Profiler showed as the single most expensive thing
-    // in the frame on iPhone 7 / iOS WebKit (rasteriser allocates a new
-    // surface every frame for varying blur radii). v2 simulates the same
-    // visual via two underlying strokes at different alpha — same look,
-    // ~6× cheaper on low-end devices.
+    // Hint highlight: faster, brighter pulse. The previous version was
+    // a quiet glow at 50-80% alpha that players said they couldn't even
+    // notice on a busy board. We now (a) draw a soft golden cell tint
+    // behind every cell of the hinted arrow, (b) add a thicker outer
+    // halo via 4 stacked strokes, and (c) speed the cycle up to 1.6 s
+    // so the eye is drawn to it. Still no shadowBlur — keeps iOS perf.
     const isHinted=i===hintArrow&&hintTime>0;
     if(isHinted&&!reducedMotion){
-      const pulse=.5+.5*sin(gt*2.5);             // 2.5s cycle
+      const pulse=.5+.5*sin(gt*4);               // ~1.6 s cycle (was 2.5 s)
       X.save();
-      // Outer halo: low alpha, full arrow drawn larger via lineWidth bump
-      // inside drawArrowStatic — but we don't have a width parameter, so
-      // approximate with two stacked strokes at decreasing alpha.
-      X.globalAlpha=(.18+pulse*.12)*revealA;     // 0.18..0.30
+      // Cell tint behind the hinted arrow — a soft gold wash that
+      // marks WHERE on the board the player should look. Subtle in the
+      // trough of the pulse, brightens at the peak.
+      X.fillStyle=TH.star;
+      X.globalAlpha=(.10+pulse*.18)*revealA;     // 0.10..0.28
+      for(const [r,c] of a.cells){
+        X.beginPath();
+        X.roundRect(gx+c*cs+cs*.08,gy+r*cs+cs*.08,cs*.84,cs*.84,cs*.18);
+        X.fill();
+      }
+      // Halo stack — 3 layers from outer-faint to inner-strong gives
+      // the impression of a glow without the cost of shadowBlur.
+      X.globalAlpha=(.30+pulse*.20)*revealA;     // 0.30..0.50
       drawArrowStatic(a,cs,gx,gy,TH.star,1,shakeOff);
-      X.globalAlpha=(.50+pulse*.30)*revealA;     // 0.50..0.80
+      X.globalAlpha=(.55+pulse*.30)*revealA;     // 0.55..0.85
+      drawArrowStatic(a,cs,gx,gy,TH.star,1,shakeOff);
+      X.globalAlpha=(.85+pulse*.15)*revealA;     // 0.85..1.00
       drawArrowStatic(a,cs,gx,gy,TH.star,1,shakeOff);
       X.restore();
     }
