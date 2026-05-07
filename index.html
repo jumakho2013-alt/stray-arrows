@@ -2557,26 +2557,30 @@ function isTutorial(){
 function spawnConfetti(){
   confetti=[];
   if(reducedMotion)return; // celebration confetti is purely decorative
-  const colors=[TH.accent,TH.success,TH.star,TH.warning,'#c468a0','#68b89c','#e9b04d','#7a8cc7'];
-  // Two-burst pattern: a wide overhead shower + an upward fountain from the
-  // check mark, so the screen reads as a real celebration instead of a sparse
-  // sprinkle.
-  for(let i=0;i<70;i++){
+  // v2 confetti: pure sparkle storm in the gold family. The grid markers
+  // are 4-pointed sparkles, the win wave bursts them gold, and the
+  // celebration confetti now matches — every gold particle is the same
+  // visual vocabulary. Drops the rainbow + shape-soup of v1 which felt
+  // off-brand against the minimal palette.
+  const colors = [TH.star, TH.accent, '#f0c47a', '#ffe2a8', '#fffbe5'];
+  // Wide overhead shower
+  for(let i=0;i<60;i++){
     confetti.push({
       x:W/2+rnd(-W/2,W/2),y:-10+rnd(-30,0),
       vx:rnd(-2,2),vy:rnd(1,4),
-      sz:rnd(4,9),rot:rnd(0,TAU),rv:rnd(-6,6),
+      sz:rnd(5,11),rot:rnd(0,TAU),rv:rnd(-4,4),
       col:colors[floor(rnd(0,colors.length))],
-      life:2+rnd(0,1.5),shape:floor(rnd(0,3)) // 0=rect, 1=circle, 2=triangle
+      life:2+rnd(0,1.5),
     });
   }
-  for(let i=0;i<40;i++){
+  // Upward fountain from where the check mark lands
+  for(let i=0;i<35;i++){
     confetti.push({
       x:W/2+rnd(-30,30),y:H*.18+rnd(-10,10),
       vx:rnd(-5,5),vy:rnd(-9,-3),
-      sz:rnd(3,7),rot:rnd(0,TAU),rv:rnd(-8,8),
+      sz:rnd(4,8),rot:rnd(0,TAU),rv:rnd(-6,6),
       col:colors[floor(rnd(0,colors.length))],
-      life:1.5+rnd(0,1),shape:floor(rnd(0,3))
+      life:1.5+rnd(0,1),
     });
   }
 }
@@ -2881,6 +2885,25 @@ function _drawPillBtn(label,x,y,w,h,color,fontFrac){
   // Hairline neutral border for definition. No coloured stroke.
   X.strokeStyle=TH.border;X.lineWidth=1;
   X.beginPath();X.roundRect(x-dw/2,y-dh/2,dw,dh,r);X.stroke();
+  // Tap ripple — subtle expanding ring from the click point during the
+  // first 280 ms after a tap. Uses lastClick (set in the touch/mouse
+  // handlers). Cost is one stroked ellipse per pressed button per
+  // frame; only paints during the brief animation window.
+  if(lastClick&&!reducedMotion){
+    const dt2=gt-lastClick.t;
+    if(dt2<.28&&abs(lastClick.x-x)<w/2&&abs(lastClick.y-y)<h/2){
+      const p=dt2/.28;
+      X.save();
+      X.beginPath();X.roundRect(x-dw/2,y-dh/2,dw,dh,r);X.clip();
+      X.strokeStyle=c;
+      X.globalAlpha=(1-p)*.55;
+      X.lineWidth=2;
+      X.beginPath();
+      X.arc(lastClick.x,lastClick.y,p*max(w,h)*.9,0,TAU);
+      X.stroke();
+      X.restore();
+    }
+  }
   // Label takes the button colour. Default colour (TH.accent) renders
   // as the text token on neutral buttons, so PLAY/etc. stay readable.
   const labelCol = (c === TH.accent) ? TH.text : c;
@@ -3690,9 +3713,10 @@ function drawPlay(){
 function drawComplete(){
   drawBg(true);
 
-  // Confetti — particle velocities/gravity were tuned at 60fps so we scale
-  // them by `dt*60` to keep the same visual speed at any refresh rate.
-  // life is decremented in seconds (dt) directly.
+  // Confetti — every particle is now a 4-pointed sparkle (the same r(θ)
+  // shape used by grid markers and the win wave). Particles still have
+  // life/velocity/gravity tuned at 60fps; the path data is procedurally
+  // sampled into a single fill so it stays cheap to render.
   const _frameScale=dt*60;
   for(let i=confetti.length-1;i>=0;i--){
     const p=confetti[i];
@@ -3701,9 +3725,20 @@ function drawComplete(){
     X.globalAlpha=clp(p.life,0,1);
     X.fillStyle=p.col;
     X.save();X.translate(p.x,p.y);X.rotate(p.rot);
-    if(p.shape===0){X.fillRect(-p.sz/2,-p.sz/2,p.sz,p.sz*.6);}
-    else if(p.shape===1){X.beginPath();X.arc(0,0,p.sz/2,0,TAU);X.fill();}
-    else{X.beginPath();X.moveTo(0,-p.sz/2);X.lineTo(p.sz/2,p.sz/2);X.lineTo(-p.sz/2,p.sz/2);X.closePath();X.fill();}
+    // 4-pointed sparkle silhouette (8 sample points — cheap; full 32-pt
+    // version is reserved for the static grid where it doesn't redraw
+    // per frame). Inner radius 30% gives that pinched-waist look.
+    const R=p.sz/2,inner=R*.30;
+    X.beginPath();
+    for(let k=0;k<8;k++){
+      const θ=k*PI/4-PI/2;
+      const t=Math.cos(2*θ);
+      const r=inner+(R-inner)*(t*t*t*t);
+      const px=Math.cos(θ)*r,py=Math.sin(θ)*r;
+      if(k===0)X.moveTo(px,py);
+      else X.lineTo(px,py);
+    }
+    X.closePath();X.fill();
     X.restore();
     X.globalAlpha=1;
   }
