@@ -3212,6 +3212,34 @@ function drawPlay(){
     drawHeart(W-26-i*24,TOP_Y,14,i<undosLeft,false);
   }
 
+  // Hint button — moved here from the bottom action row in v2 so the
+  // play area's bottom is completely free for finger gestures (the
+  // user wanted "no buttons in the player's way"). Compact pill on
+  // the LEFT side of the second top row, mirrored across the title
+  // from the stars on the right. Tap → hint, cost shown next to a
+  // small coin icon.
+  {
+    const hbX=70, hbY=TOP_Y+24, hbW=92, hbH=28;
+    const canHint=coins>=HINT_COST&&hintTime<=0;
+    const hv=abs(mx-hbX)<hbW/2&&abs(my-hbY)<hbH/2;
+    const sc=btnPressScale(hbX,hbY,hbW,hbH);
+    const dw=hbW*sc, dh=hbH*sc;
+    const color=TH.star;
+    X.fillStyle=canHint?(hv?color+'50':color+'30'):TH.btnBg;
+    X.beginPath();X.roundRect(hbX-dw/2,hbY-dh/2,dw,dh,dh/2);X.fill();
+    X.strokeStyle=canHint?color+'80':TH.border;X.lineWidth=1.2;
+    X.beginPath();X.roundRect(hbX-dw/2,hbY-dh/2,dw,dh,dh/2);X.stroke();
+    const labelColor=canHint?TH.text:TH.textDim;
+    const costColor=canHint?TH.star:TH.textDim;
+    txtP(t('hint'),hbX-hbW*.20,hbY,11,labelColor);
+    drawCoin(hbX+hbW*.15,hbY,5);
+    txt(HINT_COST+'',hbX+hbW*.24,hbY,11,costColor,'left');
+    if(tapped&&abs(tapX-hbX)<hbW/2&&abs(tapY-hbY)<hbH/2){
+      if(canHint)useHint();
+      tapped=false;
+    }
+  }
+
   // Advance level reveal animation (staggered fade-in of all arrows)
   if(levelRevealT<1)levelRevealT=min(1,levelRevealT+dt/.9);
 
@@ -3251,13 +3279,22 @@ function drawPlay(){
   }
   X.stroke();
 
-  // Dot grid background — small visible dots at the center of every cell.
-  // v2 final sizing: cs*.08 (≈5 px on a 60-px cell). Was bumped to
-  // cs*.11 in the previous pass but user said "too big, looks like
-  // mess". Slightly smaller + alpha .15 keeps graph-paper feel without
-  // competing with the arrows.
-  X.fillStyle=darkMode?'rgba(255,255,255,.15)':'rgba(0,0,0,.13)';
-  const _dotR=max(1.5,cs*.08);
+  // Cross-grid background — replaced the dot at every cell centre with
+  // a tiny "+" cross drawn in stroke. Reads as engineering / blueprint
+  // paper instead of generic dotted bg, plus the cross visually marks
+  // intersections of the (already drawn) faint grid lines, so the
+  // whole play area looks deliberately gridded rather than scattered.
+  // The win-wave celebration still turns these into golden diamonds.
+  const _dotR=max(1.8,cs*.085);
+  X.strokeStyle=darkMode?'rgba(255,255,255,.18)':'rgba(0,0,0,.16)';
+  X.lineWidth=1.2;
+  X.lineCap='round';
+  function _drawCross(cx,cy,r){
+    X.beginPath();
+    X.moveTo(cx-r,cy);X.lineTo(cx+r,cy);
+    X.moveTo(cx,cy-r);X.lineTo(cx,cy+r);
+    X.stroke();
+  }
   const _hasWave=!!_winWave;
   let _waveP=0,_waveX=0,_waveY=0,_waveSpeed=0;
   if(_hasWave){
@@ -3268,13 +3305,15 @@ function drawPlay(){
     _waveSpeed=max(W,H)*1.1;
     if(_waveP>=1)_winWave=null;
   }
-  // Dots on EVERY cell (not just occupied) for graph-paper texture.
-  X.fillStyle=darkMode?'rgba(255,255,255,.10)':'rgba(0,0,0,.08)';
+  // Crosses on EVERY cell. Fainter style for empty cells, full strength
+  // for occupied (occupied loop reuses the same _drawCross helper below).
+  X.strokeStyle=darkMode?'rgba(255,255,255,.10)':'rgba(0,0,0,.09)';
   for(let r=0;r<gridRows;r++){
     for(let c=0;c<gridCols;c++){
-      X.beginPath();X.arc(gx+c*cs+cs/2,gy+r*cs+cs/2,_dotR*0.65,0,TAU);X.fill();
+      _drawCross(gx+c*cs+cs/2,gy+r*cs+cs/2,_dotR*0.7);
     }
   }
+  X.strokeStyle=darkMode?'rgba(255,255,255,.20)':'rgba(0,0,0,.18)';
   // Occupied-cell dots (slightly stronger than empty cells). On level
   // completion the win wave passes through and turns each dot into a
   // tiny golden DIAMOND for the moment the wave front is on it — feels
@@ -3305,9 +3344,8 @@ function drawPlay(){
       X.fillRect(-sz/2,-sz/2,sz,sz);
       X.restore();
     } else {
-      // Normal phase: subtle circular dot.
-      X.fillStyle=darkMode?'rgba(255,255,255,.15)':'rgba(0,0,0,.13)';
-      X.beginPath();X.arc(cx,cy,_dotR,0,TAU);X.fill();
+      // Normal phase: full-strength cross marker.
+      _drawCross(cx,cy,_dotR);
     }
   }
 
@@ -3528,36 +3566,10 @@ function drawPlay(){
     txtP(coins+'',cx+2,cy,14,TH.star,'left');
   }
 
-  // Action button — Hint only. v2 dropped the Skip button entirely:
-  // user feedback was that Skip lets a player farm coins by watching a
-  // reward ad on Daily/Weekly, then spend the SKIP_COST instantly to
-  // jump levels they couldn't solve. Without Skip, the player has to
-  // either Hint (which costs less and surfaces just one arrow) or
-  // figure out the puzzle. Hint button moves to centre, gets bigger
-  // (180×44) and stronger fill so it stops looking like a tile-mate of
-  // the now-departed sibling.
-  const by=H*.93,bw=180,bh=44;
-  const canHint=coins>=HINT_COST&&hintTime<=0;
-  {
-    const bx=W/2;
-    const hv=abs(mx-bx)<bw/2&&abs(my-by)<bh/2;
-    const sc=btnPressScale(bx,by,bw,bh);
-    const dw=bw*sc,dh=bh*sc;
-    const color=TH.star;
-    X.fillStyle=canHint?(hv?color+'50':color+'35'):TH.btnBg;
-    X.beginPath();X.roundRect(bx-dw/2,by-dh/2,dw,dh,dh/2);X.fill();
-    X.strokeStyle=canHint?color+'80':TH.border;X.lineWidth=1.5;
-    X.beginPath();X.roundRect(bx-dw/2,by-dh/2,dw,dh,dh/2);X.stroke();
-    const labelColor=canHint?TH.text:TH.textDim;
-    const costColor=canHint?TH.star:TH.textDim;
-    txtP(t('hint'),bx-bw*.20,by,14,labelColor);
-    drawCoin(bx+bw*.16,by,8);
-    txt(HINT_COST+'',bx+bw*.26,by,13,costColor,'left');
-    if(tapped&&abs(tapX-bx)<bw/2&&abs(tapY-by)<bh/2){
-      if(canHint)useHint();
-      tapped=false;
-    }
-  }
+  // Bottom action row removed in v2 — Hint moved up to the top-left
+  // pill, Skip dropped entirely. Bottom of the play area is now
+  // completely empty so the player's thumb has unobstructed room to
+  // pan/zoom and tap arrows along the lower rows of the grid.
 
   // Update timers
   timer+=dt;
