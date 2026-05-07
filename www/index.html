@@ -1675,11 +1675,16 @@ function generateLevel(lvl,customSeed){
   // longMin shrinks at very late levels (lateExtra > 0) — gives MORE
   // arrows per board at lvl 1500+ so there's more to track even
   // though the grid stays maxed.
+  //
+  // v2.5: floor lowered 0.45 → 0.30 so lvl 6000+ procedural boards
+  // stop looking sparse (user flagged lvl 8001 as "слишком пустой").
+  // With lateExtra=5.0 this gives longMin ~= longMinBase × 0.30, i.e.
+  // ~3× more distinct arrows packed into the same grid. Coupled with
+  // the existing Pass-3 fill-coverage absorption, sparse "vertical
+  // shaft" pockets get eaten by neighbouring snakes.
   let safety=3000;
-  // Tutorial uses fixed longMin from the override table above.
-  // Otherwise the regular ramp scaled by pattern + lateExtra.
   const longMinBase=floor(maxLen*lrp(.55,.70,p)*pattern.longMinScale);
-  const longMin=tut?tut.longMin:max(15,floor(longMinBase*max(0.45,1-lateExtra*0.30)));
+  const longMin=tut?tut.longMin:max(10,floor(longMinBase*max(0.30,1-lateExtra*0.30)));
   while(safety-->0){
     const arrow=tryBuildArrow(occ,rows,cols,rng,minLen,maxLen,placed,{minAcceptLen:longMin});
     if(!arrow)break;
