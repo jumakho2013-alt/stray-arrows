@@ -67,13 +67,12 @@ body.letterboxed canvas{
 </head>
 <body class="light">
 <canvas id="c"></canvas>
-<!-- Pre-baked levels 1..500. The improved procedural
-     generator is run at build time and the best-scoring layout for each
-     level number is frozen here. window.BAKED_LEVELS is consulted in
-     generateLevel() so every player sees the same puzzle for level N
-     (handcrafted-feel without manually designing 200 boards). Procedural
-     generation still runs for level 201+ and for daily/weekly seeds. -->
-<script src="levels-baked.js?v=1777684736"></script>
+<!-- v2 retired levels-baked.js (4.5 MB of pre-baked procedural layouts).
+     The Rush Hour import now densely covers levels 11-6000, so BAKED
+     never won the lookup chain in practice. Removing it shaves ~1-2 s
+     off cold start on low-end Android. The file is kept on disk but
+     out of the bundle; rebuild it with `node tools/bake-levels-v2.js`
+     if you ever need to fall back. -->
 <!-- Handcrafted milestone levels — tutorial (1-10) plus picture/showcase
      levels at key milestones. These take priority over procedural / baked
      when their level number matches.
@@ -1548,19 +1547,15 @@ function generateLevel(lvl,customSeed){
     }
   }
 
-  // Baked-level fast path: levels 1..500 (regular play only — daily/weekly
-  // pass customSeed and stay procedural). The pre-built layout was scored
-  // and selected for tangledness during the bake, so every player sees the
-  // same puzzle for the same level number.
-  if(!FORCE_FRESH_LEVELS&&customSeed==null&&lvl>=1&&lvl<=500&&typeof window!=='undefined'&&window.BAKED_LEVELS){
+  // BAKED branch retired in v2 — IMPORTED chunks now cover lvl 11-6000
+  // densely, with HANDCRAFTED owning lvl 1-10 (tutorial) plus milestones.
+  // Kept the variable check as a no-op so the leftover comment block below
+  // about "unsolvable baked level fall-through" still parses; the
+  // condition will always evaluate to false because BAKED_LEVELS is no
+  // longer loaded.
+  if(false&&!FORCE_FRESH_LEVELS&&customSeed==null&&lvl>=1&&lvl<=500&&typeof window!=='undefined'&&window.BAKED_LEVELS){
     const baked=window.BAKED_LEVELS[lvl-1];
     if(baked){
-      // Defense-in-depth: previous baker shipped a handful of unsolvable
-      // levels (18,20-23,298,407,415 in v1.0.15) when its seed search
-      // exhausted. The baker is now fixed, but we also gate the runtime
-      // on the same solvability check used at bake time — so any future
-      // bake regression falls through to procedural generation instead
-      // of bricking the player on a deadlocked board.
       const _check=baked.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d}));
       if(_isLevelSolvable(_check,baked.rows,baked.cols)){
         gridCols=baked.cols;gridRows=baked.rows;

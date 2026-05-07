@@ -18,7 +18,6 @@ const ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/levels-baked.js',
   '/handcrafted-levels.js',
   '/levels/imported-meta.js',
   '/levels/imported-000.js',

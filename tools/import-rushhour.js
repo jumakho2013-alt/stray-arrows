@@ -41,17 +41,20 @@ const DY = [0, -1, 0, 1];
 // `targetCount` is what we want; we'll over-sample when the dataset has more
 // than enough so we can throw away post-conversion failures without dropping
 // below the target.
-// Bucket 4 was originally 50-99 moves but the database only has ~15 boards
-// in that range — the late-game slot stayed mostly empty after the first
-// pass. We now span the full 5-99 range with overlapping buckets so even
-// the late chunks are densely populated; difficulty still ramps because
-// stratified sampling within each bucket sorts by `moves` ascending and
-// places the easier boards first in the level number range.
+// "Levels everywhere" pass — push the import to ~5-6k boards so the
+// procedural generator + BAKED levels can effectively retire. Buckets
+// stretch level numbers all the way to 6000; difficulty ramps through
+// stratified sampling (each bucket sorts ascending by Rush Hour `moves`
+// before being spread across its range, so the easier boards land first).
+//
+// We deliberately oversize the targets so the streaming reader keeps
+// going past 100k lines and harvests all the moderate-difficulty boards
+// the database can provide, not just the first 6k it stumbles on.
 const BUCKETS = [
-  { range: [11, 250],    minMoves: 5,  maxMoves: 14, targetCount: 1000 },
-  { range: [251, 600],   minMoves: 14, maxMoves: 24, targetCount: 1200 },
-  { range: [601, 1000],  minMoves: 24, maxMoves: 36, targetCount: 800 },
-  { range: [1001, 1500], minMoves: 36, maxMoves: 99, targetCount: 600 },
+  { range: [11, 1000],    minMoves: 5,  maxMoves: 13, targetCount: 2500 },
+  { range: [1001, 2500],  minMoves: 13, maxMoves: 22, targetCount: 3000 },
+  { range: [2501, 4500],  minMoves: 22, maxMoves: 34, targetCount: 2500 },
+  { range: [4501, 6000],  minMoves: 34, maxMoves: 99, targetCount: 1500 },
 ];
 const CHUNK_SIZE = 250;
 
@@ -236,16 +239,15 @@ async function streamAndBucket() {
     });
     totalAccepted++;
 
-    // Print progress every 100k lines
-    if (lineNum % 100000 === 0) {
-      process.stdout.write(`  scanned ${lineNum.toLocaleString()} lines, accepted ${totalAccepted}\n`);
+    // Print progress every 250k lines
+    if (lineNum % 250000 === 0) {
+      const fills = buckets.map(b => `${b.range[0]}-${b.range[1]}:${b.candidates.length}/${b.targetCount * 3}`).join(' ');
+      process.stdout.write(`  scanned ${lineNum.toLocaleString()} — ${fills}\n`);
     }
-
-    // Early exit: all buckets have 3× their target — we have plenty
-    if (buckets.every(b => b.candidates.length >= b.targetCount * 3)) {
-      console.log(`  early exit at line ${lineNum.toLocaleString()} — all buckets oversampled`);
-      break;
-    }
+    // No early exit. Some buckets (esp. high-moves) never fill to 3× target
+    // because the database simply doesn't have that much hard content; we
+    // want to scan the whole 2.5M to make sure we got every late-game
+    // candidate, not just the first 100k.
   }
 
   console.log('');
