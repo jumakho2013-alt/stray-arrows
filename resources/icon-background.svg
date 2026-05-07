@@ -1,19 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!--
+    Adaptive-icon BACKGROUND layer (Android). Android composites this
+    behind icon-foreground.svg and may mask to circle / rounded-square /
+    teardrop depending on launcher. Bleeds full 1024×1024 because the
+    OS will crop any safe-area shape it likes from the centre 660 px.
+
+    Matches the v2 in-game dark gradient (#24244a → #15152a) with a
+    soft warm glow centre so the gold foreground reads vivid.
+  -->
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#1a1a2e"/>
-      <stop offset="100%" stop-color="#16213e"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#24244a"/>
+      <stop offset="100%" stop-color="#15152a"/>
     </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#e2b35a" stop-opacity="0.30"/>
+      <stop offset="60%" stop-color="#e2b35a" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#e2b35a" stop-opacity="0"/>
+    </radialGradient>
   </defs>
   <rect width="1024" height="1024" fill="url(#bg)"/>
-
-  <!-- Subtle maze texture -->
-  <g stroke="rgba(255,255,255,0.03)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <polyline points="200,250 200,180 400,180 400,300"/>
-    <polyline points="620,180 820,180 820,350"/>
-    <polyline points="200,450 200,550 350,550"/>
-    <polyline points="670,550 820,550 820,700"/>
-    <polyline points="200,700 200,840 450,840"/>
-    <polyline points="580,840 820,840"/>
-  </g>
+  <rect width="1024" height="1024" fill="url(#glow)"/>
 </svg>
