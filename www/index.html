@@ -3185,11 +3185,14 @@ function drawPlay(){
   txt('≡',32,TOP_Y,22,phv?TH.text:TH.textSec);
   if(tapped&&abs(tapX-32)<24&&abs(tapY-TOP_Y)<24){sfx.tap();tapped=false;goto('menu',()=>{isDaily=false;isWeekly=false});return}
 
-  // Level title (center)
-  txt('Level '+level,W/2,TOP_Y,16,TH.text);
-  // Stars for this level goal — below the title
+  // Level title — bigger weight + slight letter-spacing for "Level N"
+  // pill feel. Was 16 px regular which read as a placeholder; now 20 px
+  // bold matches the hearts visually and looks deliberate. Stars below
+  // bumped 7 -> 9 px and centred row width 60 -> 80 px so they
+  // breathe instead of clumping into a single yellow dot at distance.
+  txtP('LEVEL '+level,W/2,TOP_Y,20,TH.text);
   for(let i=0;i<3;i++){
-    drawStar(W/2-20+i*20,TOP_Y+22,7,moves<=minMoves+i*1&&i<(moves<=minMoves?3:moves<=minMoves+2?2:1));
+    drawStar(W/2-26+i*26,TOP_Y+24,9,moves<=minMoves+i*1&&i<(moves<=minMoves?3:moves<=minMoves+2?2:1));
   }
 
   // Hearts = lives (top-right, vertically centered with menu button)
@@ -3236,12 +3239,13 @@ function drawPlay(){
   }
   X.stroke();
 
-  // Dot grid background — visible dots at the center of every grid cell.
-  // v2 sizing: was cs*.06 (≈3 px on a 60-px cell — barely visible). Now
-  // cs*.11 ≈ 6.5 px, with stronger alpha so the graph-paper texture
-  // actually reads on a phone screen.
-  X.fillStyle=darkMode?'rgba(255,255,255,.18)':'rgba(0,0,0,.16)';
-  const _dotR=max(2,cs*.11);
+  // Dot grid background — small visible dots at the center of every cell.
+  // v2 final sizing: cs*.08 (≈5 px on a 60-px cell). Was bumped to
+  // cs*.11 in the previous pass but user said "too big, looks like
+  // mess". Slightly smaller + alpha .15 keeps graph-paper feel without
+  // competing with the arrows.
+  X.fillStyle=darkMode?'rgba(255,255,255,.15)':'rgba(0,0,0,.13)';
+  const _dotR=max(1.5,cs*.08);
   const _hasWave=!!_winWave;
   let _waveP=0,_waveX=0,_waveY=0,_waveSpeed=0;
   if(_hasWave){
@@ -3252,35 +3256,47 @@ function drawPlay(){
     _waveSpeed=max(W,H)*1.1;
     if(_waveP>=1)_winWave=null;
   }
-  // Dots on EVERY cell (not just occupied) so the grid keeps a graph-
-  // paper texture under empty cells too. The wave pulse only animates
-  // dots inside _levelCells. v2 bumped alpha .05 -> .12 and dot size
-  // ratio .55 -> .80 so empty cells read clearly on the bg.
-  X.fillStyle=darkMode?'rgba(255,255,255,.12)':'rgba(0,0,0,.10)';
+  // Dots on EVERY cell (not just occupied) for graph-paper texture.
+  X.fillStyle=darkMode?'rgba(255,255,255,.10)':'rgba(0,0,0,.08)';
   for(let r=0;r<gridRows;r++){
     for(let c=0;c<gridCols;c++){
-      X.beginPath();X.arc(gx+c*cs+cs/2,gy+r*cs+cs/2,_dotR*0.80,0,TAU);X.fill();
+      X.beginPath();X.arc(gx+c*cs+cs/2,gy+r*cs+cs/2,_dotR*0.65,0,TAU);X.fill();
     }
   }
-  X.fillStyle=darkMode?'rgba(255,255,255,.18)':'rgba(0,0,0,.16)';
+  // Occupied-cell dots (slightly stronger than empty cells). On level
+  // completion the win wave passes through and turns each dot into a
+  // tiny golden DIAMOND for the moment the wave front is on it — feels
+  // like sparkles riding a ripple from where the last arrow flew out.
+  // Off-wave the dot stays a neutral circle, so the magic moment is
+  // strictly the celebration window (1.6 s) and nothing else.
   for(const k of _levelCells){
     const i=k.indexOf(',');
     const r=+k.slice(0,i),c=+k.slice(i+1);
     const cx=gx+c*cs+cs/2,cy=gy+r*cs+cs/2;
-    let scale=1;
+    let waveT=0;
     if(_hasWave){
-      // Distance from wave origin → time for the front to arrive at this dot.
       const dx=cx-_waveX,dy=cy-_waveY;
       const d=Math.sqrt(dx*dx+dy*dy);
       const arriveP=d/_waveSpeed;
-      // Each dot's local "wave time" is a 0..1 window centred on the
-      // wave front passing through it. Bell curve (sin(πx)) makes the
-      // dot deflate down to ~30% then settle back — looks like the
-      // dot is briefly "pushed in" by a passing pulse.
-      const wlocal=(_waveP-arriveP)/0.18; // 0..1 over 18% of total dur
-      if(wlocal>0&&wlocal<1)scale=1-Math.sin(wlocal*PI)*0.7;
+      const wlocal=(_waveP-arriveP)/0.22; // window 22% of total dur
+      if(wlocal>0&&wlocal<1)waveT=Math.sin(wlocal*PI); // 0..1 bell curve
     }
-    X.beginPath();X.arc(cx,cy,_dotR*scale,0,TAU);X.fill();
+    if(waveT>0.05){
+      // Sparkle phase: golden diamond growing & shrinking with the wave.
+      const sz=_dotR*(1.4+waveT*1.6);
+      const alpha=Math.min(1,0.5+waveT*0.6);
+      X.save();
+      X.fillStyle=TH.star;
+      X.globalAlpha=alpha;
+      X.translate(cx,cy);
+      X.rotate(PI/4); // 45° → diamond
+      X.fillRect(-sz/2,-sz/2,sz,sz);
+      X.restore();
+    } else {
+      // Normal phase: subtle circular dot.
+      X.fillStyle=darkMode?'rgba(255,255,255,.15)':'rgba(0,0,0,.13)';
+      X.beginPath();X.arc(cx,cy,_dotR,0,TAU);X.fill();
+    }
   }
 
   // Draw all alive arrows as continuous paths through their cells
@@ -3480,40 +3496,56 @@ function drawPlay(){
 
   X.restore(); // === ZOOM/PAN BLOCK END === — UI below stays in screen coords
 
-  // Bottom bar: stats row + action buttons row
+  // Bottom stats row. v2: bumped font 11 -> 13, switched key numbers
+  // (moves count, time) to bold so they're scannable at a glance, and
+  // added small label-on-top format (LABEL above number) so the row
+  // stops reading like a debug printf and starts reading like a stat
+  // strip. Layout: [MOVES] [TIME] [COIN+N] across thirds of the width.
   const sy1=H*.87;
-  txt('Moves: '+moves+'/'+minMoves,W*.22,sy1,11,moves>minMoves?TH.warning:TH.textSec);
   const tm=floor(timer),mm=floor(tm/60),ss=tm%60;
-  txt(mm+':'+(ss<10?'0':'')+ss,W*.52,sy1,11,TH.textSec);
-  drawCoin(W*.72,sy1,6);
-  txt(coins+'',W*.75,sy1,11,TH.star,'left');
+  const _stat=(x,label,value,valColor)=>{
+    txt(label,x,sy1-7,9,TH.textDim);
+    txtP(value,x,sy1+7,14,valColor||TH.text);
+  };
+  _stat(W*.22,'MOVES',moves+'/'+minMoves,moves>minMoves?TH.warning:TH.text);
+  _stat(W*.50,'TIME',mm+':'+(ss<10?'0':'')+ss);
+  // Coin badge — coin icon + count, both vertically centred inside a tiny pill
+  {
+    const cx=W*.78,cy=sy1;
+    drawCoin(cx-12,cy,7);
+    txtP(coins+'',cx+2,cy,14,TH.star,'left');
+  }
 
-  // Action buttons row (Hint + Skip) — wider so labels in any language fit
-  // alongside the coin badge without truncation. Layout: label left, coin
-  // icon + cost right; both padded inside the pill.
-  const by=H*.93,bw=130,bh=34;
+  // Action buttons row (Hint + Skip). v2 polish: bumped height 34 -> 40,
+  // text 12 -> 13, added a small icon in front of the label to make the
+  // buttons read as game actions instead of generic pills. Also shifted
+  // the press scale to use the global btnPressScale helper so they tilt
+  // tactilely on tap like every other button.
+  const by=H*.93,bw=140,bh=40;
   const _drawActionBtn=(bx,label,cost,enabled,color)=>{
     const hv=abs(mx-bx)<bw/2&&abs(my-by)<bh/2;
-    // Design system: matches drawBigBtn tokens (fill 18/30, stroke 50, lw 1.5)
-    X.fillStyle=enabled?(hv?color+'30':color+'18'):TH.btnBg;
-    X.beginPath();X.roundRect(bx-bw/2,by-bh/2,bw,bh,bh/2);X.fill();
-    X.strokeStyle=enabled?color+'50':TH.border;X.lineWidth=1.5;
-    X.beginPath();X.roundRect(bx-bw/2,by-bh/2,bw,bh,bh/2);X.stroke();
-    // Label aligned LEFT inside the button (so coin/cost gets clean space on the right)
+    const sc=btnPressScale(bx,by,bw,bh);
+    const dw=bw*sc,dh=bh*sc;
+    // Solid fill at 30% / hover 45% — bumped from 18%/30% so the button
+    // pops off the dim play-area background better than the v1 ghost.
+    X.fillStyle=enabled?(hv?color+'45':color+'30'):TH.btnBg;
+    X.beginPath();X.roundRect(bx-dw/2,by-dh/2,dw,dh,dh/2);X.fill();
+    X.strokeStyle=enabled?color+'70':TH.border;X.lineWidth=1.5;
+    X.beginPath();X.roundRect(bx-dw/2,by-dh/2,dw,dh,dh/2);X.stroke();
     const labelColor=enabled?TH.text:TH.textDim;
     const costColor=enabled?TH.star:TH.textDim;
-    txt(label,bx-bw*.18,by,12,labelColor);
-    drawCoin(bx+bw*.18,by,6);
-    txt(cost+'',bx+bw*.28,by,11,costColor,'left');
+    txtP(label,bx-bw*.18,by,13,labelColor);
+    drawCoin(bx+bw*.18,by,7);
+    txt(cost+'',bx+bw*.28,by,12,costColor,'left');
     return tapped&&abs(tapX-bx)<bw/2&&abs(tapY-by)<bh/2;
   };
   const canHint=coins>=HINT_COST&&hintTime<=0;
-  if(_drawActionBtn(W*.275,t('hint'),HINT_COST,canHint,TH.star)){
+  if(_drawActionBtn(W*.27,t('hint'),HINT_COST,canHint,TH.star)){
     if(canHint)useHint();
     tapped=false;
   }
   const canSkip=coins>=SKIP_COST&&!isDaily&&!isWeekly;
-  if(_drawActionBtn(W*.725,t('skip'),SKIP_COST,canSkip,TH.warning)){
+  if(_drawActionBtn(W*.73,t('skip'),SKIP_COST,canSkip,TH.warning)){
     if(canSkip)skipLevel();
     tapped=false;
   }
