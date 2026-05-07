@@ -9,8 +9,12 @@
     "SplashScreen": {
       "launchAutoHide": true,
       "launchShowDuration": 1500,
+      "launchFadeOutDuration": 300,
       "backgroundColor": "#f5f2ed",
-      "showSpinner": false
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false,
+      "splashImmersive": true,
+      "splashFullScreen": true
     },
     "StatusBar": {
       "style": "dark",

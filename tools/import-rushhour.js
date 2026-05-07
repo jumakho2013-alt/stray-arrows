@@ -41,13 +41,19 @@ const DY = [0, -1, 0, 1];
 // `targetCount` is what we want; we'll over-sample when the dataset has more
 // than enough so we can throw away post-conversion failures without dropping
 // below the target.
+// Bucket 4 was originally 50-99 moves but the database only has ~15 boards
+// in that range — the late-game slot stayed mostly empty after the first
+// pass. We now span the full 5-99 range with overlapping buckets so even
+// the late chunks are densely populated; difficulty still ramps because
+// stratified sampling within each bucket sorts by `moves` ascending and
+// places the easier boards first in the level number range.
 const BUCKETS = [
-  { range: [11, 100],   minMoves: 5,  maxMoves: 15, targetCount: 600 },
-  { range: [101, 300],  minMoves: 15, maxMoves: 30, targetCount: 800 },
-  { range: [301, 600],  minMoves: 30, maxMoves: 50, targetCount: 700 },
-  { range: [601, 1100], minMoves: 50, maxMoves: 99, targetCount: 500 },
+  { range: [11, 250],    minMoves: 5,  maxMoves: 14, targetCount: 1000 },
+  { range: [251, 600],   minMoves: 14, maxMoves: 24, targetCount: 1200 },
+  { range: [601, 1000],  minMoves: 24, maxMoves: 36, targetCount: 800 },
+  { range: [1001, 1500], minMoves: 36, maxMoves: 99, targetCount: 600 },
 ];
-const CHUNK_SIZE = 200;
+const CHUNK_SIZE = 250;
 
 // ---------- Parsers ----------
 

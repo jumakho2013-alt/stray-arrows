@@ -8,49 +8,49 @@
     "chunkIdx": 0,
     "file": "imported-000.js",
     "levelStart": 1,
-    "levelEnd": 200,
-    "count": 190,
-    "sizeBytes": 66478
+    "levelEnd": 250,
+    "count": 240,
+    "sizeBytes": 81160
   },
   {
     "chunkIdx": 1,
     "file": "imported-001.js",
-    "levelStart": 201,
-    "levelEnd": 400,
-    "count": 200,
-    "sizeBytes": 70863
+    "levelStart": 251,
+    "levelEnd": 500,
+    "count": 250,
+    "sizeBytes": 87025
   },
   {
     "chunkIdx": 2,
     "file": "imported-002.js",
-    "levelStart": 401,
-    "levelEnd": 600,
-    "count": 200,
-    "sizeBytes": 71743
+    "levelStart": 501,
+    "levelEnd": 750,
+    "count": 250,
+    "sizeBytes": 87273
   },
   {
     "chunkIdx": 3,
     "file": "imported-003.js",
-    "levelStart": 601,
-    "levelEnd": 800,
-    "count": 6,
-    "sizeBytes": 2817
+    "levelStart": 751,
+    "levelEnd": 1000,
+    "count": 250,
+    "sizeBytes": 88495
   },
   {
     "chunkIdx": 4,
     "file": "imported-004.js",
-    "levelStart": 801,
-    "levelEnd": 1000,
-    "count": 6,
-    "sizeBytes": 2650
+    "levelStart": 1001,
+    "levelEnd": 1250,
+    "count": 250,
+    "sizeBytes": 89687
   },
   {
     "chunkIdx": 5,
     "file": "imported-005.js",
-    "levelStart": 1001,
-    "levelEnd": 1200,
-    "count": 3,
-    "sizeBytes": 1687
+    "levelStart": 1251,
+    "levelEnd": 1500,
+    "count": 250,
+    "sizeBytes": 90407
   }
 ];
   if (typeof window !== 'undefined') window.IMPORTED_LEVELS_META = meta;
