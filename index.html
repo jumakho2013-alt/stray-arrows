@@ -3031,6 +3031,25 @@ function drawCoin(x,y,r){
 // drawHeart glyph next to it (same fill-with-tiny-stroke approach).
 // Pass `sz` = nominal size of the heart it sits next to; the bulb
 // uses sz as its overall glyph height.
+
+// Hamburger / pause-menu glyph — three horizontal bars, rounded ends.
+// Replaces the unicode "≡" which fell back to a different font on
+// some Androids and showed at inconsistent weights between devices.
+function drawHamburger(x, y, sz, col){
+  X.save();
+  X.strokeStyle = col;
+  X.lineWidth = max(1.6, sz * 0.18);
+  X.lineCap = 'round';
+  const w = sz * 1.0;
+  const dy = sz * 0.36;
+  X.beginPath();
+  X.moveTo(x - w/2, y - dy); X.lineTo(x + w/2, y - dy);
+  X.moveTo(x - w/2, y);      X.lineTo(x + w/2, y);
+  X.moveTo(x - w/2, y + dy); X.lineTo(x + w/2, y + dy);
+  X.stroke();
+  X.restore();
+}
+
 function drawLightbulb(x, y, sz, col){
   X.save();
   X.fillStyle=col;
@@ -3238,14 +3257,16 @@ function drawPlay(){
   // Floor at 65 so non-notched devices still get reasonable padding.
   const TOP_Y=Math.max(65,safeTop+25);
 
-  // Pause/menu button (top-left) — bigger hit area (44×44) per HIG touch target
+  // Pause/menu button (top-left). Same 44×36 pill but icon is now
+  // canvas-drawn so it stays consistent across iOS / Android font
+  // fallback differences (the previous unicode "≡" rendered at
+  // different weights on different Androids).
   const phv=abs(mx-32)<24&&abs(my-TOP_Y)<24;
-  // Draw a subtle background card behind the icon so the touch area is obvious
   X.fillStyle=phv?TH.btnHover:TH.btnBg;
   X.beginPath();X.roundRect(32-22,TOP_Y-18,44,36,18);X.fill();
   X.strokeStyle=TH.border;X.lineWidth=1;
   X.beginPath();X.roundRect(32-22,TOP_Y-18,44,36,18);X.stroke();
-  txt('≡',32,TOP_Y,22,phv?TH.text:TH.textSec);
+  drawHamburger(32,TOP_Y,9,phv?TH.text:TH.textSec);
   if(tapped&&abs(tapX-32)<24&&abs(tapY-TOP_Y)<24){sfx.tap();tapped=false;goto('menu',()=>{isDaily=false;isWeekly=false});return}
 
   // Level title — bigger weight + slight letter-spacing for "Level N"
@@ -3943,86 +3964,68 @@ function drawAchPopup(){
 }
 
 // --- GAME OVER ---
+// v2 redesign: every button now flows through the unified
+// _drawPillBtn helper (drawBtn / drawBigBtn) — no more inline
+// pill-renders with the old tinted alpha fill that read as muddy
+// brown on dark mode. Buttons stack on a strict 60 px rhythm so
+// no element drifts higher/lower than its neighbours.
 function drawGameOver(){
   drawBg(true);
 
-  // Broken heart hero — same shape as the lives icons (consistency) but
-  // 4× scale and with the zigzag crack visible.
-  drawHeart(W/2,H*.22,56,true,true);
-
-  txtP(t('gameOver'),W/2,H*.38,28,TH.text);
-  txt(t('outOfHearts'),W/2,H*.44,13,TH.textSec);
-
-  // Buttons
-  if(drawBigBtn(t('retry'),W/2,H*.50,200,48,TH.accent)){
-    showInterstitialAd(); // show ad between retries
-    goto('play',()=>{generateLevel(level)});
-  }
-
-  // Continue for coins — pill-styled like every other button in the app
-  // (drawBtn shape & color tokens), with the cost block right-aligned.
-  const canContinue=coins>=CONTINUE_COST;
-  const cby=H*.58,cbw=220,cbh=42;
-  const c=canContinue?TH.star:null; // pass null when greyed out
-  const blocked=_inputBlocked();
-  const cbhv=!blocked&&abs(mx-W/2)<cbw/2&&abs(my-cby)<cbh/2;
-  const sc=btnPressScale(W/2,cby,cbw,cbh);
-  const dw=cbw*sc,dh=cbh*sc;
-  X.fillStyle=canContinue?(cbhv?TH.star+'30':TH.star+'18'):TH.btnBg;
-  X.beginPath();X.roundRect(W/2-dw/2,cby-dh/2,dw,dh,dh/2);X.fill();
-  X.strokeStyle=canContinue?TH.star+'50':TH.border;X.lineWidth=1.5;
-  X.beginPath();X.roundRect(W/2-dw/2,cby-dh/2,dw,dh,dh/2);X.stroke();
-  txt(t('continueBtn'),W/2-30,cby,14,canContinue?TH.btnText:TH.textDim);
-  drawCoin(W/2+38,cby,7);
-  txt(CONTINUE_COST+'',W/2+50,cby,12,canContinue?TH.star:TH.textDim,'left');
-  if(!blocked&&tapped&&abs(tapX-W/2)<cbw/2&&abs(tapY-cby)<cbh/2){
-    if(canContinue){sfx.tap();continueFromGameover();}
-    tapped=false;
-  }
-
-  // Continue by watching ad (FREE alternative) — same pill style with
-  // a real play-triangle icon (was a unicode ▶ which rendered inconsistently
-  // across languages and looked off-brand).
-  const aby=H*.66,abw=220,abh=42;
-  const abhv=!blocked&&abs(mx-W/2)<abw/2&&abs(my-aby)<abh/2;
-  const asc=btnPressScale(W/2,aby,abw,abh);
-  const adw=abw*asc,adh=abh*asc;
-  X.fillStyle=abhv?TH.success+'30':TH.success+'18';
-  X.beginPath();X.roundRect(W/2-adw/2,aby-adh/2,adw,adh,adh/2);X.fill();
-  X.strokeStyle=TH.success+'50';X.lineWidth=1.5;
-  X.beginPath();X.roundRect(W/2-adw/2,aby-adh/2,adw,adh,adh/2);X.stroke();
-  txt(t('continueBtn'),W/2-12,aby,14,TH.btnText);
-  drawPlayIcon(W/2+50,aby,9,TH.success);
-  if(!blocked&&tapped&&abs(tapX-W/2)<abw/2&&abs(tapY-aby)<abh/2){
-    sfx.tap();tapped=false;
-    showRewardedAd(()=>{undosLeft=3;S='play'});
-  }
-
-  // Watch ad for coins (when low on coins).
-  if(coins<CONTINUE_COST){
-    const cy=H*.73,cw=220,ch=38;
-    const chv=!blocked&&abs(mx-W/2)<cw/2&&abs(my-cy)<ch/2;
-    const csc=btnPressScale(W/2,cy,cw,ch);
-    const cdw=cw*csc,cdh=ch*csc;
-    X.fillStyle=chv?TH.star+'30':TH.star+'18';
-    X.beginPath();X.roundRect(W/2-cdw/2,cy-cdh/2,cdw,cdh,cdh/2);X.fill();
-    X.strokeStyle=TH.star+'50';X.lineWidth=1.5;
-    X.beginPath();X.roundRect(W/2-cdw/2,cy-cdh/2,cdw,cdh,cdh/2);X.stroke();
-    txt('+'+AD_COIN_REWARD+' '+t('coins').toUpperCase(),W/2-16,cy,13,TH.btnText);
-    drawPlayIcon(W/2+58,cy,8,TH.star);
-    if(!blocked&&tapped&&abs(tapX-W/2)<cw/2&&abs(tapY-cy)<ch/2){
-      sfx.tap();tapped=false;
-      showRewardedAd(()=>{coins+=AD_COIN_REWARD;totalCoinsEarned+=AD_COIN_REWARD;save();spawnFloater(W/2,cy,'+'+AD_COIN_REWARD)});
-    }
-  }
-
-  if(drawBtn(t('home'),W/2,H*.81,140,38)){goto('menu')}
-
-  // Coins display top-right
+  // Coins display top-right (drawn early so it sits behind anything else)
   drawCoin(W-50,64,7);
   txt(coins+'',W-40,64,13,TH.star,'left');
 
+  // Broken-heart hero
+  drawHeart(W/2,H*.18,56,true,true);
 
+  // Title + subtitle
+  txtP(t('gameOver'),W/2,H*.34,28,TH.text);
+  txt(t('outOfHearts'),W/2,H*.40,13,TH.textSec);
+
+  // Action stack — strict y-rhythm: header → 60px → btn → 60px → btn …
+  let by = H*.50;
+
+  // 1. Retry (primary, neutral fill, label in TH.text)
+  if(drawBigBtn(t('retry'),W/2,by,220,52)){
+    showInterstitialAd();
+    goto('play',()=>{generateLevel(level)});
+  }
+  by += 64;
+
+  // 2. Continue for coins
+  const canContinue=coins>=CONTINUE_COST;
+  const continueLabel=t('continueBtn')+'  '+CONTINUE_COST;
+  if(drawBtn(continueLabel,W/2,by,220,44,canContinue?TH.star:null)){
+    if(canContinue) continueFromGameover();
+  }
+  // Coin badge sits visually inside the right edge of the pill;
+  // drawing it AFTER drawBtn means it's painted over the button
+  // surface for correct layering.
+  drawCoin(W/2+88,by,7);
+  by += 56;
+
+  // 3. Free continue via rewarded ad
+  if(drawBtn(t('continueBtn')+' (Ad)',W/2,by,220,44,TH.success)){
+    showRewardedAd(()=>{undosLeft=3;S='play'});
+  }
+  by += 56;
+
+  // 4. Watch ad for coins — only when player can't afford option 2
+  if(coins<CONTINUE_COST){
+    const adLabel='+'+AD_COIN_REWARD+' '+t('coins').toUpperCase();
+    if(drawBtn(adLabel,W/2,by,220,40,TH.star)){
+      const cy=by;
+      showRewardedAd(()=>{
+        coins+=AD_COIN_REWARD;totalCoinsEarned+=AD_COIN_REWARD;save();
+        spawnFloater(W/2,cy,'+'+AD_COIN_REWARD);
+      });
+    }
+    by += 50;
+  }
+
+  // 5. Home — small neutral pill at the bottom
+  if(drawBtn(t('home'),W/2,by+8,140,36)){goto('menu')}
 }
 
 // --- SETTINGS ---
@@ -4339,42 +4342,61 @@ function drawSettings(){
 // --- LANGUAGE PICKER MODAL ---
 // Shown over any screen; absorbs all taps until the user picks a language or
 // taps outside the panel. Lists every language in LANGS, current one marked.
+//
+// v2 redesign: matches the Settings card visual language. Panel is
+// the TH.surface token, hairline TH.border outline, hover/selected
+// rows use the same neutral tint as _settingsRow. No more bespoke
+// rgba colour mixing per surface — every modal/card in the app reads
+// from the same palette tokens so dark mode keeps its colour family
+// consistent.
 function drawLangPicker(){
   // Dim backdrop
-  X.fillStyle='rgba(0,0,0,.5)';X.fillRect(0,0,W,H);
-  // Panel — adapts to theme: cream paper in light mode, dark navy in dark.
-  // Inner row colors derive from TH so they stay readable in both modes.
-  const panelW=300,panelH=Math.min(LANGS.length*52+90,H-100);
+  X.fillStyle='rgba(0,0,0,.55)';X.fillRect(0,0,W,H);
+  const rowH=46;
+  const panelW=300, panelH=Math.min(LANGS.length*rowH+78, H-100);
   const px=(W-panelW)/2, py=(H-panelH)/2;
-  const r=22;
-  const panelBg=darkMode?'#2a2a4a':'#ffffff';
-  const titleCol=darkMode?'#f0eee8':'#2a2a2a';
-  const rowText=darkMode?'#e8e6e0':'#2a2a2a';
-  const rowSel=TH.accent;
-  const rowSelBg=darkMode?'rgba(226,179,90,.20)':'rgba(200,144,48,.16)';
-  const rowHover=darkMode?'rgba(255,255,255,.06)':'rgba(0,0,0,.05)';
-  X.fillStyle=panelBg;
-  X.beginPath();X.roundRect(px,py,panelW,panelH,r);X.fill();
-  X.strokeStyle=darkMode?'rgba(255,255,255,.10)':'rgba(0,0,0,.08)';X.lineWidth=1;
-  X.beginPath();X.roundRect(px,py,panelW,panelH,r);X.stroke();
-  txtP(t('language'),W/2,py+34,18,titleCol);
-  const rowH=46,startY=py+62,maxRows=Math.floor((panelH-90)/rowH);
+  // Panel surface
+  X.fillStyle=TH.surface;
+  X.beginPath();X.roundRect(px,py,panelW,panelH,18);X.fill();
+  X.strokeStyle=TH.border;X.lineWidth=1;
+  X.beginPath();X.roundRect(px,py,panelW,panelH,18);X.stroke();
+  // Title
+  txtP(t('language'),W/2,py+30,18,TH.text);
+  // Clip the row list to the rounded panel so hover highlights at the
+  // first/last row don't poke past the corners — same trick as the
+  // Settings cards.
+  X.save();
+  X.beginPath();X.roundRect(px,py,panelW,panelH,18);X.clip();
+  const startY=py+58, maxRows=Math.floor((panelH-72)/rowH);
   for(let i=0;i<Math.min(LANGS.length,maxRows);i++){
     const L=LANGS[i];
     const ry=startY+i*rowH;
     const sel=L.code===lang;
-    const hv=mx>px+12&&mx<px+panelW-12&&abs(my-(ry+rowH/2))<rowH/2;
-    if(sel||hv){
-      X.fillStyle=sel?rowSelBg:rowHover;
-      X.beginPath();X.roundRect(px+12,ry,panelW-24,rowH-4,12);X.fill();
+    const hv=mx>px&&mx<px+panelW&&my>=ry&&my<=ry+rowH;
+    if(hv){
+      X.fillStyle=darkMode?'rgba(255,255,255,.05)':'rgba(0,0,0,.04)';
+      X.fillRect(px,ry,panelW,rowH);
     }
-    txt(L.name,W/2,ry+rowH/2,15,sel?rowSel:rowText);
-    if(sel){txt('✓',px+panelW-30,ry+rowH/2,16,rowSel,'right')}
-    if(tapped&&abs(tapX-W/2)<panelW/2-12&&abs(tapY-(ry+rowH/2))<rowH/2){
+    txt(L.name, W/2, ry+rowH/2, 15, sel?TH.accent:TH.text);
+    // Checkmark for selected language — small canvas-stroked tick to
+    // match the rest of the icon family (no font fallback).
+    if(sel){
+      X.save();
+      X.strokeStyle=TH.accent;X.lineWidth=2.2;X.lineCap='round';X.lineJoin='round';
+      const ckx=px+panelW-26, cky=ry+rowH/2;
+      X.beginPath();
+      X.moveTo(ckx-7,cky);X.lineTo(ckx-2,cky+5);X.lineTo(ckx+7,cky-6);
+      X.stroke();
+      X.restore();
+    }
+    if(tapped && tapX>px && tapX<px+panelW && tapY>=ry && tapY<=ry+rowH){
       lang=L.code;_safeSet('ae_lang',lang);
-      langPickerOpen=false;sfx.tap();haptic(8);tapped=false;return;
+      langPickerOpen=false;sfx.tap();haptic(8);tapped=false;
+      X.restore();
+      return;
     }
   }
+  X.restore();
   // Close (taps outside panel) — checked LAST so row taps win
   if(tapped&&(tapX<px||tapX>px+panelW||tapY<py||tapY>py+panelH)){
     langPickerOpen=false;tapped=false;
