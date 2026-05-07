@@ -4042,16 +4042,28 @@ function _drawSectionHeader(text, y){
 
 // Single grouped-list card — pass an array of row renderers, returns the y
 // below the card. Each row gets divider line between (except last).
+//
+// Card content is CLIPPED to the rounded outer shape so the hover row
+// highlight, dividers, and any row content can't bleed past the
+// corners. Without the clip, the corner rows show a rectangular hover
+// rect that pokes outside the 16-px corner radius — user explicitly
+// flagged this ("свечение по углам выходит за рамки").
 function _drawSettingsCard(yTop, rows){
   const cardX = 20, cardW = W - 40;
   const rowH = 56;
   const cardH = rowH * rows.length;
-  // Surface
+  // Surface + outline (drawn BEFORE the clip so the stroke renders at
+  // full thickness on the rim, not half-thickness inside it).
   X.fillStyle = TH.surface;
   X.beginPath(); X.roundRect(cardX, yTop, cardW, cardH, 16); X.fill();
   X.strokeStyle = TH.border; X.lineWidth = 1;
   X.beginPath(); X.roundRect(cardX, yTop, cardW, cardH, 16); X.stroke();
-  // Rows + dividers
+  // Clip subsequent draws to the card silhouette — the highlight in
+  // _settingsRow stays a clean rect now (cheap, no per-row corner
+  // detection), but the rounded clip eats whatever pokes past.
+  X.save();
+  X.beginPath(); X.roundRect(cardX, yTop, cardW, cardH, 16);
+  X.clip();
   for (let i = 0; i < rows.length; i++) {
     const ry = yTop + i * rowH;
     rows[i](cardX, ry, cardW, rowH);
@@ -4064,19 +4076,27 @@ function _drawSettingsCard(yTop, rows){
       X.stroke();
     }
   }
+  X.restore();
   return yTop + cardH;
 }
 
 // Hit-test wrapper — draws the row, returns whether it was tapped.
-function _settingsRow(rx, ry, rw, rh, draw){
+// Standalone rows (not inside a card — e.g. inline Cancel link, Back
+// link) get a rounded-pill highlight via passing `inCard=false`. Rows
+// inside a card pass `inCard=true` so the parent clip handles the
+// corner trimming and we just paint a plain rect.
+function _settingsRow(rx, ry, rw, rh, draw, inCard){
   const blocked = _inputBlocked();
   const hv = !blocked && mx >= rx && mx <= rx + rw && my >= ry && my <= ry + rh;
   if (hv) {
-    X.fillStyle = darkMode ? 'rgba(255,255,255,.04)' : 'rgba(0,0,0,.025)';
+    X.fillStyle = darkMode ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.04)';
     X.beginPath();
-    // Soft inner highlight only — no stroke, just a tint that matches
-    // the iOS "row pressed" feedback.
-    X.roundRect(rx + 2, ry, rw - 4, rh, 0);
+    if (inCard === false) {
+      // No surrounding clip → the highlight itself must be rounded.
+      X.roundRect(rx, ry, rw, rh, rh / 2);
+    } else {
+      X.rect(rx, ry, rw, rh);
+    }
     X.fill();
   }
   draw(rx, ry, rw, rh, hv);
@@ -4296,14 +4316,14 @@ function drawSettings(){
     yCursor += 6;
     if (_settingsRow(W / 2 - 60, yCursor, 120, 30, (rx, ry, rw, rh) => {
       txt(t('cancel'), rx + rw / 2, ry + rh / 2, 13, TH.textSec);
-    })) resetConfirm = false;
+    }, false)) resetConfirm = false;
   }
 
   // Back arrow — small, lives in top-left, doesn't compete with the title.
   if (_settingsRow(12, 36, 90, 44, (rx, ry, rw, rh) => {
     _drawChevron(rx + 16, ry + rh / 2, 7, TH.text);
     txt(t('back'), rx + 30, ry + rh / 2, 13, TH.text, 'left');
-  })) { resetConfirm = false; goto('menu'); }
+  }, false)) { resetConfirm = false; goto('menu'); }
 }
 
 // --- LANGUAGE PICKER MODAL ---
