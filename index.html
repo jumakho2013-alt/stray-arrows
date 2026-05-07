@@ -1068,6 +1068,7 @@ let lastGained=0;
 let anims=[]; // flying arrow animations
 let shakeAnims=[]; // blocked shake animations
 let confetti=[]; // completion confetti
+let completeEnterT=0; // game-clock seconds when state became 'complete'; used to drive star fly-in animation
 // Win ripple — a soft expanding ring from the last-cleared arrow's head
 // before the complete screen lands. Adds a "drop in water" beat to the win.
 let _winWave=null;
@@ -2474,6 +2475,7 @@ function tapArrowByIndex(idx){
       setTimeout(()=>{
         inputLocked=false;
         S='complete';
+        completeEnterT=gt;
         sfx.complete();haptic(30);
         const s=max(1,undosLeft);
         const perfect=(s===3);
@@ -3170,9 +3172,41 @@ function drawMenu(){
   txtP(t('trophy'),col4,spY-13,8,TH.textSec);
   txtP(achUnlockedCount()+'/'+ACHIEVEMENTS.length,col4,spY+9,13,TH.accent);
 
-  // PLAY button — text only, no play-icon (it broke the visual style)
-  if(drawBigBtn(t('play'),W/2,H*.58,210,56,TH.accent)){
-    goto('play',()=>{isDaily=false;isWeekly=false;level=maxLevel;generateLevel(level)});
+  // PLAY hero button — bigger than the secondary grid below, gold-tinted
+  // fill (only place the accent colour appears as a SURFACE in the app),
+  // with the play-triangle glyph and a subtle breathing pulse so it
+  // visually invites the tap. Other buttons stay neutral; this is the
+  // first thing the player sees and the primary action.
+  {
+    const bx=W/2, by=H*.58, bw=240, bh=64;
+    const blocked=_inputBlocked();
+    const hv=!blocked&&abs(mx-bx)<bw/2&&abs(my-by)<bh/2;
+    const sc=btnPressScale(bx,by,bw,bh);
+    const dw=bw*sc, dh=bh*sc;
+    const r=dh/2;
+    // Soft breathing tint — alpha drifts 0.92↔1.0 every 2.4 s. Skipped
+    // when reducedMotion is on.
+    const pulse = reducedMotion ? 1 : (.96 + .04 * sin(gt * 2.6));
+    X.save();
+    X.globalAlpha = pulse;
+    // Gold-tinted fill that survives in dark mode (raised alpha so it
+    // reads as "primary action" instead of muddy chocolate).
+    X.fillStyle = hv ? TH.accent + 'E5' : TH.accent + 'CC';
+    X.beginPath(); X.roundRect(bx-dw/2, by-dh/2, dw, dh, r); X.fill();
+    // Hairline darker rim for definition
+    X.strokeStyle = darkMode ? 'rgba(0,0,0,.30)' : 'rgba(0,0,0,.22)';
+    X.lineWidth = 1.5;
+    X.beginPath(); X.roundRect(bx-dw/2, by-dh/2, dw, dh, r); X.stroke();
+    // Label — high-contrast text reads against the gold fill in both themes
+    const labelCol = darkMode ? '#1a1a1a' : '#1a1a1a';
+    txtP(t('play'), bx - 14, by, 26, labelCol);
+    // Play-triangle glyph just to the right of the label
+    drawPlayIcon(bx + bw*.30, by, 12, labelCol);
+    X.restore();
+    if (!blocked && tapped && abs(tapX-bx)<bw/2 && abs(tapY-by)<bh/2) {
+      sfx.tap(); haptic(8); tapped = false;
+      goto('play',()=>{isDaily=false;isWeekly=false;level=maxLevel;generateLevel(level)});
+    }
   }
 
   // 2×2 grid of secondary buttons + achievements row
@@ -3674,39 +3708,93 @@ function drawComplete(){
     X.globalAlpha=1;
   }
 
-  // Check mark
-  X.strokeStyle=TH.success;X.lineWidth=3;X.lineCap='round';
-  X.beginPath();X.arc(W/2,H*.18,28,0,TAU);X.stroke();
-  X.beginPath();X.moveTo(W/2-12,H*.18);X.lineTo(W/2-3,H*.18+10);X.lineTo(W/2+14,H*.18-8);X.stroke();
+  // Elapsed since the screen appeared — drives the staggered animations.
+  // Falls back to "fully past" if completeEnterT was never set (very old
+  // saves, dev hot-reload).
+  const tNow = completeEnterT > 0 ? max(0, gt - completeEnterT) : 99;
 
-  const title=isWeekly?'WEEKLY DONE':(isDaily?'DAILY COMPLETE':'LEVEL '+level);
-  txtP(title,W/2,H*.27,24,TH.text);
+  // Hero check-circle. Pops in with a small bounce: scale 0 → 1.1 → 1
+  // over the first 380 ms.
+  const checkP = clp(tNow / 0.38, 0, 1);
+  const checkScale = checkP < 0.7
+    ? lrp(0, 1.1, checkP / 0.7)
+    : lrp(1.1, 1.0, (checkP - 0.7) / 0.3);
+  X.save();
+  X.translate(W/2, H*.18);
+  X.scale(checkScale, checkScale);
+  X.strokeStyle = TH.success; X.lineWidth = 3; X.lineCap = 'round';
+  X.beginPath(); X.arc(0, 0, 28, 0, TAU); X.stroke();
+  X.beginPath();
+  X.moveTo(-12, 0); X.lineTo(-3, 10); X.lineTo(14, -8);
+  X.stroke();
+  X.restore();
 
-  // Stars (skipped for daily/weekly)
-  const s=(isDaily||isWeekly)?3:(stars[level]||1);
-  if(!isDaily&&!isWeekly)for(let i=0;i<3;i++)drawStar(W/2-30+i*30,H*.34,12,i<s);
+  const title = isWeekly ? 'WEEKLY DONE' : (isDaily ? 'DAILY COMPLETE' : 'LEVEL ' + level);
+  // Title fades in slightly delayed
+  X.save();
+  X.globalAlpha = clp((tNow - 0.2) / 0.4, 0, 1);
+  txtP(title, W/2, H*.27, 24, TH.text);
+  X.restore();
 
-  // Stats — 3 columns
-  txt('Arrows',W*.22,H*.42,11,TH.textSec);
-  txtP(minMoves+'',W*.22,H*.47,18,TH.text);
-  txt('Hearts',W*.5,H*.42,11,TH.textSec);
-  txtP(undosLeft+'/3',W*.5,H*.47,18,undosLeft===3?TH.success:TH.text);
-  txt('Time',W*.78,H*.42,11,TH.textSec);
-  const tm=floor(timer),mm=floor(tm/60),ss=tm%60;
-  txtP(mm+':'+(ss<10?'0':'')+ss,W*.78,H*.47,18,TH.text);
-
-  if(!isDaily&&!isWeekly&&bestTime>0){
-    txt('Best: '+floor(bestTime)+'s',W/2,H*.53,11,TH.textDim);
+  // Stars — staggered fly-in. Each star gets a 350 ms window starting
+  // 0.45 s after entry, separated by 180 ms. Inside the window, the
+  // star scales from 0 → 1.4 → 1 with a fade. Skipped for daily/weekly
+  // (those are unconditionally 3-star).
+  const s = (isDaily || isWeekly) ? 3 : (stars[level] || 1);
+  if (!isDaily && !isWeekly) {
+    for (let i = 0; i < 3; i++) {
+      const stagger = 0.45 + i * 0.18;
+      const dur = 0.35;
+      const p = clp((tNow - stagger) / dur, 0, 1);
+      if (p <= 0) continue;
+      const sc = p < 0.6 ? lrp(0, 1.4, p / 0.6) : lrp(1.4, 1.0, (p - 0.6) / 0.4);
+      X.save();
+      X.translate(W/2 - 36 + i * 36, H*.34);
+      X.scale(sc, sc);
+      X.globalAlpha = clp(p * 1.5, 0, 1);
+      drawStar(0, 0, 14, i < s);
+      X.restore();
+    }
   }
 
-  // Coins earned. Read the actual `lastGained` set in the win check so daily
-  // and weekly replays show "Already claimed" instead of an inflated reward
-  // the player isn't actually getting (per audit: misleading UI on replay).
-  if((isDaily||isWeekly)&&lastGained===0){
-    txt('Already claimed today',W/2,H*.60,12,TH.textDim);
-  }else{
-    drawCoin(W/2-22,H*.60,9);
-    txtP('+'+lastGained,W/2+8,H*.60,16,TH.star);
+  // Stats card — grouped row in the same visual language as Settings.
+  // 3 stats live on one card, big bold values, small label above.
+  {
+    const cy = H * 0.46;
+    const cardX = 28, cardW = W - 56, cardH = 70;
+    X.fillStyle = TH.surface;
+    X.beginPath(); X.roundRect(cardX, cy - cardH/2, cardW, cardH, 14); X.fill();
+    X.strokeStyle = TH.border; X.lineWidth = 1;
+    X.beginPath(); X.roundRect(cardX, cy - cardH/2, cardW, cardH, 14); X.stroke();
+    const tm = floor(timer), mm = floor(tm/60), ss = tm % 60;
+    const stat = (x, label, value, valColor) => {
+      txt(label, x, cy - 12, 9, TH.textSec, 'center', '700');
+      txtP(value, x, cy + 12, 18, valColor || TH.text);
+    };
+    stat(cardX + cardW * 0.20, 'ARROWS', minMoves + '');
+    stat(cardX + cardW * 0.50, 'HEARTS', undosLeft + '/3', undosLeft === 3 ? TH.success : TH.text);
+    stat(cardX + cardW * 0.80, 'TIME', mm + ':' + (ss < 10 ? '0' : '') + ss);
+  }
+  if (!isDaily && !isWeekly && bestTime > 0) {
+    txt('Best: ' + floor(bestTime) + 's', W/2, H*.53, 11, TH.textDim);
+  }
+
+  // Reward — prominent gold pill that scales in like a celebration prize.
+  if ((isDaily || isWeekly) && lastGained === 0) {
+    txt('Already claimed today', W/2, H*.60, 12, TH.textDim);
+  } else {
+    const rp = clp((tNow - 1.0) / 0.45, 0, 1);
+    const rScale = rp < 0.7 ? lrp(0, 1.15, rp / 0.7) : lrp(1.15, 1.0, (rp - 0.7) / 0.3);
+    X.save();
+    X.translate(W/2, H*.60);
+    X.scale(rScale, rScale);
+    X.globalAlpha = clp(rp * 2, 0, 1);
+    const rw = 130, rh = 36;
+    X.fillStyle = TH.star + 'CC';
+    X.beginPath(); X.roundRect(-rw/2, -rh/2, rw, rh, rh/2); X.fill();
+    drawCoin(-rw/2 + 22, 0, 9);
+    txtP('+' + lastGained, 8, 0, 18, '#1a1a1a');
+    X.restore();
   }
 
   // Buttons — daily/weekly return to menu; normal level goes to next
@@ -3759,21 +3847,37 @@ function drawStats(){
     ['Achievements',achUnlockedCount()+'/'+ACHIEVEMENTS.length],
   ];
 
-  const startY=100,rowH=42,cardW=W-40;
-  for(let i=0;i<rows.length;i++){
-    const y=startY+i*rowH;
-    if(y+rowH>H-90)break;
-    // Row background (alternating)
-    if(i%2===0){
-      X.fillStyle=TH.cardBg;
-      X.beginPath();X.roundRect(20,y,cardW,rowH-4,8);X.fill();
+  // v2 redesign: rows now live inside a single grouped card with
+  // hairline dividers — same visual language as Settings. Big bold
+  // value on the right, label left, divider lines between rows.
+  const startY = 100, rowH = 36;
+  const cardX = 20, cardW = W - 40;
+  const visibleRows = Math.min(rows.length, Math.floor((H - 100 - 90) / rowH));
+  const cardH = visibleRows * rowH;
+  // Surface
+  X.fillStyle = TH.surface;
+  X.beginPath(); X.roundRect(cardX, startY, cardW, cardH, 14); X.fill();
+  X.strokeStyle = TH.border; X.lineWidth = 1;
+  X.beginPath(); X.roundRect(cardX, startY, cardW, cardH, 14); X.stroke();
+  // Clip + content
+  X.save();
+  X.beginPath(); X.roundRect(cardX, startY, cardW, cardH, 14);
+  X.clip();
+  for (let i = 0; i < visibleRows; i++) {
+    const y = startY + i * rowH;
+    txt(rows[i][0], cardX + 16, y + rowH/2, 12, TH.textSec, 'left');
+    txtP(rows[i][1], cardX + cardW - 16, y + rowH/2, 14, TH.text, 'right');
+    if (i < visibleRows - 1) {
+      X.strokeStyle = TH.border; X.lineWidth = 0.7;
+      X.beginPath();
+      X.moveTo(cardX + 16, y + rowH);
+      X.lineTo(cardX + cardW - 16, y + rowH);
+      X.stroke();
     }
-    txt(rows[i][0],36,y+rowH/2-2,12,TH.textSec,'left');
-    txtP(rows[i][1],W-36,y+rowH/2-2,14,TH.text,'right');
   }
+  X.restore();
 
   if(drawBtn(t('back'),W/2,H-50,140,38)){goto('menu')}
-
 }
 
 // Per-achievement icon renderer. Categories share a vector glyph so the user
@@ -3891,23 +3995,28 @@ function drawAchievements(){
   const fromIdx=achPage*ACH_PER_PAGE;
   const toIdx=min(ACHIEVEMENTS.length,fromIdx+ACH_PER_PAGE);
 
-  // List (visible page only)
+  // v2 redesign: cards now use the same neutral surface tokens as
+  // Settings / Levels / Stats. Done state is signalled by the BORDER
+  // color (gold) and the icon tint, not by a background tint that
+  // muddies on dark mode. Locked rows get a desaturated body so the
+  // ladder of progress is still readable at a glance.
   const startY=110,cardH=56,cardGap=8,cardW=W-40,cardX=20;
   for(let i=fromIdx;i<toIdx;i++){
     const a=ACHIEVEMENTS[i];
     const y=startY+(i-fromIdx)*(cardH+cardGap);
     const done=!!achUnlocked[a.id];
-    // Card
-    X.fillStyle=done?TH.star+'18':TH.cardBg;
+    // Surface (neutral for both states; only the rim differs)
+    X.fillStyle = done ? TH.surface : (darkMode ? 'rgba(255,255,255,.04)' : 'rgba(0,0,0,.025)');
     X.beginPath();X.roundRect(cardX,y,cardW,cardH,12);X.fill();
-    X.strokeStyle=done?TH.star+'50':TH.border;X.lineWidth=1;
+    X.strokeStyle = done ? TH.star : TH.border;
+    X.lineWidth = done ? 1.5 : 1;
     X.beginPath();X.roundRect(cardX,y,cardW,cardH,12);X.stroke();
-    // Icon — vector glyph per category, dimmed when locked
+    // Icon
     drawAchIcon(a.id,cardX+28,y+cardH/2,15,done?TH.star:TH.textDim);
     // Name + desc
     txt(a.name,cardX+58,y+19,12,done?TH.text:TH.textSec,'left','700');
     txt(a.desc,cardX+58,y+38,10,done?TH.textSec:TH.textDim,'left');
-    // Reward — RIGHT-anchored, "[coin] +N" inside card with 14px right padding.
+    // Reward — right-anchored
     const rewardStr='+'+a.reward;
     const rightEdge=cardX+cardW-14;
     txt(rewardStr,rightEdge,y+cardH/2,11,done?TH.star:TH.textDim,'right');
@@ -3915,20 +4024,33 @@ function drawAchievements(){
     drawCoin(rightEdge-textApproxW-7,y+cardH/2,6);
   }
 
-  // Pagination — page indicator centered, prev/next on sides
+  // Pagination — chevron pills, matches drawLevels.
   if(pageCount>1){
     const pagY=H-95;
-    txt((achPage+1)+' / '+pageCount,W/2,pagY,13,TH.textSec);
     if(achPage>0){
-      if(drawBtn('‹',W/2-90,pagY,40,32)){achPage--}
+      const px=W/2-90, pw=40, ph=34;
+      const hv=abs(mx-px)<pw/2&&abs(my-pagY)<ph/2;
+      X.fillStyle=hv?TH.btnHover:TH.btnBg;
+      X.beginPath();X.roundRect(px-pw/2,pagY-ph/2,pw,ph,ph/2);X.fill();
+      X.strokeStyle=TH.border;X.lineWidth=1;
+      X.beginPath();X.roundRect(px-pw/2,pagY-ph/2,pw,ph,ph/2);X.stroke();
+      _drawChevron(px,pagY,7,TH.text,'left');
+      if(tapped&&abs(tapX-px)<pw/2&&abs(tapY-pagY)<ph/2){sfx.tap();tapped=false;achPage--}
     }
+    txt((achPage+1)+' / '+pageCount,W/2,pagY,12,TH.textSec,'center','700');
     if(achPage<pageCount-1){
-      if(drawBtn('›',W/2+90,pagY,40,32)){achPage++}
+      const px=W/2+90, pw=40, ph=34;
+      const hv=abs(mx-px)<pw/2&&abs(my-pagY)<ph/2;
+      X.fillStyle=hv?TH.btnHover:TH.btnBg;
+      X.beginPath();X.roundRect(px-pw/2,pagY-ph/2,pw,ph,ph/2);X.fill();
+      X.strokeStyle=TH.border;X.lineWidth=1;
+      X.beginPath();X.roundRect(px-pw/2,pagY-ph/2,pw,ph,ph/2);X.stroke();
+      _drawChevron(px,pagY,7,TH.text,'right');
+      if(tapped&&abs(tapX-px)<pw/2&&abs(tapY-pagY)<ph/2){sfx.tap();tapped=false;achPage++}
     }
   }
 
   if(drawBtn(t('back'),W/2,H-50,140,38)){goto('menu')}
-
 }
 
 // Achievement unlock popup — animates at top of screen
@@ -4445,38 +4567,37 @@ function drawLevels(){
     const s=stars[lv]||0;
     const hv=abs(mx-x)<26&&abs(my-y)<30;
 
-    // Card background
+    // Card background — neutral solid for ALL states; differentiation
+    // comes from a subtle 2-px border accent on `current` and a star
+    // tint on `done`. No more tinted rgba fills (that read as muddy
+    // gold on dark mode). Locked cards use a desaturated surface so
+    // they read as "not yet" without colour-noise.
     const cardW=52,cardH=56;
-    if(current){
-      X.fillStyle=TH.accent+'30';
-    }else if(done){
-      X.fillStyle=TH.star+'18';
-    }else if(unlocked){
-      X.fillStyle=hv?TH.btnHover:TH.btnBg;
-    }else{
-      X.fillStyle=TH.cardBg;
+    if(unlocked){
+      X.fillStyle = hv ? TH.btnHover : TH.btnBg;
+    } else {
+      X.fillStyle = darkMode ? 'rgba(255,255,255,.04)' : 'rgba(0,0,0,.03)';
     }
     X.beginPath();X.roundRect(x-cardW/2,y-cardH/2,cardW,cardH,10);X.fill();
-    // Border
-    X.strokeStyle=current?TH.accent:(done?TH.star+'60':TH.border);
-    X.lineWidth=current?2:1;
+    // Border — accent only when this is the current level
+    if (current) {
+      X.strokeStyle = TH.accent; X.lineWidth = 2;
+    } else {
+      X.strokeStyle = TH.border; X.lineWidth = 1;
+    }
     X.beginPath();X.roundRect(x-cardW/2,y-cardH/2,cardW,cardH,10);X.stroke();
-
     // Level number
-    txtP(lv+'',x,y-8,unlocked?15:13,unlocked?TH.text:TH.textDim);
-
-    // Stars (real star shapes)
+    txtP(lv+'',x,y-8, unlocked?15:13, unlocked?TH.text:TH.textDim);
+    // Stars (canvas-drawn glyphs, scaled small)
     for(let j=0;j<3;j++){
       const sx=x-10+j*10,sy=y+14;
-      drawStar(sx,sy,4,done&&j<s);
+      drawStar(sx,sy,4, done && j<s);
     }
-
-    // Lock indicator — small dim bar under the level number for locked levels
+    // Locked indicator — small horizontal dash under the level number
     if(!unlocked){
       X.strokeStyle=TH.textDim;X.lineWidth=1.2;X.lineCap='round';
       X.beginPath();X.moveTo(x-7,y+4);X.lineTo(x+7,y+4);X.stroke();
     }
-
     // Tap
     if(tapped&&abs(tapX-x)<cardW/2&&abs(tapY-y)<cardH/2&&unlocked){
       sfx.tap();tapped=false;
@@ -4485,21 +4606,35 @@ function drawLevels(){
     }
   }
 
-  // Pagination controls
+  // Pagination — chevron icons rather than ASCII arrows.
   const pagY=H-110;
   const hasPrev=levelsPage>0;
-  const hasNext=true; // unlimited levels
   if(hasPrev){
-    if(drawBtn('← Prev',W*.28,pagY,100,36)){levelsPage--}
+    const px=W*.28, pw=88, ph=36;
+    const hv=abs(mx-px)<pw/2&&abs(my-pagY)<ph/2;
+    X.fillStyle=hv?TH.btnHover:TH.btnBg;
+    X.beginPath();X.roundRect(px-pw/2,pagY-ph/2,pw,ph,ph/2);X.fill();
+    X.strokeStyle=TH.border;X.lineWidth=1;
+    X.beginPath();X.roundRect(px-pw/2,pagY-ph/2,pw,ph,ph/2);X.stroke();
+    _drawChevron(px-18,pagY,7,TH.text,'left');
+    txt('PREV',px+8,pagY,12,TH.text);
+    if(tapped&&abs(tapX-px)<pw/2&&abs(tapY-pagY)<ph/2){sfx.tap();tapped=false;levelsPage--}
   }
-  txt('Page '+(levelsPage+1),W/2,pagY,12,TH.textSec);
-  if(hasNext){
-    if(drawBtn('Next →',W*.72,pagY,100,36)){levelsPage++}
+  txt('PAGE '+(levelsPage+1),W/2,pagY,11,TH.textSec,'center','700');
+  {
+    const px=W*.72, pw=88, ph=36;
+    const hv=abs(mx-px)<pw/2&&abs(my-pagY)<ph/2;
+    X.fillStyle=hv?TH.btnHover:TH.btnBg;
+    X.beginPath();X.roundRect(px-pw/2,pagY-ph/2,pw,ph,ph/2);X.fill();
+    X.strokeStyle=TH.border;X.lineWidth=1;
+    X.beginPath();X.roundRect(px-pw/2,pagY-ph/2,pw,ph,ph/2);X.stroke();
+    txt('NEXT',px-10,pagY,12,TH.text);
+    _drawChevron(px+18,pagY,7,TH.text,'right');
+    if(tapped&&abs(tapX-px)<pw/2&&abs(tapY-pagY)<ph/2){sfx.tap();tapped=false;levelsPage++}
   }
 
-  // Back to menu
+  // Back
   if(drawBtn(t('back'),W/2,H-55,140,36)){goto('menu')}
-
 }
 
 // ================================================================
