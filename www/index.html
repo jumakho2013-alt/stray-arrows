@@ -3307,21 +3307,30 @@ function drawPlay(){
   // them at every cell centre the eye reconstructs the lattice without
   // needing the lines.
 
-  // Cross-grid background — replaced the dot at every cell centre with
-  // a tiny "+" cross drawn in stroke. Reads as engineering / blueprint
-  // paper instead of generic dotted bg, plus the cross visually marks
-  // intersections of the (already drawn) faint grid lines, so the
-  // whole play area looks deliberately gridded rather than scattered.
-  // The win-wave celebration still turns these into golden diamonds.
-  const _dotR=max(1.8,cs*.085);
-  X.strokeStyle=darkMode?'rgba(255,255,255,.18)':'rgba(0,0,0,.16)';
-  X.lineWidth=1.2;
-  X.lineCap='round';
-  function _drawCross(cx,cy,r){
+  // Soft 4-pointed sparkles at every cell centre — the "+" crosses
+  // were too geometric (read as engineering tape) so we swap them for
+  // a cartoon-sparkle silhouette: 4 outward arms with rounded tips
+  // and concave bezier-smoothed valleys between them. The polar shape
+  // r(θ) = inner + (outer - inner) * cos(2θ)^4 gives the right
+  // "pinched waist between fat petals" look, like a stylised twinkle.
+  const _dotR=max(2.4,cs*.10);
+  function _drawSparkle(cx,cy,R){
+    const inner=R*0.30;
+    // 64 segments = smooth enough at any size, still cheap (one path
+    // fill, no per-segment stroke cost).
     X.beginPath();
-    X.moveTo(cx-r,cy);X.lineTo(cx+r,cy);
-    X.moveTo(cx,cy-r);X.lineTo(cx,cy+r);
-    X.stroke();
+    for(let i=0;i<=64;i++){
+      const θ=(i/64)*TAU-PI/2;
+      const t=cos(2*θ);                       // -1..1, peaks at cardinals
+      const k=t*t*t*t;                        // ^4 → very narrow waists
+      const r=inner+(R-inner)*k;              // inner at diagonals, R at arm tips
+      const px=cx+cos(θ)*r;
+      const py=cy+sin(θ)*r;
+      if(i===0)X.moveTo(px,py);
+      else X.lineTo(px,py);
+    }
+    X.closePath();
+    X.fill();
   }
   const _hasWave=!!_winWave;
   let _waveP=0,_waveX=0,_waveY=0,_waveSpeed=0;
@@ -3333,15 +3342,15 @@ function drawPlay(){
     _waveSpeed=max(W,H)*1.1;
     if(_waveP>=1)_winWave=null;
   }
-  // Crosses on EVERY cell. Fainter style for empty cells, full strength
-  // for occupied (occupied loop reuses the same _drawCross helper below).
-  X.strokeStyle=darkMode?'rgba(255,255,255,.10)':'rgba(0,0,0,.09)';
+  // Sparkles on EVERY cell. Empty cells get a fainter fill, occupied
+  // get the full alpha (occupied loop below reuses the same helper).
+  X.fillStyle=darkMode?'rgba(255,255,255,.10)':'rgba(0,0,0,.09)';
   for(let r=0;r<gridRows;r++){
     for(let c=0;c<gridCols;c++){
-      _drawCross(gx+c*cs+cs/2,gy+r*cs+cs/2,_dotR*0.7);
+      _drawSparkle(gx+c*cs+cs/2,gy+r*cs+cs/2,_dotR*0.65);
     }
   }
-  X.strokeStyle=darkMode?'rgba(255,255,255,.20)':'rgba(0,0,0,.18)';
+  X.fillStyle=darkMode?'rgba(255,255,255,.20)':'rgba(0,0,0,.18)';
   // Occupied-cell dots (slightly stronger than empty cells). On level
   // completion the win wave passes through and turns each dot into a
   // tiny golden DIAMOND for the moment the wave front is on it — feels
@@ -3361,19 +3370,20 @@ function drawPlay(){
       if(wlocal>0&&wlocal<1)waveT=Math.sin(wlocal*PI); // 0..1 bell curve
     }
     if(waveT>0.05){
-      // Sparkle phase: golden diamond growing & shrinking with the wave.
+      // Sparkle phase: occupied-cell sparkle blooms gold and grows
+      // 1.4× → 3.0× as the wave passes through. Same silhouette as
+      // the rest of the grid, just bigger and saturated — so the
+      // celebration reads as "the same dots became magical for a
+      // second" rather than swapping in a different shape.
       const sz=_dotR*(1.4+waveT*1.6);
       const alpha=Math.min(1,0.5+waveT*0.6);
       X.save();
-      X.fillStyle=TH.star;
       X.globalAlpha=alpha;
-      X.translate(cx,cy);
-      X.rotate(PI/4); // 45° → diamond
-      X.fillRect(-sz/2,-sz/2,sz,sz);
+      X.fillStyle=TH.star;
+      _drawSparkle(cx,cy,sz);
       X.restore();
     } else {
-      // Normal phase: full-strength cross marker.
-      _drawCross(cx,cy,_dotR);
+      _drawSparkle(cx,cy,_dotR);
     }
   }
 
