@@ -2764,7 +2764,15 @@ function btnPressScale(x,y,w,h){
 // canvas so we don't recreate 4 gradient objects per frame (was the main lag
 // source — gradient allocation on iOS WebKit is expensive).
 let _bgCache=null,_bgCacheDark=null;
-function _renderBg(dark){
+// Two background variants:
+//   • atmospheric — gradient + 3 colored blobs. Used on the MENU only,
+//     gives the title a hero feel.
+//   • plain — pure vertical gradient, no blobs. Used everywhere else
+//     (Settings, Play, Levels, Complete, GameOver). Without this, the
+//     blob glows pushed past card edges and made surfaces look "leaky"
+//     — user explicitly flagged this on Settings.
+let _bgCachePlain=null;
+function _renderBg(dark, withBlobs){
   const cv=document.createElement('canvas');
   cv.width=W;cv.height=H;
   const x=cv.getContext('2d');
@@ -2773,29 +2781,31 @@ function _renderBg(dark){
   if(dark){bg.addColorStop(0,'#24244a');bg.addColorStop(1,'#15152a');}
   else{bg.addColorStop(0,'#faf7f1');bg.addColorStop(1,'#ece6d8');}
   x.fillStyle=bg;x.fillRect(0,0,W,H);
-  x.save();
-  x.globalAlpha=dark?.35:.22;
-  const b1=x.createRadialGradient(W*.85,H*.12,0,W*.85,H*.12,W*.7);
-  b1.addColorStop(0, dark?'#d48a4a':'#d4aa4a');b1.addColorStop(1,'rgba(0,0,0,0)');
-  x.fillStyle=b1;x.fillRect(0,0,W,H);
-  const b2=x.createRadialGradient(W*.1,H*.85,0,W*.1,H*.85,W*.8);
-  b2.addColorStop(0, dark?'#5a7aaa':'#7a9cc8');b2.addColorStop(1,'rgba(0,0,0,0)');
-  x.fillStyle=b2;x.fillRect(0,0,W,H);
-  const b3=x.createRadialGradient(W*.7,H*.55,0,W*.7,H*.55,W*.55);
-  b3.addColorStop(0, dark?'#a66090':'#e88aa8');b3.addColorStop(1,'rgba(0,0,0,0)');
-  x.fillStyle=b3;x.fillRect(0,0,W,H);
-  x.restore();
+  if(withBlobs){
+    x.save();
+    x.globalAlpha=dark?.35:.22;
+    const b1=x.createRadialGradient(W*.85,H*.12,0,W*.85,H*.12,W*.7);
+    b1.addColorStop(0, dark?'#d48a4a':'#d4aa4a');b1.addColorStop(1,'rgba(0,0,0,0)');
+    x.fillStyle=b1;x.fillRect(0,0,W,H);
+    const b2=x.createRadialGradient(W*.1,H*.85,0,W*.1,H*.85,W*.8);
+    b2.addColorStop(0, dark?'#5a7aaa':'#7a9cc8');b2.addColorStop(1,'rgba(0,0,0,0)');
+    x.fillStyle=b2;x.fillRect(0,0,W,H);
+    const b3=x.createRadialGradient(W*.7,H*.55,0,W*.7,H*.55,W*.55);
+    b3.addColorStop(0, dark?'#a66090':'#e88aa8');b3.addColorStop(1,'rgba(0,0,0,0)');
+    x.fillStyle=b3;x.fillRect(0,0,W,H);
+    x.restore();
+  }
   return cv;
 }
-function drawBg(){
+function drawBg(plain){
   if(_bgCacheDirty||_bgCacheDark!==darkMode){
-    _bgCache=_renderBg(darkMode);
+    _bgCache=_renderBg(darkMode,true);
+    _bgCachePlain=_renderBg(darkMode,false);
     _bgCacheDark=darkMode;
     _bgCacheDirty=false;
   }
-  // Fallback: if cache failed (e.g. WebKit refused offscreen canvas alloc),
-  // draw a solid background so the screen isn't blank.
-  if(_bgCache){X.drawImage(_bgCache,0,0,W,H);}
+  const cache=plain?_bgCachePlain:_bgCache;
+  if(cache){X.drawImage(cache,0,0,W,H);}
   else{X.fillStyle=darkMode?'#1a1a2e':'#f5f2ed';X.fillRect(0,0,W,H);}
 }
 
@@ -3220,7 +3230,7 @@ function drawMenu(){
 
 // --- PLAY ---
 function drawPlay(){
-  drawBg();
+  drawBg(true);
 
   const cs=getCellSize(),gx=getGridX(),gy=getGridY();
 
@@ -3619,7 +3629,7 @@ function drawPlay(){
 
 // --- COMPLETE ---
 function drawComplete(){
-  drawBg();
+  drawBg(true);
 
   // Confetti — particle velocities/gravity were tuned at 60fps so we scale
   // them by `dt*60` to keep the same visual speed at any refresh rate.
@@ -3695,7 +3705,7 @@ function drawComplete(){
 
 // --- STATS ---
 function drawStats(){
-  drawBg();
+  drawBg(true);
   txtP(t('stats'),W/2,62,22,TH.text);
 
   // Coins top-right
@@ -3841,7 +3851,7 @@ function drawAchIcon(id,cx,cy,sz,col){
 // affordance (per audit).
 const ACH_PER_PAGE=9;
 function drawAchievements(){
-  drawBg();
+  drawBg(true);
   txtP('ACHIEVEMENTS',W/2,62,22,TH.text);
   txt(achUnlockedCount()+' / '+ACHIEVEMENTS.length+' unlocked',W/2,86,12,TH.textSec);
 
@@ -3935,7 +3945,7 @@ function drawAchPopup(){
 
 // --- GAME OVER ---
 function drawGameOver(){
-  drawBg();
+  drawBg(true);
 
   // Broken heart hero — same shape as the lives icons (consistency) but
   // 4× scale and with the zigzag crack visible.
@@ -4164,7 +4174,7 @@ function _drawSettingsIcon(name, x, y, sz, col){
 }
 
 function drawSettings(){
-  drawBg();
+  drawBg(true);
 
   // Header
   txtP(t('settings'), W / 2, 64, 24, TH.text);
@@ -4346,7 +4356,7 @@ function drawLangPicker(){
 // the level number, stars earned, and lock state.
 const LEVELS_PER_PAGE=25;
 function drawLevels(){
-  drawBg();
+  drawBg(true);
 
   // Header
   txtP(t('levels'),W/2,62,22,TH.text);
