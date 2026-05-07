@@ -3145,17 +3145,29 @@ function drawMenu(){
   drawCoin(36,_topY,7);
   txt(coins+'',52,_topY,13,TH.star,'left');
 
-  // "Update available" nudge — shown only when checkForUpdate() found a
-  // newer App Store version (cached 24h). Tap → opens App Store.
+  // "Update available" nudge — when checkForUpdate() finds a newer App
+  // Store version. v2 redesign: previously a quiet 28-px pill at the
+  // bottom in 11-px text — players didn't notice it and many ran weeks
+  // behind. New banner sits prominently UNDER the title, pulses softly,
+  // and uses the warning colour token so it reads as "act on me, not
+  // ignore me". Tap → opens the App Store directly.
   if(availableUpdate){
-    const bY=H*.91,bW=240,bH=28;
+    const bY=H*.295,bW=300,bH=46;
     const hv=abs(mx-W/2)<bW/2&&abs(my-bY)<bH/2;
-    // Design system tokens (matches drawBigBtn): fill 18/30, stroke 50, lw 1.5
-    X.fillStyle=hv?TH.accent+'30':TH.accent+'18';
+    // Slow breathing pulse: alpha drifts between 0.85 and 1.0 every 1.8 s.
+    const pulse=.92+.08*sin(gt*3.5);
+    X.save();
+    X.globalAlpha=pulse;
+    // Solid, saturated fill — warning amber on cream, gold on navy.
+    // Stronger than the regular menu buttons so the eye lands here first.
+    X.fillStyle=hv?TH.warning+'55':TH.warning+'40';
     X.beginPath();X.roundRect(W/2-bW/2,bY-bH/2,bW,bH,bH/2);X.fill();
-    X.strokeStyle=TH.accent+'50';X.lineWidth=1.5;
+    X.strokeStyle=TH.warning;X.lineWidth=2;
     X.beginPath();X.roundRect(W/2-bW/2,bY-bH/2,bW,bH,bH/2);X.stroke();
-    txt(t('updateAvailable')+' v'+availableUpdate,W/2,bY,11,TH.accent);
+    // Up-arrow glyph on the left + label + tap-to-update hint
+    txtP('↑',W/2-bW*.40,bY,18,TH.warning,'center');
+    txtP(t('updateAvailable')+'  v'+availableUpdate,W/2+bW*.04,bY,14,TH.text,'center');
+    X.restore();
     if(tapped&&abs(tapX-W/2)<bW/2&&abs(tapY-bY)<bH/2){
       sfx.tap();haptic(8);openAppStore();tapped=false;
     }
@@ -3516,38 +3528,35 @@ function drawPlay(){
     txtP(coins+'',cx+2,cy,14,TH.star,'left');
   }
 
-  // Action buttons row (Hint + Skip). v2 polish: bumped height 34 -> 40,
-  // text 12 -> 13, added a small icon in front of the label to make the
-  // buttons read as game actions instead of generic pills. Also shifted
-  // the press scale to use the global btnPressScale helper so they tilt
-  // tactilely on tap like every other button.
-  const by=H*.93,bw=140,bh=40;
-  const _drawActionBtn=(bx,label,cost,enabled,color)=>{
+  // Action button — Hint only. v2 dropped the Skip button entirely:
+  // user feedback was that Skip lets a player farm coins by watching a
+  // reward ad on Daily/Weekly, then spend the SKIP_COST instantly to
+  // jump levels they couldn't solve. Without Skip, the player has to
+  // either Hint (which costs less and surfaces just one arrow) or
+  // figure out the puzzle. Hint button moves to centre, gets bigger
+  // (180×44) and stronger fill so it stops looking like a tile-mate of
+  // the now-departed sibling.
+  const by=H*.93,bw=180,bh=44;
+  const canHint=coins>=HINT_COST&&hintTime<=0;
+  {
+    const bx=W/2;
     const hv=abs(mx-bx)<bw/2&&abs(my-by)<bh/2;
     const sc=btnPressScale(bx,by,bw,bh);
     const dw=bw*sc,dh=bh*sc;
-    // Solid fill at 30% / hover 45% — bumped from 18%/30% so the button
-    // pops off the dim play-area background better than the v1 ghost.
-    X.fillStyle=enabled?(hv?color+'45':color+'30'):TH.btnBg;
+    const color=TH.star;
+    X.fillStyle=canHint?(hv?color+'50':color+'35'):TH.btnBg;
     X.beginPath();X.roundRect(bx-dw/2,by-dh/2,dw,dh,dh/2);X.fill();
-    X.strokeStyle=enabled?color+'70':TH.border;X.lineWidth=1.5;
+    X.strokeStyle=canHint?color+'80':TH.border;X.lineWidth=1.5;
     X.beginPath();X.roundRect(bx-dw/2,by-dh/2,dw,dh,dh/2);X.stroke();
-    const labelColor=enabled?TH.text:TH.textDim;
-    const costColor=enabled?TH.star:TH.textDim;
-    txtP(label,bx-bw*.18,by,13,labelColor);
-    drawCoin(bx+bw*.18,by,7);
-    txt(cost+'',bx+bw*.28,by,12,costColor,'left');
-    return tapped&&abs(tapX-bx)<bw/2&&abs(tapY-by)<bh/2;
-  };
-  const canHint=coins>=HINT_COST&&hintTime<=0;
-  if(_drawActionBtn(W*.27,t('hint'),HINT_COST,canHint,TH.star)){
-    if(canHint)useHint();
-    tapped=false;
-  }
-  const canSkip=coins>=SKIP_COST&&!isDaily&&!isWeekly;
-  if(_drawActionBtn(W*.73,t('skip'),SKIP_COST,canSkip,TH.warning)){
-    if(canSkip)skipLevel();
-    tapped=false;
+    const labelColor=canHint?TH.text:TH.textDim;
+    const costColor=canHint?TH.star:TH.textDim;
+    txtP(t('hint'),bx-bw*.20,by,14,labelColor);
+    drawCoin(bx+bw*.16,by,8);
+    txt(HINT_COST+'',bx+bw*.26,by,13,costColor,'left');
+    if(tapped&&abs(tapX-bx)<bw/2&&abs(tapY-by)<bh/2){
+      if(canHint)useHint();
+      tapped=false;
+    }
   }
 
   // Update timers
