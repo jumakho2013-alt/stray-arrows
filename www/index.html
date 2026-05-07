@@ -4018,72 +4018,282 @@ function drawGameOver(){
 
 // --- SETTINGS ---
 let resetConfirm=false;
+// ---------- Settings helpers (v2 redesign — iOS-style grouped lists) ----------
+//
+// Was: 5 big tinted-pill buttons stacked vertically, every one same
+// shape/size, "Theme: Dark" / "Sound: ON" mashed together. Read like a
+// raw HTML form. Now: section headers + grouped rows on a card surface,
+// each row is icon + label + value/toggle/chevron. Direct lift from
+// the iOS HIG settings pattern with our minimal stroke-icon vocabulary.
+
+function _drawSectionHeader(text, y){
+  txt(text.toUpperCase(), 30, y, 9, TH.textSec, 'left', '700');
+}
+
+// Single grouped-list card — pass an array of row renderers, returns the y
+// below the card. Each row gets divider line between (except last).
+function _drawSettingsCard(yTop, rows){
+  const cardX = 20, cardW = W - 40;
+  const rowH = 56;
+  const cardH = rowH * rows.length;
+  // Surface
+  X.fillStyle = TH.surface;
+  X.beginPath(); X.roundRect(cardX, yTop, cardW, cardH, 16); X.fill();
+  X.strokeStyle = TH.border; X.lineWidth = 1;
+  X.beginPath(); X.roundRect(cardX, yTop, cardW, cardH, 16); X.stroke();
+  // Rows + dividers
+  for (let i = 0; i < rows.length; i++) {
+    const ry = yTop + i * rowH;
+    rows[i](cardX, ry, cardW, rowH);
+    if (i < rows.length - 1) {
+      X.strokeStyle = TH.border;
+      X.lineWidth = 0.7;
+      X.beginPath();
+      X.moveTo(cardX + 56, ry + rowH);
+      X.lineTo(cardX + cardW - 16, ry + rowH);
+      X.stroke();
+    }
+  }
+  return yTop + cardH;
+}
+
+// Hit-test wrapper — draws the row, returns whether it was tapped.
+function _settingsRow(rx, ry, rw, rh, draw){
+  const blocked = _inputBlocked();
+  const hv = !blocked && mx >= rx && mx <= rx + rw && my >= ry && my <= ry + rh;
+  if (hv) {
+    X.fillStyle = darkMode ? 'rgba(255,255,255,.04)' : 'rgba(0,0,0,.025)';
+    X.beginPath();
+    // Soft inner highlight only — no stroke, just a tint that matches
+    // the iOS "row pressed" feedback.
+    X.roundRect(rx + 2, ry, rw - 4, rh, 0);
+    X.fill();
+  }
+  draw(rx, ry, rw, rh, hv);
+  if (!blocked && tapped && tapX >= rx && tapX <= rx + rw && tapY >= ry && tapY <= ry + rh) {
+    sfx.tap(); tapped = false;
+    return true;
+  }
+  return false;
+}
+
+// iOS-style toggle switch. ON = filled accent track + thumb on right.
+// OFF = grey track + thumb on left.
+function _drawToggle(cx, cy, on){
+  const tw = 44, th = 26, r = th / 2;
+  const x = cx - tw / 2, y = cy - th / 2;
+  X.fillStyle = on ? TH.accent : (darkMode ? 'rgba(255,255,255,.18)' : 'rgba(0,0,0,.18)');
+  X.beginPath(); X.roundRect(x, y, tw, th, r); X.fill();
+  // Thumb — pure white circle for both states (matches iOS)
+  const thumbX = on ? x + tw - r : x + r;
+  X.fillStyle = '#ffffff';
+  X.beginPath(); X.arc(thumbX, cy, r - 3, 0, TAU); X.fill();
+  // Subtle thumb shadow
+  X.fillStyle = 'rgba(0,0,0,.10)';
+  X.beginPath(); X.arc(thumbX, cy + 1, r - 3, 0, TAU); X.fill('evenodd');
+}
+
+// Chevron > glyph for navigational rows (Language, Watch ad).
+function _drawChevron(cx, cy, sz, col){
+  X.strokeStyle = col || TH.textSec;
+  X.lineWidth = 2;
+  X.lineCap = 'round'; X.lineJoin = 'round';
+  X.beginPath();
+  X.moveTo(cx - sz * 0.3, cy - sz * 0.5);
+  X.lineTo(cx + sz * 0.3, cy);
+  X.lineTo(cx - sz * 0.3, cy + sz * 0.5);
+  X.stroke();
+}
+
+// Icon strip — minimal stroke glyphs matching the heart/star/coin family.
+function _drawSettingsIcon(name, x, y, sz, col){
+  X.save();
+  X.strokeStyle = col;
+  X.fillStyle = col;
+  X.lineWidth = 1.6;
+  X.lineCap = 'round'; X.lineJoin = 'round';
+  if (name === 'globe') {
+    X.beginPath(); X.arc(x, y, sz, 0, TAU); X.stroke();
+    X.beginPath(); X.ellipse(x, y, sz * 0.45, sz, 0, 0, TAU); X.stroke();
+    X.beginPath(); X.moveTo(x - sz, y); X.lineTo(x + sz, y); X.stroke();
+  } else if (name === 'speaker') {
+    X.beginPath();
+    X.moveTo(x - sz * 0.6, y - sz * 0.35);
+    X.lineTo(x - sz * 0.2, y - sz * 0.35);
+    X.lineTo(x + sz * 0.2, y - sz * 0.7);
+    X.lineTo(x + sz * 0.2, y + sz * 0.7);
+    X.lineTo(x - sz * 0.2, y + sz * 0.35);
+    X.lineTo(x - sz * 0.6, y + sz * 0.35);
+    X.closePath(); X.fill();
+    // Sound waves
+    X.beginPath(); X.arc(x + sz * 0.5, y, sz * 0.45, -PI / 3, PI / 3); X.stroke();
+    X.beginPath(); X.arc(x + sz * 0.5, y, sz * 0.75, -PI / 3, PI / 3); X.stroke();
+  } else if (name === 'moon') {
+    X.beginPath();
+    X.arc(x, y, sz, PI * 0.25, PI * 1.75, false);
+    X.arc(x + sz * 0.45, y - sz * 0.05, sz * 0.95, PI * 1.7, PI * 0.3, true);
+    X.closePath(); X.fill();
+  } else if (name === 'contrast') {
+    X.beginPath(); X.arc(x, y, sz, 0, TAU); X.stroke();
+    X.beginPath(); X.arc(x, y, sz, -PI / 2, PI / 2); X.fill();
+  } else if (name === 'coin') {
+    drawCoin(x, y, sz);
+  } else if (name === 'trash') {
+    X.beginPath();
+    X.moveTo(x - sz * 0.55, y - sz * 0.55);
+    X.lineTo(x + sz * 0.55, y - sz * 0.55);
+    X.stroke();
+    X.beginPath();
+    X.moveTo(x - sz * 0.30, y - sz * 0.55);
+    X.lineTo(x - sz * 0.30, y - sz * 0.85);
+    X.lineTo(x + sz * 0.30, y - sz * 0.85);
+    X.lineTo(x + sz * 0.30, y - sz * 0.55);
+    X.stroke();
+    // Body
+    X.beginPath();
+    X.roundRect(x - sz * 0.45, y - sz * 0.35, sz * 0.9, sz * 1.15, sz * 0.10);
+    X.stroke();
+    // Vertical lines inside
+    X.beginPath();
+    X.moveTo(x - sz * 0.20, y - sz * 0.18); X.lineTo(x - sz * 0.20, y + sz * 0.62);
+    X.moveTo(x, y - sz * 0.18); X.lineTo(x, y + sz * 0.62);
+    X.moveTo(x + sz * 0.20, y - sz * 0.18); X.lineTo(x + sz * 0.20, y + sz * 0.62);
+    X.stroke();
+  }
+  X.restore();
+}
+
 function drawSettings(){
   drawBg();
-  txtP(t('settings'),W/2,62,22,TH.text);
 
-  // Language — opens picker modal (drawLangPicker draws it on top after the
-  // rest of the screen is rendered, so taps land on the modal not the buttons
-  // below it)
-  const curLang=LANGS.find(l=>l.code===lang)||LANGS[0];
-  if(drawBtn(t('language')+': '+curLang.name,W/2,110,260,44)){
-    langPickerOpen=true;
-  }
+  // Header
+  txtP(t('settings'), W / 2, 64, 24, TH.text);
 
-  // Sound
-  if(drawBtn(t('sound')+': '+(sndOn?t('on'):t('off')),W/2,165,260,44)){
-    sndOn=!sndOn;_safeSet('ae_sound',sndOn?'1':'0');
-  }
-  // Dark mode
-  if(drawBtn(t('theme')+': '+(darkMode?t('themeDark'):t('themeLight')),W/2,220,260,44)){
-    darkMode=!darkMode;_safeSet('ae_theme',darkMode?'dark':'light');applyTheme();
-  }
-  // High-contrast accessibility toggle. Persisted under ae_contrast='high'/''.
-  // Repaints immediately because TH getters read the flag — no need to
-  // invalidate the bg cache (applyTheme does that).
-  if(drawBtn(t('contrast')+': '+(highContrast?t('on'):t('off')),W/2,275,260,44)){
-    highContrast=!highContrast;_safeSet('ae_contrast',highContrast?'high':'normal');applyTheme();
-  }
-  // Watch Ad for Coins
-  if(drawBtn(t('watchAd')+' +'+AD_COIN_REWARD+' '+t('coins'),W/2,350,260,44,TH.star)){
-    showRewardedAd(()=>{coins+=AD_COIN_REWARD;totalCoinsEarned+=AD_COIN_REWARD;save();spawnFloater(W/2,295,'+'+AD_COIN_REWARD)});
-  }
+  let yCursor = 110;
 
-  // Reset — two-tap confirmation (no native dialogs)
-  if(!resetConfirm){
-    if(drawBtn(t('resetProgress'),W/2,425,200,44,TH.warning)){resetConfirm=true}
-  }else{
-    txt(t('areYouSure'),W/2,415,13,TH.warning);
-    // Wider than CANCEL because translations like "ДА, СБРОСИТЬ" / "SÍ, REINICIAR" / "EVET, SIFIRLA" overflow 110px.
-    if(drawBtn(t('yesReset'),W/2-72,455,134,40,TH.arrowBlock)){
-      // Reset wipes PROGRESS keys only — language, sound, theme preferences
-      // and system keys (lasterror, lastreject) are preserved.
-      // KEY NAMES MUST MATCH save() in line ~386 — previous list used wrong
-      // names (ae_perfect vs ae_perfects, ae_streak vs ae_streakdays, etc.)
-      // and silently left progress in storage.
-      const PROGRESS_KEYS=['ae_level','ae_maxlevel','ae_coins','ae_stars','ae_ach',
-        'ae_total_coins','ae_streakdays','ae_lastday','ae_perfects','ae_dailies',
-        'ae_nohint','ae_fastest','ae_playtime','ae_noads'];
-      for(const k of PROGRESS_KEYS)localStorage.removeItem(k);
-      // Also sweep dynamic keys: ae_best_<level>, ae_daily_<seed>, ae_weekly_<seed>
-      for(let i=localStorage.length-1;i>=0;i--){
-        const k=localStorage.key(i);
-        if(k&&(k.startsWith('ae_best_')||k.startsWith('ae_daily_')||k.startsWith('ae_weekly_')))
-          localStorage.removeItem(k);
+  // ----- General -----
+  _drawSectionHeader(t('settings'), yCursor);  // re-use settings token; could be a new "GENERAL" token if added later
+  yCursor += 14;
+
+  const curLang = LANGS.find(l => l.code === lang) || LANGS[0];
+
+  yCursor = _drawSettingsCard(yCursor, [
+    // Language → opens picker modal
+    (rx, ry, rw, rh) => {
+      if (_settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
+        _drawSettingsIcon('globe', rx + 28, ry + rh / 2, 11, TH.textSec);
+        txt(t('language'), rx + 56, ry + rh / 2, 14, TH.text, 'left');
+        txt(curLang.name, rx + rw - 36, ry + rh / 2, 13, TH.textSec, 'right');
+        _drawChevron(rx + rw - 18, ry + rh / 2, 8);
+      })) langPickerOpen = true;
+    },
+    // Sound toggle
+    (rx, ry, rw, rh) => {
+      if (_settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
+        _drawSettingsIcon('speaker', rx + 28, ry + rh / 2, 11, TH.textSec);
+        txt(t('sound'), rx + 56, ry + rh / 2, 14, TH.text, 'left');
+        _drawToggle(rx + rw - 32, ry + rh / 2, sndOn);
+      })) {
+        sndOn = !sndOn; _safeSet('ae_sound', sndOn ? '1' : '0');
       }
-      level=1;maxLevel=1;coins=STARTING_COINS;stars={};totalStars=0;
-      achUnlocked={};totalPerfect=0;totalDailies=0;noHintCount=0;
-      totalCoinsEarned=0;streakDays=0;totalPlayTime=0;fastestLevel=99999;
-      lastPlayDay=0;hintUsedThisLevel=false;
-      // adsRemoved is now a const — nothing to reset.
-      resetConfirm=false;save();
-      goto('menu');
-    }
-    if(drawBtn(t('cancel'),W/2+72,455,110,40)){resetConfirm=false}
+    },
+    // Dark mode toggle
+    (rx, ry, rw, rh) => {
+      if (_settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
+        _drawSettingsIcon('moon', rx + 28, ry + rh / 2, 10, TH.textSec);
+        txt(t('themeDark'), rx + 56, ry + rh / 2, 14, TH.text, 'left');
+        _drawToggle(rx + rw - 32, ry + rh / 2, darkMode);
+      })) {
+        darkMode = !darkMode; _safeSet('ae_theme', darkMode ? 'dark' : 'light');
+        applyTheme();
+      }
+    },
+    // High Contrast toggle
+    (rx, ry, rw, rh) => {
+      if (_settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
+        _drawSettingsIcon('contrast', rx + 28, ry + rh / 2, 10, TH.textSec);
+        txt(t('contrast'), rx + 56, ry + rh / 2, 14, TH.text, 'left');
+        _drawToggle(rx + rw - 32, ry + rh / 2, highContrast);
+      })) {
+        highContrast = !highContrast; _safeSet('ae_contrast', highContrast ? 'high' : 'normal');
+        applyTheme();
+      }
+    },
+  ]);
+
+  yCursor += 28;
+
+  // ----- Coins -----
+  _drawSectionHeader(t('coins'), yCursor);
+  yCursor += 14;
+
+  yCursor = _drawSettingsCard(yCursor, [
+    (rx, ry, rw, rh) => {
+      if (_settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
+        _drawSettingsIcon('coin', rx + 28, ry + rh / 2, 9);
+        txt(t('watchAd'), rx + 56, ry + rh / 2, 14, TH.text, 'left');
+        txt('+' + AD_COIN_REWARD, rx + rw - 36, ry + rh / 2, 14, TH.star, 'right');
+        _drawChevron(rx + rw - 18, ry + rh / 2, 8, TH.star);
+      })) {
+        showRewardedAd(() => {
+          coins += AD_COIN_REWARD; totalCoinsEarned += AD_COIN_REWARD; save();
+          spawnFloater(W / 2, ry + rh / 2, '+' + AD_COIN_REWARD);
+        });
+      }
+    },
+  ]);
+
+  yCursor += 28;
+
+  // ----- Reset (DANGER) — confirm in place, no separate buttons -----
+  if (!resetConfirm) {
+    yCursor = _drawSettingsCard(yCursor, [
+      (rx, ry, rw, rh) => {
+        if (_settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
+          _drawSettingsIcon('trash', rx + 28, ry + rh / 2, 10, TH.arrowBlock);
+          txt(t('resetProgress'), rx + 56, ry + rh / 2, 14, TH.arrowBlock, 'left');
+        })) resetConfirm = true;
+      },
+    ]);
+  } else {
+    // Confirmation card — full-width row with the danger styling, plus a
+    // small CANCEL link below to dismiss.
+    yCursor = _drawSettingsCard(yCursor, [
+      (rx, ry, rw, rh) => {
+        if (_settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
+          _drawSettingsIcon('trash', rx + 28, ry + rh / 2, 10, TH.arrowBlock);
+          txt(t('yesReset'), rx + 56, ry + rh / 2, 14, TH.arrowBlock, 'left');
+        })) {
+          const PROGRESS_KEYS = ['ae_level', 'ae_maxlevel', 'ae_coins', 'ae_stars', 'ae_ach',
+            'ae_total_coins', 'ae_streakdays', 'ae_lastday', 'ae_perfects', 'ae_dailies',
+            'ae_nohint', 'ae_fastest', 'ae_playtime', 'ae_noads'];
+          for (const k of PROGRESS_KEYS) localStorage.removeItem(k);
+          for (let i = localStorage.length - 1; i >= 0; i--) {
+            const k = localStorage.key(i);
+            if (k && (k.startsWith('ae_best_') || k.startsWith('ae_daily_') || k.startsWith('ae_weekly_')))
+              localStorage.removeItem(k);
+          }
+          level = 1; maxLevel = 1; coins = STARTING_COINS; stars = {}; totalStars = 0;
+          achUnlocked = {}; totalPerfect = 0; totalDailies = 0; noHintCount = 0;
+          totalCoinsEarned = 0; streakDays = 0; totalPlayTime = 0; fastestLevel = 99999;
+          lastPlayDay = 0; hintUsedThisLevel = false;
+          resetConfirm = false; save();
+          goto('menu');
+        }
+      },
+    ]);
+    // Inline cancel link beneath — small, neutral, no card.
+    yCursor += 6;
+    if (_settingsRow(W / 2 - 60, yCursor, 120, 30, (rx, ry, rw, rh) => {
+      txt(t('cancel'), rx + rw / 2, ry + rh / 2, 13, TH.textSec);
+    })) resetConfirm = false;
   }
 
-  if(drawBtn('← '+t('back'),W/2,H-60,140,38)){resetConfirm=false;goto('menu')}
-
+  // Back arrow — small, lives in top-left, doesn't compete with the title.
+  if (_settingsRow(12, 36, 90, 44, (rx, ry, rw, rh) => {
+    _drawChevron(rx + 16, ry + rh / 2, 7, TH.text);
+    txt(t('back'), rx + 30, ry + rh / 2, 13, TH.text, 'left');
+  })) { resetConfirm = false; goto('menu'); }
 }
 
 // --- LANGUAGE PICKER MODAL ---
