@@ -163,7 +163,7 @@ function _devWarn(stage, err){
 
 // Single source of truth for the displayed app version. Bump alongside
 // CFBundleShortVersionString in ios/App/App.xcodeproj/project.pbxproj.
-const APP_VERSION='v1.0.19';
+const APP_VERSION='v1.0.20';
 // App Store deep link — used by the in-app "update available" nudge.
 const APP_STORE_URL='https://apps.apple.com/app/stray-arrows/id6763406927';
 const PI=Math.PI,TAU=PI*2,sin=Math.sin,cos=Math.cos,abs=Math.abs,floor=Math.floor,min=Math.min,max=Math.max,sqrt=Math.sqrt;
@@ -1210,11 +1210,9 @@ const WEEKLY_REWARD=150;  // first weekly completion (was 200, rebalanced so the
 // false so any old code paths still gate correctly. If real StoreKit IAP
 // lands later, restore the localStorage read here.
 const adsRemoved=false;
-const INTERSTITIAL_INTERVAL=300; // seconds between interstitials (5 min)
-// Initialized so the FIRST interstitial trigger is allowed instead of being
-// suppressed by the cool-down (which compares against gt — game-time seconds
-// since boot — that starts at 0).
-let lastInterstitialTime=-INTERSTITIAL_INTERVAL;
+// (Interstitial cadence now lives in showInterstitialAd — wall-clock
+// 5-7 min randomized window persisted in localStorage. The old `gt`-
+// based cooldown constants were removed in v1.0.20.)
 let adRewardCallback=null; // callback after rewarded ad completes
 
 // Real AdMob integration via @capacitor-community/admob
@@ -1385,24 +1383,52 @@ async function showRewardedAd(onReward){
     _adInFlight=false;
   }
 }
+// v1.0.20: interstitial back on with WALL-CLOCK cooldown.
+//
+// Each successful show records Date.now() in localStorage AND rolls a
+// fresh random next-interval in the 5-7 minute range. The next call
+// only fires once wall-clock time crossed that interval — regardless
+// of whether the app was closed, a level was retried, the user idled,
+// or anything else. Fixes the v1.0.17 bug where the cooldown ran on
+// `gt` (per-session game-clock) and reset to 0 on every relaunch,
+// which is what made ads feel like they fired after every single game.
+//
+// First-ever call seeds the timestamp to "now" and returns without
+// showing — so a brand-new install never sees an ad in the opening
+// minutes when impressions matter least and friction matters most.
+const INTERSTITIAL_MIN_MS = 5 * 60 * 1000;   // 5 min
+const INTERSTITIAL_MAX_MS = 7 * 60 * 1000;   // 7 min
+function _rollNextInterstitialInterval(){
+  return INTERSTITIAL_MIN_MS + floor(Math.random() * (INTERSTITIAL_MAX_MS - INTERSTITIAL_MIN_MS));
+}
 async function showInterstitialAd(){
-  // v1.0.18: interstitial ads disabled entirely.
-  //
-  // Why: App Store Analytics showed Stray Arrows D7 retention at 3%.
-  // The previous cooldown used `gt` (per-session game clock) instead of
-  // wall-clock time, so every fresh app launch reset the cooldown and
-  // interstitials fired again after almost every level / retry. Users
-  // perceived this as "ad after every game" — exactly the kind of
-  // friction that kills retention on a free puzzle game with no other
-  // hook yet.
-  //
-  // Only rewarded ads remain (showRewardedAd) — those are user-initiated
-  // ("watch ad for coins / extra hearts") so they don't feel intrusive.
-  //
-  // Function kept as a no-op so all the call sites stay valid and we
-  // can re-enable later (with WALL-CLOCK cooldown + a much longer
-  // interval, e.g. 10-15 minutes) once retention is fixed by other means.
-  return;
+  if(adsRemoved)return;
+  let lastTs = +localStorage.getItem('ae_inter_last') || 0;
+  let nextInterval = +localStorage.getItem('ae_inter_next') || INTERSTITIAL_MIN_MS;
+  // First-ever call: seed the timer so the first real ad lands ~5-7 min
+  // from now, not immediately on a fresh install.
+  if (lastTs === 0) {
+    _safeSet('ae_inter_last', String(Date.now()));
+    _safeSet('ae_inter_next', String(_rollNextInterstitialInterval()));
+    return;
+  }
+  if (Date.now() - lastTs < nextInterval) return;
+  if (!admobReady || typeof Capacitor === 'undefined' || !Capacitor.Plugins.AdMob) return;
+  const AdMob = Capacitor.Plugins.AdMob;
+  try {
+    if (!_interstitialPrepared) {
+      await AdMob.prepareInterstitial({ adId: INTERSTITIAL_ID(), isTesting: _admobTestMode() });
+      _interstitialPrepared = true;
+    }
+    await AdMob.showInterstitial();
+    // Stamp ONLY after a real show so a load/network failure doesn't
+    // waste the slot — the next call will retry instead of waiting
+    // another full 5-7 minutes.
+    _safeSet('ae_inter_last', String(Date.now()));
+    _safeSet('ae_inter_next', String(_rollNextInterstitialInterval()));
+  } catch (e) {
+    _logAdErr('showInterstitial', e);
+  }
 }
 function useHint(){
   if(coins<HINT_COST||hintTime>0)return false;
