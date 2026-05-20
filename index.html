@@ -196,7 +196,7 @@ function _ensureImportedChunk(lvl){
 }
 // Single source of truth for the displayed app version. Bump alongside
 // CFBundleShortVersionString in ios/App/App.xcodeproj/project.pbxproj.
-const APP_VERSION='v1.0.17';
+const APP_VERSION='v1.0.18';
 // App Store deep link — used by the in-app "update available" nudge.
 const APP_STORE_URL='https://apps.apple.com/app/stray-arrows/id6763406927';
 const PI=Math.PI,TAU=PI*2,sin=Math.sin,cos=Math.cos,abs=Math.abs,floor=Math.floor,min=Math.min,max=Math.max,sqrt=Math.sqrt;
@@ -1419,22 +1419,23 @@ async function showRewardedAd(onReward){
   }
 }
 async function showInterstitialAd(){
-  if(adsRemoved)return;
-  const now=gt;
-  if(now-lastInterstitialTime<INTERSTITIAL_INTERVAL)return;
-  lastInterstitialTime=now;
-  if(!admobReady||typeof Capacitor==='undefined'||!Capacitor.Plugins.AdMob)return;
-  const AdMob=Capacitor.Plugins.AdMob;
-  try{
-    if(!_interstitialPrepared){
-      await AdMob.prepareInterstitial({adId:INTERSTITIAL_ID(),isTesting:_admobTestMode()});
-      _interstitialPrepared=true;
-    }
-    await AdMob.showInterstitial();
-  }catch(e){
-    _logAdErr('showInterstitial',e);
-    // Don't retry interstitials — they're noisy and timed; just skip this slot.
-  }
+  // v1.0.18: interstitial ads disabled entirely.
+  //
+  // Why: App Store Analytics showed Stray Arrows D7 retention at 3%.
+  // The previous cooldown used `gt` (per-session game clock) instead of
+  // wall-clock time, so every fresh app launch reset the cooldown and
+  // interstitials fired again after almost every level / retry. Users
+  // perceived this as "ad after every game" — exactly the kind of
+  // friction that kills retention on a free puzzle game with no other
+  // hook yet.
+  //
+  // Only rewarded ads remain (showRewardedAd) — those are user-initiated
+  // ("watch ad for coins / extra hearts") so they don't feel intrusive.
+  //
+  // Function kept as a no-op so all the call sites stay valid and we
+  // can re-enable later (with WALL-CLOCK cooldown + a much longer
+  // interval, e.g. 10-15 minutes) once retention is fixed by other means.
+  return;
 }
 function useHint(){
   if(coins<HINT_COST||hintTime>0)return false;
