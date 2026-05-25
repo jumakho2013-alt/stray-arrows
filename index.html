@@ -163,7 +163,7 @@ function _devWarn(stage, err){
 
 // Single source of truth for the displayed app version. Bump alongside
 // CFBundleShortVersionString in ios/App/App.xcodeproj/project.pbxproj.
-const APP_VERSION='v1.0.20';
+const APP_VERSION='v1.0.21';
 // App Store deep link — used by the in-app "update available" nudge.
 const APP_STORE_URL='https://apps.apple.com/app/stray-arrows/id6763406927';
 const PI=Math.PI,TAU=PI*2,sin=Math.sin,cos=Math.cos,abs=Math.abs,floor=Math.floor,min=Math.min,max=Math.max,sqrt=Math.sqrt;
@@ -1403,17 +1403,28 @@ function _rollNextInterstitialInterval(){
 }
 async function showInterstitialAd(){
   if(adsRemoved)return;
+  const now = Date.now();
   let lastTs = +localStorage.getItem('ae_inter_last') || 0;
   let nextInterval = +localStorage.getItem('ae_inter_next') || INTERSTITIAL_MIN_MS;
   // First-ever call: seed the timer so the first real ad lands ~5-7 min
   // from now, not immediately on a fresh install.
   if (lastTs === 0) {
-    _safeSet('ae_inter_last', String(Date.now()));
+    _safeSet('ae_inter_last', String(now));
     _safeSet('ae_inter_next', String(_rollNextInterstitialInterval()));
     return;
   }
-  if (Date.now() - lastTs < nextInterval) return;
+  if (now - lastTs < nextInterval) return;
   if (!admobReady || typeof Capacitor === 'undefined' || !Capacitor.Plugins.AdMob) return;
+  // Commit the cooldown window NOW, the instant the gate opens — BEFORE we
+  // touch the native show. This is the fix for the "ad before every level"
+  // bug: AdMob.showInterstitial() can reject *after* the ad has already been
+  // displayed (no-fill retry, frequency-cap error, plugin quirk). If we only
+  // stamped after a clean resolve, that throw would skip the stamp, leave
+  // lastTs stale, and every subsequent level would re-open the gate and fire
+  // again. Rate-limiting is the contract here; losing one impression on a
+  // rare failed show is a fine price for never spamming the player.
+  _safeSet('ae_inter_last', String(now));
+  _safeSet('ae_inter_next', String(_rollNextInterstitialInterval()));
   const AdMob = Capacitor.Plugins.AdMob;
   try {
     if (!_interstitialPrepared) {
@@ -1421,11 +1432,8 @@ async function showInterstitialAd(){
       _interstitialPrepared = true;
     }
     await AdMob.showInterstitial();
-    // Stamp ONLY after a real show so a load/network failure doesn't
-    // waste the slot — the next call will retry instead of waiting
-    // another full 5-7 minutes.
-    _safeSet('ae_inter_last', String(Date.now()));
-    _safeSet('ae_inter_next', String(_rollNextInterstitialInterval()));
+    // Consumed — onInterstitialAdDismissed re-prepares the next one.
+    _interstitialPrepared = false;
   } catch (e) {
     _logAdErr('showInterstitial', e);
   }

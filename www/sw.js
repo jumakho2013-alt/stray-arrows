@@ -2,7 +2,7 @@
 // CACHE_NAME is auto-synced from package.json version by tools/sync-sw-version.js
 // (runs as `prebuild` script). Do NOT edit the version below by hand — bump
 // package.json instead and run `npm run build`.
-const CACHE_NAME = 'stray-arrows-v1.0.20';
+const CACHE_NAME = 'stray-arrows-v1.0.21';
 
 // Pre-cached on install: everything required to render the first frame and
 // reach the level-1 board. handcrafted-levels.js is included because it owns

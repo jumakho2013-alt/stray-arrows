@@ -1,6 +1,6 @@
 {
   "name": "stray-arrows",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "",
   "main": "sw.js",
   "scripts": {
