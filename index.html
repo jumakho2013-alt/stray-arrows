@@ -4773,16 +4773,27 @@ function drawSkins(){
   drawCoin(W-52,64,8);
   txt(coins+'',W-40,64,13,TH.star,'left');
 
-  const cols=3, n=SKINS.length;
-  const margin=20, gap=12;
+  // 2 columns → big, easy-to-read cards. Card HEIGHT is derived from the
+  // available vertical space so all rows always fit (never clips the bottom
+  // row on shorter phones), then capped so cards stay roughly square on tall
+  // screens instead of stretching into letterboxes.
+  const cols=2, n=SKINS.length;
+  const rows=Math.ceil(n/cols);
+  const margin=20, gap=14, startY=104, bottomPad=20;
   const cardW=(W-margin*2-gap*(cols-1))/cols;
-  const cardH=104, startY=118;
+  const availH=H-startY-bottomPad;
+  const cardH=Math.min((availH-gap*(rows-1))/rows, cardW*0.82);
+  const lastRowCount=n-(rows-1)*cols; // cards on the final row
 
   for(let idx=0;idx<n;idx++){
     const sk=SKINS[idx];
-    const cx=idx%cols, ry=floor(idx/cols);
-    const x=margin+cx*(cardW+gap)+cardW/2;
-    const y=startY+ry*(cardH+gap)+cardH/2;
+    const cIdx=idx%cols, rIdx=floor(idx/cols);
+    // Centre the final row when it isn't full (e.g. a lone 9th card).
+    const rowCount=(rIdx===rows-1)?lastRowCount:cols;
+    const rowW=rowCount*cardW+(rowCount-1)*gap;
+    const rowLeft=(W-rowW)/2;
+    const x=rowLeft+cIdx*(cardW+gap)+cardW/2;
+    const y=startY+rIdx*(cardH+gap)+cardH/2;
     const owned=ownedSkins.has(sk.id);
     const active=sk.id===activeSkin;
     const afford=coins>=sk.price;
@@ -4790,27 +4801,29 @@ function drawSkins(){
 
     // Card surface + border (accent outline marks the equipped skin)
     X.fillStyle=hv?TH.btnHover:TH.btnBg;
-    X.beginPath();X.roundRect(x-cardW/2,y-cardH/2,cardW,cardH,12);X.fill();
-    X.strokeStyle=active?TH.accent:TH.border;X.lineWidth=active?2:1;
-    X.beginPath();X.roundRect(x-cardW/2,y-cardH/2,cardW,cardH,12);X.stroke();
+    X.beginPath();X.roundRect(x-cardW/2,y-cardH/2,cardW,cardH,16);X.fill();
+    X.strokeStyle=active?TH.accent:TH.border;X.lineWidth=active?2.5:1;
+    X.beginPath();X.roundRect(x-cardW/2,y-cardH/2,cardW,cardH,16);X.stroke();
 
     // Preview arrow, painted by the skin (index 1 = representative hue for
     // ramp skins; animated skins drift with gt unless reduced-motion).
+    // Sized off the (now larger) card so it reads clearly.
     const tt=(sk.animated&&!reducedMotion)?gt:0;
     let pc;try{pc=sk.paint(1,tt)}catch(e){pc=TH.arrow}
-    drawArrow(x,y-16,0,54,pc,1);
+    drawArrow(x,y-cardH*0.16,0,cardW*0.46,pc,1);
 
     // Name
-    txtP(sk.name,x,y+20,12,owned?TH.text:TH.textSec);
+    txtP(sk.name,x,y+cardH*0.15,15,owned?TH.text:TH.textSec);
 
     // Footer status
+    const fy=y+cardH*0.34;
     if(active){
-      txtP(t('equipped'),x,y+40,10,TH.accent);
+      txtP(t('equipped'),x,fy,12,TH.accent);
     }else if(owned){
-      txtP(t('equip'),x,y+40,10,TH.textSec);
+      txtP(t('equip'),x,fy,12,TH.textSec);
     }else{
-      drawCoin(x-16,y+40,5);
-      txt(sk.price+'',x-4,y+40,11,afford?TH.star:TH.textDim,'left');
+      drawCoin(x-20,fy,6);
+      txt(sk.price+'',x-6,fy,13,afford?TH.star:TH.textDim,'left');
     }
 
     // Tap: active → no-op; owned → equip; else → buy (auto-equips) or reject.
@@ -4821,7 +4834,7 @@ function drawSkins(){
       else{
         const r=buySkin(sk.id);
         if(r==='bought'){sfx.tap();haptic(12);save();spawnFloater(x,y,'-'+sk.price,TH.star);}
-        else{sfx.tap();spawnFloater(x,y-34,t('notEnough'),TH.arrowBlock);}
+        else{sfx.tap();spawnFloater(x,y-cardH*0.3,t('notEnough'),TH.arrowBlock);}
       }
     }
   }
