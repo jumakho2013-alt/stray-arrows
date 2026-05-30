@@ -570,6 +570,13 @@ let lastClick=null; // {x,y,t} for button press scale feedback
 // Zoom state (Play screen only, reset on each generateLevel)
 let zoomLevel=1, panX=0, panY=0;
 const MIN_ZOOM=0.4, MAX_ZOOM=4;
+// User gestures (pinch / wheel) may not zoom OUT below 1.0 — the fit. Below
+// that the grid is fully visible with empty margin AND _clampPan() hard-locks
+// pan to centre, so the whole [0.4, 1.0] band was a dead zone where the board
+// "stuck" and fingers couldn't move it until you zoomed back past 1.0. MIN_ZOOM
+// stays 0.4 ONLY for the programmatic level-intro fly-in (_zoomFrom), which is
+// non-interactive and pans nothing.
+const PINCH_MIN_ZOOM=1;
 // Intro zoom animation. On level start we set zoomLevel=startZoom (a wide
 // view of the stage including padding) and animate toward _zoomTarget over
 // _zoomIntroDur seconds — gives the player a sense of scale before the
@@ -709,7 +716,7 @@ C.addEventListener('wheel',e=>{
   if(!(e.ctrlKey||e.metaKey))return;
   e.preventDefault();
   _zoomIntroT=1; // user took control — kill the intro lerp
-  zoomLevel=clp(zoomLevel-e.deltaY*.005,MIN_ZOOM,MAX_ZOOM);
+  zoomLevel=clp(zoomLevel-e.deltaY*.005,PINCH_MIN_ZOOM,MAX_ZOOM);
   _clampPan();
 },{passive:false});
 
@@ -754,7 +761,7 @@ C.addEventListener('touchmove',e=>{
     const midX=(p1.x+p2.x)/2,midY=(p1.y+p2.y)/2;
     // 1) Update zoom from finger spread
     if(_pinchStartDist>0){
-      zoomLevel=clp(_pinchStartZoom*d/_pinchStartDist,MIN_ZOOM,MAX_ZOOM);
+      zoomLevel=clp(_pinchStartZoom*d/_pinchStartDist,PINCH_MIN_ZOOM,MAX_ZOOM);
     }
     // 2) Pin the world-point that was under the initial midpoint to the
     // current midpoint. Forward (grid-center pivot):
