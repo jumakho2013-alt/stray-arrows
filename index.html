@@ -306,8 +306,75 @@ const TH={
   shadowLg: 24,
 };
 
+// ================================================================
+//  ARROW SKINS — cosmetic, unlocked with coins. A skin is a `paint(i,t)`
+//  function returning a CSS colour, called once per arrow per frame from
+//  arrowColor(). Solid skins ignore the args. "Ramp" skins vary hue by
+//  arrow index so a board reads as a multi-colour spread. "Animated" skins
+//  also drift with time t (seconds) — and MUST collapse to their t=0 frame
+//  under reducedMotion (we never animate when the OS asked us not to).
+//  No shadowBlur anywhere — it's the iOS WebKit perf cliff drawArrow avoids.
+// ================================================================
+function _hsl(h,s,l){h=((h%360)+360)%360;return 'hsl('+h+','+s+'%,'+l+'%)';}
+const SKINS=[
+  // Free default — the theme's own arrow colour (adapts to dark/contrast).
+  {id:'classic', name:'Classic', price:0,    animated:false, paint:()=>TH.arrow},
+  // --- colour tier ---
+  {id:'ink',     name:'Mono Ink',price:1000, animated:false, paint:()=>darkMode?'#f2ece4':'#241c1a'},
+  {id:'neon',    name:'Neon',    price:1500, animated:false, paint:()=>darkMode?'#3df0ff':'#0bb6c7'},
+  {id:'gold',    name:'Gold',    price:2000, animated:false, paint:()=>'#e8b53a'},
+  {id:'sunset',  name:'Sunset',  price:2500, animated:false, paint:i=>_hsl(14+i*24,85,darkMode?64:52)},
+  {id:'ocean',   name:'Ocean',   price:2500, animated:false, paint:i=>_hsl(188+i*16,72,darkMode?62:46)},
+  // --- animated (premium) tier ---
+  {id:'aurora',  name:'Aurora',  price:5000, animated:true,  paint:(i,t)=>_hsl(140+i*22+t*18,70,darkMode?62:50)},
+  {id:'rainbow', name:'Rainbow', price:6000, animated:true,  paint:(i,t)=>_hsl(i*40+t*60,85,darkMode?63:52)},
+  {id:'shimmer', name:'Shimmer', price:7000, animated:true,  paint:(i,t)=>_hsl(45,90,50+18*Math.sin(t*3+i*0.6))},
+];
+const SKIN_BY_ID={};
+for(const s of SKINS)SKIN_BY_ID[s.id]=s;
+
+// 'classic' is always owned. Persisted as a comma list in ae_skins.
+let ownedSkins=(function(){
+  const raw=(localStorage.getItem('ae_skins')||'').split(',').map(s=>s.trim()).filter(Boolean);
+  const set=new Set(raw);set.add('classic');return set;
+})();
+// Active skin id — fall back to classic if the stored id is unknown (e.g. a
+// skin removed in a later build, or a corrupted value).
+let activeSkin=(function(){
+  const id=localStorage.getItem('ae_skin')||'classic';
+  return SKIN_BY_ID[id]?id:'classic';
+})();
+function _activeSkinDef(){return SKIN_BY_ID[activeSkin]||SKIN_BY_ID.classic;}
+
+// Persist skin state immediately (a purchase must survive a crash, not wait
+// for the next save()).
+function _persistSkins(){
+  _safeSet('ae_skins',Array.from(ownedSkins).join(','));
+  _safeSet('ae_skin',activeSkin);
+}
+// Returns 'bought' | 'owned' | 'poor'. Caller handles SFX/feedback.
+function buySkin(id){
+  const sk=SKIN_BY_ID[id];
+  if(!sk)return 'poor';
+  if(ownedSkins.has(id))return 'owned';
+  if(coins<sk.price)return 'poor';
+  coins-=sk.price;
+  ownedSkins.add(id);
+  activeSkin=id;            // auto-equip on purchase
+  _persistSkins();_safeSet('ae_coins',coins);
+  return 'bought';
+}
+function setActiveSkin(id){
+  if(!ownedSkins.has(id))return false;
+  activeSkin=id;_persistSkins();
+  return true;
+}
+
 function arrowColor(a,i){
-  return TH.arrow;
+  const sk=_activeSkinDef();
+  // Animated skins freeze to t=0 under reduced-motion.
+  const t=(sk.animated&&!reducedMotion)?gt:0;
+  try{return sk.paint(i||0,t);}catch(e){_devWarn('skinPaint:'+sk.id,e);return TH.arrow;}
 }
 
 // ================================================================
@@ -325,8 +392,8 @@ const LANGS=[
   {code:'ja',name:'日本語'},
 ];
 const STR={
-  en:{title1:'STRAY',title2:'ARROWS',tagline:'puzzle game',play:'PLAY',levels:'LEVELS',daily:'DAILY',weekly:'WEEKLY',stats:'STATS',achievements:'ACHIEVEMENTS',settings:'SETTINGS',sound:'Sound',theme:'Theme',themeDark:'Dark',themeLight:'Light',language:'Language',watchAd:'Watch Ad',coins:'Coins',resetProgress:'Reset Progress',areYouSure:'Are you sure?',yesReset:'YES, RESET',cancel:'CANCEL',back:'BACK',hint:'HINT',skip:'SKIP',level:'LEVEL',stars:'STARS',streak:'STREAK',trophy:'TROPHY',on:'ON',off:'OFF',nextLevel:'NEXT LEVEL',replay:'REPLAY',home:'HOME',gameOver:'GAME OVER',outOfHearts:'You ran out of hearts',retry:'RETRY',continueBtn:'CONTINUE',adUnavailable:'Ad unavailable, try later',updateAvailable:'Update available',contrast:'Contrast',},
-  ru:{title1:'STRAY',title2:'ARROWS',tagline:'головоломка',play:'ИГРАТЬ',levels:'УРОВНИ',daily:'ДЕНЬ',weekly:'НЕДЕЛЯ',stats:'СТАТЫ',achievements:'ДОСТИЖЕНИЯ',settings:'НАСТРОЙКИ',sound:'Звук',theme:'Тема',themeDark:'Тёмная',themeLight:'Светлая',language:'Язык',watchAd:'Смотреть рекламу',coins:'монет',resetProgress:'Сбросить прогресс',areYouSure:'Вы уверены?',yesReset:'ДА, СБРОСИТЬ',cancel:'ОТМЕНА',back:'НАЗАД',hint:'ПОДСКАЗКА',skip:'ПРОПУСК',level:'УРОВЕНЬ',stars:'ЗВЁЗДЫ',streak:'СЕРИЯ',trophy:'КУБОК',on:'ВКЛ',off:'ВЫКЛ',nextLevel:'СЛЕД. УРОВЕНЬ',replay:'ЗАНОВО',home:'ДОМОЙ',gameOver:'ИГРА ОКОНЧЕНА',outOfHearts:'Закончились жизни',retry:'ПОВТОР',continueBtn:'ПРОДОЛЖИТЬ',adUnavailable:'Реклама недоступна',updateAvailable:'Доступно обновление',contrast:'Контраст',},
+  en:{title1:'STRAY',title2:'ARROWS',tagline:'puzzle game',play:'PLAY',levels:'LEVELS',daily:'DAILY',weekly:'WEEKLY',stats:'STATS',achievements:'ACHIEVEMENTS',settings:'SETTINGS',sound:'Sound',theme:'Theme',themeDark:'Dark',themeLight:'Light',language:'Language',watchAd:'Watch Ad',coins:'Coins',resetProgress:'Reset Progress',areYouSure:'Are you sure?',yesReset:'YES, RESET',cancel:'CANCEL',back:'BACK',hint:'HINT',skip:'SKIP',level:'LEVEL',stars:'STARS',streak:'STREAK',trophy:'TROPHY',on:'ON',off:'OFF',nextLevel:'NEXT LEVEL',replay:'REPLAY',home:'HOME',gameOver:'GAME OVER',outOfHearts:'You ran out of hearts',retry:'RETRY',continueBtn:'CONTINUE',adUnavailable:'Ad unavailable, try later',updateAvailable:'Update available',contrast:'Contrast',skins:'SKINS',equipped:'EQUIPPED',equip:'EQUIP',notEnough:'Not enough coins',},
+  ru:{title1:'STRAY',title2:'ARROWS',tagline:'головоломка',play:'ИГРАТЬ',levels:'УРОВНИ',daily:'ДЕНЬ',weekly:'НЕДЕЛЯ',stats:'СТАТЫ',achievements:'ДОСТИЖЕНИЯ',settings:'НАСТРОЙКИ',sound:'Звук',theme:'Тема',themeDark:'Тёмная',themeLight:'Светлая',language:'Язык',watchAd:'Смотреть рекламу',coins:'монет',resetProgress:'Сбросить прогресс',areYouSure:'Вы уверены?',yesReset:'ДА, СБРОСИТЬ',cancel:'ОТМЕНА',back:'НАЗАД',hint:'ПОДСКАЗКА',skip:'ПРОПУСК',level:'УРОВЕНЬ',stars:'ЗВЁЗДЫ',streak:'СЕРИЯ',trophy:'КУБОК',on:'ВКЛ',off:'ВЫКЛ',nextLevel:'СЛЕД. УРОВЕНЬ',replay:'ЗАНОВО',home:'ДОМОЙ',gameOver:'ИГРА ОКОНЧЕНА',outOfHearts:'Закончились жизни',retry:'ПОВТОР',continueBtn:'ПРОДОЛЖИТЬ',adUnavailable:'Реклама недоступна',updateAvailable:'Доступно обновление',contrast:'Контраст',skins:'СКИНЫ',equipped:'ВЫБРАН',equip:'ВЫБРАТЬ',notEnough:'Недостаточно монет',},
   es:{title1:'STRAY',title2:'ARROWS',tagline:'juego de puzzle',play:'JUGAR',levels:'NIVELES',daily:'DIARIO',weekly:'SEMANAL',stats:'STATS',achievements:'LOGROS',settings:'AJUSTES',sound:'Sonido',theme:'Tema',themeDark:'Oscuro',themeLight:'Claro',language:'Idioma',watchAd:'Ver anuncio',coins:'monedas',resetProgress:'Reiniciar',areYouSure:'¿Estás seguro?',yesReset:'SÍ, REINICIAR',cancel:'CANCELAR',back:'ATRÁS',hint:'PISTA',skip:'SALTAR',level:'NIVEL',stars:'ESTR',streak:'RACHA',trophy:'COPA',on:'ON',off:'OFF',nextLevel:'SIGUIENTE',replay:'REPETIR',home:'INICIO',gameOver:'FIN',outOfHearts:'Sin vidas',retry:'REINTENTAR',continueBtn:'CONTINUAR',adUnavailable:'Anuncio no disponible',updateAvailable:'Actualización disponible',contrast:'Contraste',},
   de:{title1:'STRAY',title2:'ARROWS',tagline:'Puzzlespiel',play:'SPIELEN',levels:'LEVEL',daily:'TAG',weekly:'WOCHE',stats:'STATS',achievements:'ERFOLGE',settings:'EINSTELL.',sound:'Ton',theme:'Theme',themeDark:'Dunkel',themeLight:'Hell',language:'Sprache',watchAd:'Werbung ansehen',coins:'Münzen',resetProgress:'Zurücksetzen',areYouSure:'Sicher?',yesReset:'JA, RESET',cancel:'ABBR.',back:'ZURÜCK',hint:'TIPP',skip:'ÜBERSPR.',level:'LVL',stars:'STERNE',streak:'SERIE',trophy:'POKAL',on:'AN',off:'AUS',nextLevel:'WEITER',replay:'NEU',home:'HOME',gameOver:'GAME OVER',outOfHearts:'Keine Herzen mehr',retry:'NEU',continueBtn:'WEITER',adUnavailable:'Werbung nicht verfügbar',updateAvailable:'Update verfügbar',contrast:'Kontrast',},
   fr:{title1:'STRAY',title2:'ARROWS',tagline:'jeu de puzzle',play:'JOUER',levels:'NIVEAUX',daily:'JOUR',weekly:'SEMAINE',stats:'STATS',achievements:'SUCCÈS',settings:'PARAM.',sound:'Son',theme:'Thème',themeDark:'Sombre',themeLight:'Clair',language:'Langue',watchAd:'Voir pub',coins:'pièces',resetProgress:'Réinitialiser',areYouSure:'Sûr ?',yesReset:'OUI, RESET',cancel:'ANNULER',back:'RETOUR',hint:'INDICE',skip:'PASSER',level:'NIV',stars:'ÉTOILES',streak:'SÉRIE',trophy:'COUPE',on:'ON',off:'OFF',nextLevel:'SUIVANT',replay:'REJOUER',home:'ACCUEIL',gameOver:'PERDU',outOfHearts:'Plus de vies',retry:'REJOUER',continueBtn:'CONTINUER',adUnavailable:'Pub indisponible',updateAvailable:'Mise à jour dispo',contrast:'Contraste',},
@@ -1101,6 +1168,7 @@ function save(){
   _safeSet('ae_nohint',noHintCount);
   _safeSet('ae_fastest',fastestLevel);
   _safeSet('ae_playtime',floor(totalPlayTime));
+  _persistSkins();
 }
 
 // Spawn a floating "+N" text for a coin reward — quick reward feedback
@@ -3265,10 +3333,17 @@ function drawMenu(){
     X.beginPath();X.arc(gx+cos(a)*10,gy+sin(a)*10,2,0,TAU);X.fill()}
   if(tapped&&abs(tapX-gx)<20&&abs(tapY-gy)<20){sfx.tap();tapped=false;goto('settings')}
 
-  // Coins — nudged slightly below the gear for better visual balance
+  // Coins — nudged slightly below the gear for better visual balance.
+  // The whole coin chip is a tappable entry to the Skins shop (tap-your-coins
+  // -to-spend idiom); a small chevron hints it's interactive.
   const _topY=Math.max(55,safeTop+19);
+  const _coinHv=mx>=20&&mx<=104&&abs(my-_topY)<16;
   drawCoin(36,_topY,7);
   txt(coins+'',52,_topY,13,TH.star,'left');
+  _drawChevron(94,_topY,5,_coinHv?TH.accent:TH.textDim,'right');
+  if(tapped&&mx>=20&&mx<=104&&abs(tapY-_topY)<16&&tapX>=20&&tapX<=104){
+    sfx.tap();tapped=false;goto('skins');
+  }
 
   // "Update available" nudge — when checkForUpdate() finds a newer App
   // Store version. v2 redesign: previously a quiet 28-px pill at the
@@ -4440,6 +4515,18 @@ function drawSettings(){
         });
       }
     },
+    // Arrow Skins shop → goto('skins'). Icon previews the active skin's paint.
+    (rx, ry, rw, rh) => {
+      if (_settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
+        const _sk = _activeSkinDef();
+        const _t = (_sk.animated && !reducedMotion) ? gt : 0;
+        let _pc; try { _pc = _sk.paint(1, _t); } catch (e) { _pc = TH.arrow; }
+        drawArrow(rx + 28, ry + rh / 2, 0, 26, _pc, 1);
+        txt(t('skins'), rx + 56, ry + rh / 2, 14, TH.text, 'left');
+        txt(_sk.name, rx + rw - 36, ry + rh / 2, 13, TH.textSec, 'right');
+        _drawChevron(rx + rw - 18, ry + rh / 2, 8);
+      })) goto('skins');
+    },
   ]);
 
   yCursor += 28;
@@ -4465,7 +4552,7 @@ function drawSettings(){
         })) {
           const PROGRESS_KEYS = ['ae_level', 'ae_maxlevel', 'ae_coins', 'ae_stars', 'ae_ach',
             'ae_total_coins', 'ae_streakdays', 'ae_lastday', 'ae_perfects', 'ae_dailies',
-            'ae_nohint', 'ae_fastest', 'ae_playtime', 'ae_noads'];
+            'ae_nohint', 'ae_fastest', 'ae_playtime', 'ae_noads', 'ae_skins', 'ae_skin'];
           for (const k of PROGRESS_KEYS) localStorage.removeItem(k);
           for (let i = localStorage.length - 1; i >= 0; i--) {
             const k = localStorage.key(i);
@@ -4476,6 +4563,7 @@ function drawSettings(){
           achUnlocked = {}; totalPerfect = 0; totalDailies = 0; noHintCount = 0;
           totalCoinsEarned = 0; streakDays = 0; totalPlayTime = 0; fastestLevel = 99999;
           lastPlayDay = 0; hintUsedThisLevel = false;
+          ownedSkins = new Set(['classic']); activeSkin = 'classic';
           resetConfirm = false; save();
           goto('menu');
         }
@@ -4672,6 +4760,79 @@ function drawLevels(){
 // ================================================================
 let _lastT=0;
 let fadingOut=false;
+// --- SKINS SHOP ---
+// 3-column grid of arrow skins. Each card previews the skin (a right-pointing
+// arrow painted by it), its name, and a footer: EQUIPPED (active), EQUIP
+// (owned → tap to equip), or a coin + price (tap to buy if affordable, dimmed
+// otherwise). Buying auto-equips. Paid with the in-game coins earned in play /
+// rewarded ads — NOT real money (that's the separate Remove Ads IAP).
+function drawSkins(){
+  drawBg(true);
+  txtP(t('skins'),W/2,64,24,TH.text);
+  // Coin balance, top-right — mirrors the play/complete/gameover screens.
+  drawCoin(W-52,64,8);
+  txt(coins+'',W-40,64,13,TH.star,'left');
+
+  const cols=3, n=SKINS.length;
+  const margin=20, gap=12;
+  const cardW=(W-margin*2-gap*(cols-1))/cols;
+  const cardH=104, startY=118;
+
+  for(let idx=0;idx<n;idx++){
+    const sk=SKINS[idx];
+    const cx=idx%cols, ry=floor(idx/cols);
+    const x=margin+cx*(cardW+gap)+cardW/2;
+    const y=startY+ry*(cardH+gap)+cardH/2;
+    const owned=ownedSkins.has(sk.id);
+    const active=sk.id===activeSkin;
+    const afford=coins>=sk.price;
+    const hv=abs(mx-x)<cardW/2&&abs(my-y)<cardH/2;
+
+    // Card surface + border (accent outline marks the equipped skin)
+    X.fillStyle=hv?TH.btnHover:TH.btnBg;
+    X.beginPath();X.roundRect(x-cardW/2,y-cardH/2,cardW,cardH,12);X.fill();
+    X.strokeStyle=active?TH.accent:TH.border;X.lineWidth=active?2:1;
+    X.beginPath();X.roundRect(x-cardW/2,y-cardH/2,cardW,cardH,12);X.stroke();
+
+    // Preview arrow, painted by the skin (index 1 = representative hue for
+    // ramp skins; animated skins drift with gt unless reduced-motion).
+    const tt=(sk.animated&&!reducedMotion)?gt:0;
+    let pc;try{pc=sk.paint(1,tt)}catch(e){pc=TH.arrow}
+    drawArrow(x,y-16,0,54,pc,1);
+
+    // Name
+    txtP(sk.name,x,y+20,12,owned?TH.text:TH.textSec);
+
+    // Footer status
+    if(active){
+      txtP(t('equipped'),x,y+40,10,TH.accent);
+    }else if(owned){
+      txtP(t('equip'),x,y+40,10,TH.textSec);
+    }else{
+      drawCoin(x-16,y+40,5);
+      txt(sk.price+'',x-4,y+40,11,afford?TH.star:TH.textDim,'left');
+    }
+
+    // Tap: active → no-op; owned → equip; else → buy (auto-equips) or reject.
+    if(tapped&&hv){
+      tapped=false;
+      if(active){sfx.tap();}
+      else if(owned){setActiveSkin(sk.id);sfx.tap();haptic(8);}
+      else{
+        const r=buySkin(sk.id);
+        if(r==='bought'){sfx.tap();haptic(12);save();spawnFloater(x,y,'-'+sk.price,TH.star);}
+        else{sfx.tap();spawnFloater(x,y-34,t('notEnough'),TH.arrowBlock);}
+      }
+    }
+  }
+
+  // Back chevron — identical pattern to Settings.
+  if(_settingsRow(12,36,90,44,(rx,ry,rw,rh)=>{
+    _drawChevron(rx+16,ry+rh/2,7,TH.text,'left');
+    txt(t('back'),rx+30,ry+rh/2,13,TH.text,'left');
+  },false)){goto('menu');}
+}
+
 function goto(newState,action){
   if(fadingOut)return;
   // Reset transient screen-local UI flags when leaving screens — avoids the
@@ -4709,6 +4870,7 @@ function loop(t){
   else if(S==='levels')drawLevels();
   else if(S==='achievements')drawAchievements();
   else if(S==='stats')drawStats();
+  else if(S==='skins')drawSkins();
 
   // Global: floating coin popups + achievement unlock popup
   drawFloaters();
