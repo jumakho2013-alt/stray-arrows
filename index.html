@@ -344,7 +344,6 @@ const SKINS=[
   // --- animated tier ---
   {id:'fire',    name:'Fire',    price:5000, animated:true,  paint:(c,x0,y0,x1,y1,i,t)=>{const k=Math.max(.22,Math.min(.78,.5+.16*Math.sin(t*8+i*1.7)));return _grad(c,x0,y0,x1,y1,[[0,'#6e1200'],[k,'#ef5a12'],[1,'#ffd14a']]);}},
   {id:'rainbow', name:'Rainbow', price:7000, animated:false, paint:(c,x0,y0,x1,y1)=>_grad(c,x0,y0,x1,y1,[[0,_hsl(0,85,58)],[.25,_hsl(75,85,58)],[.5,_hsl(150,85,58)],[.75,_hsl(225,85,58)],[1,_hsl(300,85,58)]])},
-  {id:'brush',   name:'Brush',   price:4500, animated:false, brush:true, paint:(c,x0,y0,x1,y1)=>_grad(c,x0,y0,x1,y1, darkMode?[[0,'#f4ecdf'],[1,'#cab7a3']]:[[0,'#3a322b'],[1,'#0a0807']])},
 ];
 const SKIN_BY_ID={};
 for(const s of SKINS)SKIN_BY_ID[s.id]=s;
@@ -392,38 +391,10 @@ function setActiveSkin(id){
 // t=0 under reduced-motion.
 function _skinPaint(sk,i){
   const t=(sk.animated&&!reducedMotion)?gt:0;
-  const fn=(ctx,x0,y0,x1,y1)=>{
+  return (ctx,x0,y0,x1,y1)=>{
     try{return sk.paint(ctx,x0,y0,x1,y1,i||0,t);}
     catch(e){_devWarn('skinPaint:'+sk.id,e);return TH.arrow;}
   };
-  if(sk.brush)fn._brush=true; // tells drawArrowPolyline to use the tapered ink ribbon
-  return fn;
-}
-// Fill a calligraphic "brush" ribbon along centerline pts: the stroke starts
-// thin at the tail and grows to full width (a brush-down stroke), giving an
-// ink/hieroglyph look instead of a uniform pipe. maxHalf = half the full width.
-function _brushFill(ctx,pts,maxHalf,paint){
-  const n=pts.length; if(n<2)return;
-  const seg=[],len=[]; let total=0;
-  for(let i=0;i<n-1;i++){const dx=pts[i+1][0]-pts[i][0],dy=pts[i+1][1]-pts[i][1];const l=Math.hypot(dx,dy)||1e-6;seg.push([dx/l,dy/l]);len.push(l);total+=l;}
-  const left=[],right=[]; let acc=0;
-  for(let i=0;i<n;i++){
-    const a=seg[Math.max(0,i-1)], b=seg[Math.min(seg.length-1,i)];
-    let tx=a[0]+b[0],ty=a[1]+b[1];const tl=Math.hypot(tx,ty)||1e-6;tx/=tl;ty/=tl;
-    const nx=-ty,ny=tx;                      // perpendicular to the local tangent
-    const tA=total>0?acc/total:0;
-    const prof=tA<0.20?(0.18+(tA/0.20)*0.82):1.0;  // thin tail → full body
-    const h=maxHalf*prof;
-    left.push([pts[i][0]+nx*h,pts[i][1]+ny*h]);
-    right.push([pts[i][0]-nx*h,pts[i][1]-ny*h]);
-    if(i<len.length)acc+=len[i];
-  }
-  ctx.fillStyle=paint;
-  ctx.beginPath();
-  ctx.moveTo(left[0][0],left[0][1]);
-  for(let i=1;i<n;i++)ctx.lineTo(left[i][0],left[i][1]);
-  for(let i=n-1;i>=0;i--)ctx.lineTo(right[i][0],right[i][1]);
-  ctx.closePath();ctx.fill();
 }
 function arrowColor(a,i){ return _skinPaint(_activeSkinDef(),i||0); }
 // Resolve a `col` (string OR paint-function) to a concrete fillStyle/strokeStyle.
@@ -2827,35 +2798,27 @@ function drawArrowPolyline(pts,sz,col,alpha){
   const k=min(1,headL/hlen);
   modPts[modPts.length-1]=[last[0]-nx*hlen*k,last[1]-ny*hlen*k];
 
-  // Brush skins render a tapered calligraphic ink ribbon instead of the
-  // uniform pipe (thin at the tail, full through the body) — the head
-  // triangle below still marks direction.
-  const isBrush = typeof col==='function' && col._brush;
-  if(isBrush){
-    _brushFill(X, modPts, thick*0.55, paint);
+  // Line body: thick stroke with ARC'd corners. lineJoin='round' alone
+  // only gives a tiny radius (≈ stroke width / 2) so 90° turns still
+  // read as sharp. arcTo at every interior vertex replaces each corner
+  // with a real curve of `cornerR` radius — the path reads like a
+  // soft pipe winding through cells, not a stair-step.
+  X.strokeStyle=paint;
+  X.lineWidth=thick;
+  X.lineCap='round';
+  X.lineJoin='round';
+  const cornerR=sz*0.10;
+  X.beginPath();
+  X.moveTo(modPts[0][0],modPts[0][1]);
+  if(modPts.length<3){
+    for(let i=1;i<modPts.length;i++)X.lineTo(modPts[i][0],modPts[i][1]);
   }else{
-    // Line body: thick stroke with ARC'd corners. lineJoin='round' alone
-    // only gives a tiny radius (≈ stroke width / 2) so 90° turns still
-    // read as sharp. arcTo at every interior vertex replaces each corner
-    // with a real curve of `cornerR` radius — the path reads like a
-    // soft pipe winding through cells, not a stair-step.
-    X.strokeStyle=paint;
-    X.lineWidth=thick;
-    X.lineCap='round';
-    X.lineJoin='round';
-    const cornerR=sz*0.10;
-    X.beginPath();
-    X.moveTo(modPts[0][0],modPts[0][1]);
-    if(modPts.length<3){
-      for(let i=1;i<modPts.length;i++)X.lineTo(modPts[i][0],modPts[i][1]);
-    }else{
-      for(let i=1;i<modPts.length-1;i++){
-        X.arcTo(modPts[i][0],modPts[i][1],modPts[i+1][0],modPts[i+1][1],cornerR);
-      }
-      X.lineTo(modPts[modPts.length-1][0],modPts[modPts.length-1][1]);
+    for(let i=1;i<modPts.length-1;i++){
+      X.arcTo(modPts[i][0],modPts[i][1],modPts[i+1][0],modPts[i+1][1],cornerR);
     }
-    X.stroke();
+    X.lineTo(modPts[modPts.length-1][0],modPts[modPts.length-1][1]);
   }
+  X.stroke();
 
   // Triangular arrowhead at the head (tip at `last`, base extending backward)
   const pxv=-ny,pyv=nx;
@@ -4851,9 +4814,9 @@ function drawSkins(){
   // available vertical space so all rows always fit (never clips the bottom
   // row on shorter phones), then capped so cards stay roughly square on tall
   // screens instead of stretching into letterboxes.
-  const cols=2, n=SKINS.length;
+  const cols=3, n=SKINS.length;
   const rows=Math.ceil(n/cols);
-  const margin=20, gap=14, startY=104, bottomPad=20;
+  const margin=16, gap=11, startY=104, bottomPad=20;
   const cardW=(W-margin*2-gap*(cols-1))/cols;
   const availH=H-startY-bottomPad;
   const cardH=Math.min((availH-gap*(rows-1))/rows, cardW*0.82);
@@ -4887,34 +4850,32 @@ function drawSkins(){
     X.strokeStyle=active?TH.accent:TH.border;X.lineWidth=active?2.5:1;
     X.beginPath();X.roundRect(cardX,cardY,cardW,cardH,16);X.stroke();
 
-    // Bold, game-style thick arrow — the hero of the card. The skin's colour
-    // is the only decoration, left to breathe on a clean surface (no muddy
-    // tint box). drawArrowPolyline gives the same rounded thick look as the
-    // arrows in play, so the preview matches what you actually get.
-    const ay=y-cardH*0.13, aw=cardW*0.24;
-    drawArrowPolyline([[x-aw,ay],[x+aw,ay]], cardW*0.46, pc, 1);
+    // Bold, game-style thick arrow — the hero of the card. drawArrowPolyline
+    // gives the same rounded thick look as the arrows in play.
+    const ay=y-cardH*0.12, aw=cardW*0.26;
+    drawArrowPolyline([[x-aw,ay],[x+aw,ay]], cardW*0.50, pc, 1);
 
     // Name
-    txtP(sk.name, x, y+cardH*0.16, 14.5, owned?TH.text:TH.textSec);
+    txtP(sk.name, x, y+cardH*0.17, 12, owned?TH.text:TH.textSec);
 
     // Status chip / price pill
-    const chipY=y+cardH*0.36;
+    const chipY=y+cardH*0.37;
     if(active){
-      txtP(t('equipped'), x, chipY, 11, TH.accent);
+      txtP(t('equipped'), x, chipY, 9, TH.accent);
       // Corner check badge so "equipped" reads at a glance.
-      const bx=cardX+cardW-16, by=cardY+16, br=10;
+      const bx=cardX+cardW-13, by=cardY+13, br=8;
       X.fillStyle=TH.accent;X.beginPath();X.arc(bx,by,br,0,TAU);X.fill();
-      X.strokeStyle='#fff';X.lineWidth=2;X.lineCap='round';X.lineJoin='round';
-      X.beginPath();X.moveTo(bx-4,by+0.5);X.lineTo(bx-1.2,by+3.4);X.lineTo(bx+4.2,by-3);X.stroke();
+      X.strokeStyle='#fff';X.lineWidth=1.7;X.lineCap='round';X.lineJoin='round';
+      X.beginPath();X.moveTo(bx-3.2,by+0.4);X.lineTo(bx-1,by+2.8);X.lineTo(bx+3.4,by-2.4);X.stroke();
     }else if(owned){
-      txtP(t('equip'), x, chipY, 11, TH.textSec);
+      txtP(t('equip'), x, chipY, 9, TH.textSec);
     }else{
       // Price pill — gold when affordable, muted when not.
-      const pw=70, ph=24;
+      const pw=56, ph=20;
       X.save();X.globalAlpha=afford?0.14:0.06;X.fillStyle=afford?TH.star:TH.text;
       X.beginPath();X.roundRect(x-pw/2,chipY-ph/2,pw,ph,ph/2);X.fill();X.restore();
-      drawCoin(x-16,chipY,6);
-      txt(sk.price+'', x-3, chipY, 13, afford?TH.star:TH.textDim, 'left');
+      drawCoin(x-13,chipY,5);
+      txt(sk.price+'', x-2, chipY, 11, afford?TH.star:TH.textDim, 'left');
     }
 
     // Tap: active → no-op; owned → equip; else → buy (auto-equips) or reject.
