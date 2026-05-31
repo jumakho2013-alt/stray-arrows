@@ -654,15 +654,21 @@ let _zoomFrom=1, _zoomTarget=1, _zoomIntroT=0, _zoomIntroDur=0.65;
 // previous flat 14 px target they barely used a third of the canvas
 // (cell size ~50 px on a 390-wide viewport, so the auto-zoom branch
 // never fired). Now we compute a target cell size that lets the larger
-// of {cols, rows} fill ~80% of the stage width, capped so even a 4×4
+// of {cols, rows} fill ~92% of the stage width, capped so even a 4×4
 // doesn't blow up beyond the viewport edges.
-const AUTO_ZOOM_CAP=2.4;
+// v2.6: target bumped 0.80 → 0.92 and cap 2.4 → 3.0 — players found the
+// default board too small/cramped to read even after pinch-zooming. Now the
+// board fills almost the full width by default (≈4% margin per side); tall
+// grids stay vertical-limited so they don't overzoom past the play area, and
+// genuinely huge boards (which already fill the width at zoom 1) are unchanged
+// — pinch-zoom + pan handles those, now that the pan dead-zone is fixed.
+const AUTO_ZOOM_CAP=3.0;
 function _autoFitZoom(){
   const cs=getCellSize();
   if(cs<=0)return 1;
   const gridMax=max(gridCols,gridRows);
-  // 80% of canvas width / grid dimension = ideal cell size
-  const idealCs=(W*0.80)/gridMax;
+  // 92% of canvas width / grid dimension = ideal cell size
+  const idealCs=(W*0.92)/gridMax;
   if(cs>=idealCs)return 1;
   return min(AUTO_ZOOM_CAP, idealCs/cs);
 }
