@@ -4805,31 +4805,53 @@ function drawSkins(){
     const afford=coins>=sk.price;
     const hv=abs(mx-x)<cardW/2&&abs(my-y)<cardH/2;
 
-    // Card surface + border (accent outline marks the equipped skin)
-    X.fillStyle=hv?TH.btnHover:TH.btnBg;
-    X.beginPath();X.roundRect(x-cardW/2,y-cardH/2,cardW,cardH,16);X.fill();
-    X.strokeStyle=active?TH.accent:TH.border;X.lineWidth=active?2.5:1;
-    X.beginPath();X.roundRect(x-cardW/2,y-cardH/2,cardW,cardH,16);X.stroke();
-
-    // Preview arrow, painted by the skin (index 1 = representative hue for
-    // ramp skins; animated skins drift with gt unless reduced-motion).
-    // Sized off the (now larger) card so it reads clearly.
+    const cardX=x-cardW/2, cardY=y-cardH/2;
     const tt=(sk.animated&&!reducedMotion)?gt:0;
     let pc;try{pc=sk.paint(1,tt)}catch(e){pc=TH.arrow}
-    drawArrow(x,y-cardH*0.16,0,cardW*0.46,pc,1);
+
+    // Card surface. Equipped card gets a faint accent wash so it reads as
+    // "selected" beyond just the border.
+    X.fillStyle=hv?TH.btnHover:TH.btnBg;
+    X.beginPath();X.roundRect(cardX,cardY,cardW,cardH,16);X.fill();
+    if(active){
+      X.save();X.globalAlpha=0.07;X.fillStyle=TH.accent;
+      X.beginPath();X.roundRect(cardX,cardY,cardW,cardH,16);X.fill();X.restore();
+    }
+    X.strokeStyle=active?TH.accent:TH.border;X.lineWidth=active?2.5:1;
+    X.beginPath();X.roundRect(cardX,cardY,cardW,cardH,16);X.stroke();
+
+    // Preview "well" — a rounded inset tinted by the skin's OWN colour (12%),
+    // so each card reads as a colour swatch and the old dead space is filled.
+    const pad=9, wellH=cardH*0.46;
+    const wellX=cardX+pad, wellY=cardY+pad, wellW=cardW-pad*2;
+    X.save();X.globalAlpha=0.12;X.fillStyle=pc;
+    X.beginPath();X.roundRect(wellX,wellY,wellW,wellH,11);X.fill();X.restore();
+    X.strokeStyle=TH.border;X.lineWidth=1;
+    X.beginPath();X.roundRect(wellX,wellY,wellW,wellH,11);X.stroke();
+    // Arrow centred in the well, painted by the skin.
+    drawArrow(wellX+wellW/2, wellY+wellH/2, 0, wellW*0.50, pc, 1);
 
     // Name
-    txtP(sk.name,x,y+cardH*0.15,15,owned?TH.text:TH.textSec);
+    txtP(sk.name, x, y+cardH*0.165, 14, owned?TH.text:TH.textSec);
 
-    // Footer status
-    const fy=y+cardH*0.34;
+    // Status chip / price pill
+    const chipY=y+cardH*0.36;
     if(active){
-      txtP(t('equipped'),x,fy,12,TH.accent);
+      txtP(t('equipped'), x, chipY, 11, TH.accent);
+      // Corner check badge so "equipped" reads at a glance.
+      const bx=cardX+cardW-16, by=cardY+16, br=10;
+      X.fillStyle=TH.accent;X.beginPath();X.arc(bx,by,br,0,TAU);X.fill();
+      X.strokeStyle='#fff';X.lineWidth=2;X.lineCap='round';X.lineJoin='round';
+      X.beginPath();X.moveTo(bx-4,by+0.5);X.lineTo(bx-1.2,by+3.4);X.lineTo(bx+4.2,by-3);X.stroke();
     }else if(owned){
-      txtP(t('equip'),x,fy,12,TH.textSec);
+      txtP(t('equip'), x, chipY, 11, TH.textSec);
     }else{
-      drawCoin(x-20,fy,6);
-      txt(sk.price+'',x-6,fy,13,afford?TH.star:TH.textDim,'left');
+      // Price pill — gold when affordable, muted when not.
+      const pw=70, ph=24;
+      X.save();X.globalAlpha=afford?0.14:0.06;X.fillStyle=afford?TH.star:TH.text;
+      X.beginPath();X.roundRect(x-pw/2,chipY-ph/2,pw,ph,ph/2);X.fill();X.restore();
+      drawCoin(x-16,chipY,6);
+      txt(sk.price+'', x-3, chipY, 13, afford?TH.star:TH.textDim, 'left');
     }
 
     // Tap: active → no-op; owned → equip; else → buy (auto-equips) or reject.
