@@ -335,7 +335,10 @@ const SKINS=[
   {id:'classic', name:'Classic', price:0,    animated:false, paint:()=>TH.arrow},
   // --- solid tier ---
   {id:'ink',     name:'Mono Ink',price:1000, animated:false, paint:()=>darkMode?'#f2ece4':'#241c1a'},
-  {id:'neon',    name:'Neon',    price:1500, animated:false, paint:()=>'#19e6ff'},
+  {id:'neon',    name:'Neon',    price:1500, animated:false, style:'glow',    paint:()=>'#19e6ff'},
+  // --- shape/style tier (different rendering, not just colour) ---
+  {id:'outline', name:'Outline', price:3000, animated:false, style:'outline', paint:()=>darkMode?'#f4ecdf':'#2a211c'},
+  {id:'plasma',  name:'3D',      price:4500, animated:false, style:'bevel',   paint:()=>'#5b8cff'},
   // --- gradient tier (each looks distinct) ---
   {id:'gold',    name:'Gold',    price:2500, animated:false, paint:(c,x0,y0,x1,y1)=>_grad(c,x0,y0,x1,y1,[[0,'#8a5a16'],[.5,'#f4cf5a'],[.74,'#fff6d0'],[1,'#d8a838']])},
   {id:'ice',     name:'Ice',     price:3500, animated:false, paint:(c,x0,y0,x1,y1)=>_grad(c,x0,y0,x1,y1,[[0,'#1b63b3'],[.55,'#62d0ff'],[1,'#eafbff']])},
@@ -391,10 +394,12 @@ function setActiveSkin(id){
 // t=0 under reduced-motion.
 function _skinPaint(sk,i){
   const t=(sk.animated&&!reducedMotion)?gt:0;
-  return (ctx,x0,y0,x1,y1)=>{
+  const fn=(ctx,x0,y0,x1,y1)=>{
     try{return sk.paint(ctx,x0,y0,x1,y1,i||0,t);}
     catch(e){_devWarn('skinPaint:'+sk.id,e);return TH.arrow;}
   };
+  if(sk.style)fn._style=sk.style; // 'glow' | 'outline' | 'bevel' — drives drawArrowPolyline
+  return fn;
 }
 function arrowColor(a,i){ return _skinPaint(_activeSkinDef(),i||0); }
 // Resolve a `col` (string OR paint-function) to a concrete fillStyle/strokeStyle.
@@ -2803,34 +2808,69 @@ function drawArrowPolyline(pts,sz,col,alpha){
   // read as sharp. arcTo at every interior vertex replaces each corner
   // with a real curve of `cornerR` radius — the path reads like a
   // soft pipe winding through cells, not a stair-step.
-  X.strokeStyle=paint;
-  X.lineWidth=thick;
+  // Optional per-skin render STYLE (carried on the paint function). The body
+  // path is always built the same way (arcTo rounded corners → clean turns);
+  // the style only changes how it's painted, so corners never break.
+  const style=(typeof col==='function'&&col._style)||'solid';
+  const cornerR=sz*0.10;
   X.lineCap='round';
   X.lineJoin='round';
-  const cornerR=sz*0.10;
-  X.beginPath();
-  X.moveTo(modPts[0][0],modPts[0][1]);
-  if(modPts.length<3){
-    for(let i=1;i<modPts.length;i++)X.lineTo(modPts[i][0],modPts[i][1]);
-  }else{
-    for(let i=1;i<modPts.length-1;i++){
-      X.arcTo(modPts[i][0],modPts[i][1],modPts[i+1][0],modPts[i+1][1],cornerR);
+  const bodyPath=()=>{
+    X.beginPath();
+    X.moveTo(modPts[0][0],modPts[0][1]);
+    if(modPts.length<3){
+      for(let i=1;i<modPts.length;i++)X.lineTo(modPts[i][0],modPts[i][1]);
+    }else{
+      for(let i=1;i<modPts.length-1;i++){
+        X.arcTo(modPts[i][0],modPts[i][1],modPts[i+1][0],modPts[i+1][1],cornerR);
+      }
+      X.lineTo(modPts[modPts.length-1][0],modPts[modPts.length-1][1]);
     }
-    X.lineTo(modPts[modPts.length-1][0],modPts[modPts.length-1][1]);
-  }
-  X.stroke();
-
-  // Triangular arrowhead at the head (tip at `last`, base extending backward)
+  };
   const pxv=-ny,pyv=nx;
   const tipX=last[0],tipY=last[1];
   const baseX=tipX-nx*headL,baseY=tipY-ny*headL;
-  X.fillStyle=paint;
-  X.beginPath();
-  X.moveTo(tipX,tipY);
-  X.lineTo(baseX+pxv*headW,baseY+pyv*headW);
-  X.lineTo(baseX-pxv*headW,baseY-pyv*headW);
-  X.closePath();
-  X.fill();
+  const headPath=(scale)=>{
+    const hw=headW*(scale||1), hl=headL*(scale||1);
+    const bx=tipX-nx*hl, by=tipY-ny*hl;
+    X.beginPath();
+    X.moveTo(tipX,tipY);
+    X.lineTo(bx+pxv*hw,by+pyv*hw);
+    X.lineTo(bx-pxv*hw,by-pyv*hw);
+    X.closePath();
+  };
+
+  if(style==='glow'){
+    // Neon: soft colour halo behind a bright core (no shadowBlur — layered
+    // low-alpha strokes instead, which is far cheaper on iOS).
+    X.save();
+    X.strokeStyle=paint;
+    X.globalAlpha=0.22;X.lineWidth=thick*2.2;bodyPath();X.stroke();
+    X.globalAlpha=0.40;X.lineWidth=thick*1.5;bodyPath();X.stroke();
+    X.globalAlpha=0.30;X.fillStyle=paint;headPath(1.5);X.fill();
+    X.restore();
+    X.strokeStyle=paint;X.lineWidth=thick;bodyPath();X.stroke();
+    X.fillStyle=paint;headPath(1);X.fill();
+  }else if(style==='outline'){
+    // Line-art: stroke the body, then carve the centre with the bg colour to
+    // leave a hollow outline; head is an outlined triangle.
+    X.strokeStyle=paint;X.lineWidth=thick;bodyPath();X.stroke();
+    X.strokeStyle=TH.bg;X.lineWidth=max(1,thick-max(3.5,thick*0.46));bodyPath();X.stroke();
+    X.strokeStyle=paint;X.lineWidth=max(2,thick*0.42);X.lineJoin='round';headPath(1);X.stroke();
+  }else if(style==='bevel'){
+    // 3D: flat body + a light top-left highlight and dark bottom-right shadow
+    // edge for volume.
+    X.strokeStyle=paint;X.lineWidth=thick;bodyPath();X.stroke();
+    X.fillStyle=paint;headPath(1);X.fill();
+    const off=max(1,thick*0.16);
+    X.save();X.globalAlpha=0.40;X.strokeStyle='#ffffff';X.lineWidth=max(1.5,thick*0.20);
+    X.translate(-off,-off);bodyPath();X.stroke();X.restore();
+    X.save();X.globalAlpha=0.30;X.strokeStyle='#000000';X.lineWidth=max(1.5,thick*0.20);
+    X.translate(off,off);bodyPath();X.stroke();X.restore();
+  }else{
+    X.strokeStyle=paint;X.lineWidth=thick;bodyPath();X.stroke();
+    X.fillStyle=paint;headPath(1);X.fill();
+  }
 
   X.globalAlpha=1;
   X.restore();
