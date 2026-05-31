@@ -4860,10 +4860,14 @@ function drawSkins(){
   // screens instead of stretching into letterboxes.
   const cols=3, n=SKINS.length;
   const rows=Math.ceil(n/cols);
-  const margin=16, gap=11, startY=104, bottomPad=20;
+  const margin=16, gap=11, topY=104, bottomPad=20;
   const cardW=(W-margin*2-gap*(cols-1))/cols;
-  const availH=H-startY-bottomPad;
+  const availH=H-topY-bottomPad;
   const cardH=Math.min((availH-gap*(rows-1))/rows, cardW*0.82);
+  // Centre the grid in the leftover vertical space (cards are capped square, so
+  // they don't fill the whole height) — balanced instead of top-heavy.
+  const gridH=rows*cardH+(rows-1)*gap;
+  const startY=topY+Math.max(0,(availH-gridH)*0.42);
   const lastRowCount=n-(rows-1)*cols; // cards on the final row
 
   for(let idx=0;idx<n;idx++){
