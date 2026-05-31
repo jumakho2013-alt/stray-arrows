@@ -343,7 +343,8 @@ const SKINS=[
   {id:'galaxy',  name:'Galaxy',  price:6000, animated:false, paint:(c,x0,y0,x1,y1)=>_grad(c,x0,y0,x1,y1,[[0,'#3a1d8a'],[.5,'#b13bd6'],[1,'#ff8ad0']])},
   // --- animated tier ---
   {id:'fire',    name:'Fire',    price:5000, animated:true,  paint:(c,x0,y0,x1,y1,i,t)=>{const k=Math.max(.22,Math.min(.78,.5+.16*Math.sin(t*8+i*1.7)));return _grad(c,x0,y0,x1,y1,[[0,'#6e1200'],[k,'#ef5a12'],[1,'#ffd14a']]);}},
-  {id:'rainbow', name:'Rainbow', price:7000, animated:true,  paint:(c,x0,y0,x1,y1,i,t)=>{const o=(t*40)%360;return _grad(c,x0,y0,x1,y1,[[0,_hsl(o,85,58)],[.25,_hsl(o+75,85,58)],[.5,_hsl(o+150,85,58)],[.75,_hsl(o+225,85,58)],[1,_hsl(o+300,85,58)]]);}},
+  {id:'rainbow', name:'Rainbow', price:7000, animated:false, paint:(c,x0,y0,x1,y1)=>_grad(c,x0,y0,x1,y1,[[0,_hsl(0,85,58)],[.25,_hsl(75,85,58)],[.5,_hsl(150,85,58)],[.75,_hsl(225,85,58)],[1,_hsl(300,85,58)]])},
+  {id:'brush',   name:'Brush',   price:4500, animated:false, brush:true, paint:(c,x0,y0,x1,y1)=>_grad(c,x0,y0,x1,y1, darkMode?[[0,'#f4ecdf'],[1,'#cab7a3']]:[[0,'#3a322b'],[1,'#0a0807']])},
 ];
 const SKIN_BY_ID={};
 for(const s of SKINS)SKIN_BY_ID[s.id]=s;
@@ -391,10 +392,38 @@ function setActiveSkin(id){
 // t=0 under reduced-motion.
 function _skinPaint(sk,i){
   const t=(sk.animated&&!reducedMotion)?gt:0;
-  return (ctx,x0,y0,x1,y1)=>{
+  const fn=(ctx,x0,y0,x1,y1)=>{
     try{return sk.paint(ctx,x0,y0,x1,y1,i||0,t);}
     catch(e){_devWarn('skinPaint:'+sk.id,e);return TH.arrow;}
   };
+  if(sk.brush)fn._brush=true; // tells drawArrowPolyline to use the tapered ink ribbon
+  return fn;
+}
+// Fill a calligraphic "brush" ribbon along centerline pts: the stroke starts
+// thin at the tail and grows to full width (a brush-down stroke), giving an
+// ink/hieroglyph look instead of a uniform pipe. maxHalf = half the full width.
+function _brushFill(ctx,pts,maxHalf,paint){
+  const n=pts.length; if(n<2)return;
+  const seg=[],len=[]; let total=0;
+  for(let i=0;i<n-1;i++){const dx=pts[i+1][0]-pts[i][0],dy=pts[i+1][1]-pts[i][1];const l=Math.hypot(dx,dy)||1e-6;seg.push([dx/l,dy/l]);len.push(l);total+=l;}
+  const left=[],right=[]; let acc=0;
+  for(let i=0;i<n;i++){
+    const a=seg[Math.max(0,i-1)], b=seg[Math.min(seg.length-1,i)];
+    let tx=a[0]+b[0],ty=a[1]+b[1];const tl=Math.hypot(tx,ty)||1e-6;tx/=tl;ty/=tl;
+    const nx=-ty,ny=tx;                      // perpendicular to the local tangent
+    const tA=total>0?acc/total:0;
+    const prof=tA<0.20?(0.18+(tA/0.20)*0.82):1.0;  // thin tail → full body
+    const h=maxHalf*prof;
+    left.push([pts[i][0]+nx*h,pts[i][1]+ny*h]);
+    right.push([pts[i][0]-nx*h,pts[i][1]-ny*h]);
+    if(i<len.length)acc+=len[i];
+  }
+  ctx.fillStyle=paint;
+  ctx.beginPath();
+  ctx.moveTo(left[0][0],left[0][1]);
+  for(let i=1;i<n;i++)ctx.lineTo(left[i][0],left[i][1]);
+  for(let i=n-1;i>=0;i--)ctx.lineTo(right[i][0],right[i][1]);
+  ctx.closePath();ctx.fill();
 }
 function arrowColor(a,i){ return _skinPaint(_activeSkinDef(),i||0); }
 // Resolve a `col` (string OR paint-function) to a concrete fillStyle/strokeStyle.
@@ -694,8 +723,8 @@ function _autoFitZoom(){
   const cs=getCellSize();
   if(cs<=0)return 1;
   const gridMax=max(gridCols,gridRows);
-  // 92% of canvas width / grid dimension = ideal cell size
-  const idealCs=(W*0.92)/gridMax;
+  // 96% of canvas width / grid dimension = ideal cell size
+  const idealCs=(W*0.96)/gridMax;
   if(cs>=idealCs)return 1;
   return min(AUTO_ZOOM_CAP, idealCs/cs);
 }
@@ -2777,8 +2806,8 @@ function drawArrowPolyline(pts,sz,col,alpha){
   // Per competitor reference screenshots (Arrow Jam Go, Arrows Escape):
   // arrows visually fill ~25-30% of cell width so adjacent snakes form
   // contiguous-looking maze walls. Bumped .14 → .28.
-  const thick=max(2.5,sz*.22);
-  const headL=sz*.38,headW=sz*.32;
+  const thick=max(2.5,sz*.25);
+  const headL=sz*.40,headW=sz*.34;
 
   X.save();
   X.globalAlpha=alpha==null?1:alpha;
@@ -2798,27 +2827,35 @@ function drawArrowPolyline(pts,sz,col,alpha){
   const k=min(1,headL/hlen);
   modPts[modPts.length-1]=[last[0]-nx*hlen*k,last[1]-ny*hlen*k];
 
-  // Line body: thick stroke with ARC'd corners. lineJoin='round' alone
-  // only gives a tiny radius (≈ stroke width / 2) so 90° turns still
-  // read as sharp. arcTo at every interior vertex replaces each corner
-  // with a real curve of `cornerR` radius — the path reads like a
-  // soft pipe winding through cells, not a stair-step.
-  X.strokeStyle=paint;
-  X.lineWidth=thick;
-  X.lineCap='round';
-  X.lineJoin='round';
-  const cornerR=sz*0.10;
-  X.beginPath();
-  X.moveTo(modPts[0][0],modPts[0][1]);
-  if(modPts.length<3){
-    for(let i=1;i<modPts.length;i++)X.lineTo(modPts[i][0],modPts[i][1]);
+  // Brush skins render a tapered calligraphic ink ribbon instead of the
+  // uniform pipe (thin at the tail, full through the body) — the head
+  // triangle below still marks direction.
+  const isBrush = typeof col==='function' && col._brush;
+  if(isBrush){
+    _brushFill(X, modPts, thick*0.55, paint);
   }else{
-    for(let i=1;i<modPts.length-1;i++){
-      X.arcTo(modPts[i][0],modPts[i][1],modPts[i+1][0],modPts[i+1][1],cornerR);
+    // Line body: thick stroke with ARC'd corners. lineJoin='round' alone
+    // only gives a tiny radius (≈ stroke width / 2) so 90° turns still
+    // read as sharp. arcTo at every interior vertex replaces each corner
+    // with a real curve of `cornerR` radius — the path reads like a
+    // soft pipe winding through cells, not a stair-step.
+    X.strokeStyle=paint;
+    X.lineWidth=thick;
+    X.lineCap='round';
+    X.lineJoin='round';
+    const cornerR=sz*0.10;
+    X.beginPath();
+    X.moveTo(modPts[0][0],modPts[0][1]);
+    if(modPts.length<3){
+      for(let i=1;i<modPts.length;i++)X.lineTo(modPts[i][0],modPts[i][1]);
+    }else{
+      for(let i=1;i<modPts.length-1;i++){
+        X.arcTo(modPts[i][0],modPts[i][1],modPts[i+1][0],modPts[i+1][1],cornerR);
+      }
+      X.lineTo(modPts[modPts.length-1][0],modPts[modPts.length-1][1]);
     }
-    X.lineTo(modPts[modPts.length-1][0],modPts[modPts.length-1][1]);
+    X.stroke();
   }
-  X.stroke();
 
   // Triangular arrowhead at the head (tip at `last`, base extending backward)
   const pxv=-ny,pyv=nx;
