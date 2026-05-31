@@ -1,11 +1,1 @@
-{
-  "version": "0.0.1",
-  "configurations": [
-    {
-      "name": "sandbox",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8081"],
-      "port": 8081
-    }
-  ]
-}
+{ "version": "0.0.1", "configurations": [ { "name": "stray-static", "runtimeExecutable": "python3", "runtimeArgs": ["-m","http.server","8765"], "port": 8765 } ] }

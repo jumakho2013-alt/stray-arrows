@@ -306,8 +306,107 @@ const TH={
   shadowLg: 24,
 };
 
-function arrowColor(a,i){
-  return TH.arrow;
+// ================================================================
+//  ARROW SKINS — cosmetic, unlocked with coins. A skin's
+//  `paint(ctx,x0,y0,x1,y1,i,t)` returns a fillStyle/strokeStyle for an arrow
+//  whose tail→head runs (x0,y0)→(x1,y1): solid skins return a colour, gradient
+//  skins (fire/ice/rainbow/…) build a CanvasLinearGradient along that line so
+//  they look genuinely distinct, not just recoloured. arrowColor() returns a
+//  deferred paint FUNCTION; the draw path resolves it with the real geometry
+//  via _resolvePaint(). "Animated" skins use t (seconds) and MUST collapse to
+//  their t=0 frame under reducedMotion (handled in _skinPaint).
+//  No shadowBlur anywhere — it's the iOS WebKit perf cliff drawArrow avoids.
+// ================================================================
+function _hsl(h,s,l){h=((h%360)+360)%360;return 'hsl('+h+','+s+'%,'+l+'%)';}
+// Build a linear gradient along the arrow's tail→head line from [offset,colour]
+// stops. Lets skins look genuinely DIFFERENT (fire/ice/rainbow) rather than
+// being one flat colour. No shadowBlur anywhere (iOS WebKit perf cliff).
+function _grad(ctx,x0,y0,x1,y1,stops){
+  const g=ctx.createLinearGradient(x0,y0,x1,y1);
+  for(const s of stops)g.addColorStop(s[0],s[1]);
+  return g;
+}
+// A skin's paint(ctx,x0,y0,x1,y1,i,t) returns a fillStyle/strokeStyle for an
+// arrow whose tail→head runs (x0,y0)→(x1,y1). Solid skins ignore the geometry;
+// gradient skins use _grad. Animated skins use t (seconds) and are frozen to
+// t=0 under reduced-motion by the caller.
+const SKINS=[
+  // Free default — the theme's own arrow colour (adapts to dark/contrast).
+  {id:'classic', name:'Classic', price:0,    animated:false, paint:()=>TH.arrow},
+  // --- solid tier ---
+  {id:'ink',     name:'Mono Ink',price:1000, animated:false, paint:()=>darkMode?'#f2ece4':'#241c1a'},
+  {id:'neon',    name:'Neon',    price:1500, animated:false, style:'glow',    paint:()=>'#19e6ff'},
+  // --- shape/style tier (different rendering, not just colour) ---
+  {id:'outline', name:'Outline', price:3000, animated:false, style:'outline', paint:()=>darkMode?'#f4ecdf':'#2a211c'},
+  {id:'plasma',  name:'3D',      price:4500, animated:false, style:'bevel',   paint:()=>'#5b8cff'},
+  // --- gradient tier (each looks distinct) ---
+  {id:'gold',    name:'Gold',    price:2500, animated:false, paint:(c,x0,y0,x1,y1)=>_grad(c,x0,y0,x1,y1,[[0,'#8a5a16'],[.5,'#f4cf5a'],[.74,'#fff6d0'],[1,'#d8a838']])},
+  {id:'ice',     name:'Ice',     price:3500, animated:false, paint:(c,x0,y0,x1,y1)=>_grad(c,x0,y0,x1,y1,[[0,'#1b63b3'],[.55,'#62d0ff'],[1,'#eafbff']])},
+  {id:'toxic',   name:'Toxic',   price:4000, animated:false, paint:(c,x0,y0,x1,y1)=>_grad(c,x0,y0,x1,y1,[[0,'#1f6b1f'],[.5,'#7CFC00'],[1,'#eaff66']])},
+  {id:'galaxy',  name:'Galaxy',  price:6000, animated:false, paint:(c,x0,y0,x1,y1)=>_grad(c,x0,y0,x1,y1,[[0,'#3a1d8a'],[.5,'#b13bd6'],[1,'#ff8ad0']])},
+  // --- animated tier ---
+  {id:'fire',    name:'Fire',    price:5000, animated:true,  paint:(c,x0,y0,x1,y1,i,t)=>{const k=Math.max(.22,Math.min(.78,.5+.16*Math.sin(t*8+i*1.7)));return _grad(c,x0,y0,x1,y1,[[0,'#6e1200'],[k,'#ef5a12'],[1,'#ffd14a']]);}},
+  {id:'rainbow', name:'Rainbow', price:7000, animated:false, paint:(c,x0,y0,x1,y1)=>_grad(c,x0,y0,x1,y1,[[0,_hsl(0,85,58)],[.25,_hsl(75,85,58)],[.5,_hsl(150,85,58)],[.75,_hsl(225,85,58)],[1,_hsl(300,85,58)]])},
+];
+const SKIN_BY_ID={};
+for(const s of SKINS)SKIN_BY_ID[s.id]=s;
+
+// 'classic' is always owned. Persisted as a comma list in ae_skins.
+let ownedSkins=(function(){
+  const raw=(localStorage.getItem('ae_skins')||'').split(',').map(s=>s.trim()).filter(Boolean);
+  const set=new Set(raw);set.add('classic');return set;
+})();
+// Active skin id — fall back to classic if the stored id is unknown (e.g. a
+// skin removed in a later build, or a corrupted value).
+let activeSkin=(function(){
+  const id=localStorage.getItem('ae_skin')||'classic';
+  return SKIN_BY_ID[id]?id:'classic';
+})();
+function _activeSkinDef(){return SKIN_BY_ID[activeSkin]||SKIN_BY_ID.classic;}
+
+// Persist skin state immediately (a purchase must survive a crash, not wait
+// for the next save()).
+function _persistSkins(){
+  _safeSet('ae_skins',Array.from(ownedSkins).join(','));
+  _safeSet('ae_skin',activeSkin);
+}
+// Returns 'bought' | 'owned' | 'poor'. Caller handles SFX/feedback.
+function buySkin(id){
+  const sk=SKIN_BY_ID[id];
+  if(!sk)return 'poor';
+  if(ownedSkins.has(id))return 'owned';
+  if(coins<sk.price)return 'poor';
+  coins-=sk.price;
+  ownedSkins.add(id);
+  activeSkin=id;            // auto-equip on purchase
+  _persistSkins();_safeSet('ae_coins',coins);
+  return 'bought';
+}
+function setActiveSkin(id){
+  if(!ownedSkins.has(id))return false;
+  activeSkin=id;_persistSkins();
+  return true;
+}
+
+// Returns a PAINT FUNCTION (ctx,x0,y0,x1,y1)->fillStyle for the given skin and
+// arrow index. Deferred so gradient skins can build their gradient from the
+// arrow's actual tail→head geometry at draw time. Animated skins freeze to
+// t=0 under reduced-motion.
+function _skinPaint(sk,i){
+  const t=(sk.animated&&!reducedMotion)?gt:0;
+  const fn=(ctx,x0,y0,x1,y1)=>{
+    try{return sk.paint(ctx,x0,y0,x1,y1,i||0,t);}
+    catch(e){_devWarn('skinPaint:'+sk.id,e);return TH.arrow;}
+  };
+  if(sk.style)fn._style=sk.style; // 'glow' | 'outline' | 'bevel' — drives drawArrowPolyline
+  return fn;
+}
+function arrowColor(a,i){ return _skinPaint(_activeSkinDef(),i||0); }
+// Resolve a `col` (string OR paint-function) to a concrete fillStyle/strokeStyle.
+// Semantic overrides (TH.star hint, TH.arrowBlock shake) stay plain strings;
+// skins arrive as functions and get the arrow geometry to build their gradient.
+function _resolvePaint(col,ctx,x0,y0,x1,y1){
+  return (typeof col==='function')?col(ctx,x0,y0,x1,y1):(col||TH.arrow);
 }
 
 // ================================================================
@@ -325,8 +424,8 @@ const LANGS=[
   {code:'ja',name:'日本語'},
 ];
 const STR={
-  en:{title1:'STRAY',title2:'ARROWS',tagline:'puzzle game',play:'PLAY',levels:'LEVELS',daily:'DAILY',weekly:'WEEKLY',stats:'STATS',achievements:'ACHIEVEMENTS',settings:'SETTINGS',sound:'Sound',theme:'Theme',themeDark:'Dark',themeLight:'Light',language:'Language',watchAd:'Watch Ad',coins:'Coins',resetProgress:'Reset Progress',areYouSure:'Are you sure?',yesReset:'YES, RESET',cancel:'CANCEL',back:'BACK',hint:'HINT',skip:'SKIP',level:'LEVEL',stars:'STARS',streak:'STREAK',trophy:'TROPHY',on:'ON',off:'OFF',nextLevel:'NEXT LEVEL',replay:'REPLAY',home:'HOME',gameOver:'GAME OVER',outOfHearts:'You ran out of hearts',retry:'RETRY',continueBtn:'CONTINUE',adUnavailable:'Ad unavailable, try later',updateAvailable:'Update available',contrast:'Contrast',},
-  ru:{title1:'STRAY',title2:'ARROWS',tagline:'головоломка',play:'ИГРАТЬ',levels:'УРОВНИ',daily:'ДЕНЬ',weekly:'НЕДЕЛЯ',stats:'СТАТЫ',achievements:'ДОСТИЖЕНИЯ',settings:'НАСТРОЙКИ',sound:'Звук',theme:'Тема',themeDark:'Тёмная',themeLight:'Светлая',language:'Язык',watchAd:'Смотреть рекламу',coins:'монет',resetProgress:'Сбросить прогресс',areYouSure:'Вы уверены?',yesReset:'ДА, СБРОСИТЬ',cancel:'ОТМЕНА',back:'НАЗАД',hint:'ПОДСКАЗКА',skip:'ПРОПУСК',level:'УРОВЕНЬ',stars:'ЗВЁЗДЫ',streak:'СЕРИЯ',trophy:'КУБОК',on:'ВКЛ',off:'ВЫКЛ',nextLevel:'СЛЕД. УРОВЕНЬ',replay:'ЗАНОВО',home:'ДОМОЙ',gameOver:'ИГРА ОКОНЧЕНА',outOfHearts:'Закончились жизни',retry:'ПОВТОР',continueBtn:'ПРОДОЛЖИТЬ',adUnavailable:'Реклама недоступна',updateAvailable:'Доступно обновление',contrast:'Контраст',},
+  en:{title1:'STRAY',title2:'ARROWS',tagline:'puzzle game',play:'PLAY',levels:'LEVELS',daily:'DAILY',weekly:'WEEKLY',stats:'STATS',achievements:'ACHIEVEMENTS',settings:'SETTINGS',sound:'Sound',theme:'Theme',themeDark:'Dark',themeLight:'Light',language:'Language',watchAd:'Watch Ad',coins:'Coins',resetProgress:'Reset Progress',areYouSure:'Are you sure?',yesReset:'YES, RESET',cancel:'CANCEL',back:'BACK',hint:'HINT',skip:'SKIP',level:'LEVEL',stars:'STARS',streak:'STREAK',trophy:'TROPHY',on:'ON',off:'OFF',nextLevel:'NEXT LEVEL',replay:'REPLAY',home:'HOME',gameOver:'GAME OVER',outOfHearts:'You ran out of hearts',retry:'RETRY',continueBtn:'CONTINUE',adUnavailable:'Ad unavailable, try later',updateAvailable:'Update available',contrast:'Contrast',skins:'SKINS',equipped:'EQUIPPED',equip:'EQUIP',notEnough:'Not enough coins',removeAds:'Remove Ads',restorePurchases:'Restore Purchases',adsRemovedLabel:'Ads removed',adsRemovedMsg:'Ads removed — thank you!',iapUnavailable:'Purchase unavailable',},
+  ru:{title1:'STRAY',title2:'ARROWS',tagline:'головоломка',play:'ИГРАТЬ',levels:'УРОВНИ',daily:'ДЕНЬ',weekly:'НЕДЕЛЯ',stats:'СТАТЫ',achievements:'ДОСТИЖЕНИЯ',settings:'НАСТРОЙКИ',sound:'Звук',theme:'Тема',themeDark:'Тёмная',themeLight:'Светлая',language:'Язык',watchAd:'Смотреть рекламу',coins:'монет',resetProgress:'Сбросить прогресс',areYouSure:'Вы уверены?',yesReset:'ДА, СБРОСИТЬ',cancel:'ОТМЕНА',back:'НАЗАД',hint:'ПОДСКАЗКА',skip:'ПРОПУСК',level:'УРОВЕНЬ',stars:'ЗВЁЗДЫ',streak:'СЕРИЯ',trophy:'КУБОК',on:'ВКЛ',off:'ВЫКЛ',nextLevel:'СЛЕД. УРОВЕНЬ',replay:'ЗАНОВО',home:'ДОМОЙ',gameOver:'ИГРА ОКОНЧЕНА',outOfHearts:'Закончились жизни',retry:'ПОВТОР',continueBtn:'ПРОДОЛЖИТЬ',adUnavailable:'Реклама недоступна',updateAvailable:'Доступно обновление',contrast:'Контраст',skins:'СКИНЫ',equipped:'ВЫБРАН',equip:'ВЫБРАТЬ',notEnough:'Недостаточно монет',removeAds:'Убрать рекламу',restorePurchases:'Восстановить покупки',adsRemovedLabel:'Реклама убрана',adsRemovedMsg:'Реклама убрана — спасибо!',iapUnavailable:'Покупка недоступна',},
   es:{title1:'STRAY',title2:'ARROWS',tagline:'juego de puzzle',play:'JUGAR',levels:'NIVELES',daily:'DIARIO',weekly:'SEMANAL',stats:'STATS',achievements:'LOGROS',settings:'AJUSTES',sound:'Sonido',theme:'Tema',themeDark:'Oscuro',themeLight:'Claro',language:'Idioma',watchAd:'Ver anuncio',coins:'monedas',resetProgress:'Reiniciar',areYouSure:'¿Estás seguro?',yesReset:'SÍ, REINICIAR',cancel:'CANCELAR',back:'ATRÁS',hint:'PISTA',skip:'SALTAR',level:'NIVEL',stars:'ESTR',streak:'RACHA',trophy:'COPA',on:'ON',off:'OFF',nextLevel:'SIGUIENTE',replay:'REPETIR',home:'INICIO',gameOver:'FIN',outOfHearts:'Sin vidas',retry:'REINTENTAR',continueBtn:'CONTINUAR',adUnavailable:'Anuncio no disponible',updateAvailable:'Actualización disponible',contrast:'Contraste',},
   de:{title1:'STRAY',title2:'ARROWS',tagline:'Puzzlespiel',play:'SPIELEN',levels:'LEVEL',daily:'TAG',weekly:'WOCHE',stats:'STATS',achievements:'ERFOLGE',settings:'EINSTELL.',sound:'Ton',theme:'Theme',themeDark:'Dunkel',themeLight:'Hell',language:'Sprache',watchAd:'Werbung ansehen',coins:'Münzen',resetProgress:'Zurücksetzen',areYouSure:'Sicher?',yesReset:'JA, RESET',cancel:'ABBR.',back:'ZURÜCK',hint:'TIPP',skip:'ÜBERSPR.',level:'LVL',stars:'STERNE',streak:'SERIE',trophy:'POKAL',on:'AN',off:'AUS',nextLevel:'WEITER',replay:'NEU',home:'HOME',gameOver:'GAME OVER',outOfHearts:'Keine Herzen mehr',retry:'NEU',continueBtn:'WEITER',adUnavailable:'Werbung nicht verfügbar',updateAvailable:'Update verfügbar',contrast:'Kontrast',},
   fr:{title1:'STRAY',title2:'ARROWS',tagline:'jeu de puzzle',play:'JOUER',levels:'NIVEAUX',daily:'JOUR',weekly:'SEMAINE',stats:'STATS',achievements:'SUCCÈS',settings:'PARAM.',sound:'Son',theme:'Thème',themeDark:'Sombre',themeLight:'Clair',language:'Langue',watchAd:'Voir pub',coins:'pièces',resetProgress:'Réinitialiser',areYouSure:'Sûr ?',yesReset:'OUI, RESET',cancel:'ANNULER',back:'RETOUR',hint:'INDICE',skip:'PASSER',level:'NIV',stars:'ÉTOILES',streak:'SÉRIE',trophy:'COUPE',on:'ON',off:'OFF',nextLevel:'SUIVANT',replay:'REJOUER',home:'ACCUEIL',gameOver:'PERDU',outOfHearts:'Plus de vies',retry:'REJOUER',continueBtn:'CONTINUER',adUnavailable:'Pub indisponible',updateAvailable:'Mise à jour dispo',contrast:'Contraste',},
@@ -570,6 +669,13 @@ let lastClick=null; // {x,y,t} for button press scale feedback
 // Zoom state (Play screen only, reset on each generateLevel)
 let zoomLevel=1, panX=0, panY=0;
 const MIN_ZOOM=0.4, MAX_ZOOM=4;
+// User gestures (pinch / wheel) may not zoom OUT below 1.0 — the fit. Below
+// that the grid is fully visible with empty margin AND _clampPan() hard-locks
+// pan to centre, so the whole [0.4, 1.0] band was a dead zone where the board
+// "stuck" and fingers couldn't move it until you zoomed back past 1.0. MIN_ZOOM
+// stays 0.4 ONLY for the programmatic level-intro fly-in (_zoomFrom), which is
+// non-interactive and pans nothing.
+const PINCH_MIN_ZOOM=1;
 // Intro zoom animation. On level start we set zoomLevel=startZoom (a wide
 // view of the stage including padding) and animate toward _zoomTarget over
 // _zoomIntroDur seconds — gives the player a sense of scale before the
@@ -580,15 +686,21 @@ let _zoomFrom=1, _zoomTarget=1, _zoomIntroT=0, _zoomIntroDur=0.65;
 // previous flat 14 px target they barely used a third of the canvas
 // (cell size ~50 px on a 390-wide viewport, so the auto-zoom branch
 // never fired). Now we compute a target cell size that lets the larger
-// of {cols, rows} fill ~80% of the stage width, capped so even a 4×4
+// of {cols, rows} fill ~92% of the stage width, capped so even a 4×4
 // doesn't blow up beyond the viewport edges.
-const AUTO_ZOOM_CAP=2.4;
+// v2.6: target bumped 0.80 → 0.92 and cap 2.4 → 3.0 — players found the
+// default board too small/cramped to read even after pinch-zooming. Now the
+// board fills almost the full width by default (≈4% margin per side); tall
+// grids stay vertical-limited so they don't overzoom past the play area, and
+// genuinely huge boards (which already fill the width at zoom 1) are unchanged
+// — pinch-zoom + pan handles those, now that the pan dead-zone is fixed.
+const AUTO_ZOOM_CAP=3.0;
 function _autoFitZoom(){
   const cs=getCellSize();
   if(cs<=0)return 1;
   const gridMax=max(gridCols,gridRows);
-  // 80% of canvas width / grid dimension = ideal cell size
-  const idealCs=(W*0.80)/gridMax;
+  // 96% of canvas width / grid dimension = ideal cell size
+  const idealCs=(W*0.96)/gridMax;
   if(cs>=idealCs)return 1;
   return min(AUTO_ZOOM_CAP, idealCs/cs);
 }
@@ -709,7 +821,7 @@ C.addEventListener('wheel',e=>{
   if(!(e.ctrlKey||e.metaKey))return;
   e.preventDefault();
   _zoomIntroT=1; // user took control — kill the intro lerp
-  zoomLevel=clp(zoomLevel-e.deltaY*.005,MIN_ZOOM,MAX_ZOOM);
+  zoomLevel=clp(zoomLevel-e.deltaY*.005,PINCH_MIN_ZOOM,MAX_ZOOM);
   _clampPan();
 },{passive:false});
 
@@ -754,7 +866,7 @@ C.addEventListener('touchmove',e=>{
     const midX=(p1.x+p2.x)/2,midY=(p1.y+p2.y)/2;
     // 1) Update zoom from finger spread
     if(_pinchStartDist>0){
-      zoomLevel=clp(_pinchStartZoom*d/_pinchStartDist,MIN_ZOOM,MAX_ZOOM);
+      zoomLevel=clp(_pinchStartZoom*d/_pinchStartDist,PINCH_MIN_ZOOM,MAX_ZOOM);
     }
     // 2) Pin the world-point that was under the initial midpoint to the
     // current midpoint. Forward (grid-center pivot):
@@ -1094,6 +1206,7 @@ function save(){
   _safeSet('ae_nohint',noHintCount);
   _safeSet('ae_fastest',fastestLevel);
   _safeSet('ae_playtime',floor(totalPlayTime));
+  _persistSkins();
 }
 
 // Spawn a floating "+N" text for a coin reward — quick reward feedback
@@ -1206,10 +1319,12 @@ const DAILY_REWARD=100;   // first daily completion of the day (was 50)
 const WEEKLY_REWARD=150;  // first weekly completion (was 200, rebalanced so the
                           // ad path stays competitive — 60 coins for 30s view)
 
-// IAP-free build: there is no Remove Ads purchase. `adsRemoved` is hard-coded
-// false so any old code paths still gate correctly. If real StoreKit IAP
-// lands later, restore the localStorage read here.
-const adsRemoved=false;
+// Remove Ads — one-time non-consumable IAP. `adsRemoved` persists in ae_noads
+// and is set true when the purchase is approved OR restored. It only gates the
+// timed interstitial; user-initiated rewarded ads keep working (standard for
+// "remove ads"). See initIAP / buyRemoveAds / restorePurchases below.
+let adsRemoved=(()=>{try{return localStorage.getItem('ae_noads')==='1';}catch(e){return false;}})();
+function _setAdsRemoved(v){adsRemoved=!!v;_safeSet('ae_noads',v?'1':'0');}
 // (Interstitial cadence now lives in showInterstitialAd — wall-clock
 // 5-7 min randomized window persisted in localStorage. The old `gt`-
 // based cooldown constants were removed in v1.0.20.)
@@ -1318,12 +1433,60 @@ async function initAdMob(){
   }catch(e){_logAdErr('init',e)}
 }
 
+// ===== Remove Ads — In-App Purchase (cordova-plugin-purchase / CdvPurchase) =====
+// One non-consumable product, no backend. All guarded with `typeof CdvPurchase`
+// so web/preview (where the plugin doesn't exist) simply no-ops.
+//
+// STORE SETUP (the one part that can't live in code — do this in your accounts):
+//   • App Store Connect → your app → In-App Purchases → create a
+//     NON-CONSUMABLE with Product ID exactly `remove_ads`, price tier $2.99.
+//   • Google Play Console → Monetize → In-app products → create product id
+//     `remove_ads`, price $2.99, set Active.
+// Until those exist the button shows "unavailable" on device (and no price).
+const REMOVE_ADS_ID='remove_ads';
+let _removeAdsPrice='';   // localized price string from the store (e.g. "$2.99")
+let _iapBusy=false;       // a purchase/restore is in flight
+function _iapPlatform(){const CP=CdvPurchase;return _isIOS()?CP.Platform.APPLE_APPSTORE:CP.Platform.GOOGLE_PLAY;}
+function initIAP(){
+  try{
+    if(typeof CdvPurchase==='undefined')return;            // plugin absent (web)
+    const CP=CdvPurchase, store=CP.store, plat=_iapPlatform();
+    store.register([{id:REMOVE_ADS_ID,type:CP.ProductType.NON_CONSUMABLE,platform:plat}]);
+    store.when()
+      .productUpdated(()=>{const p=store.get(REMOVE_ADS_ID,plat);if(p&&p.pricing&&p.pricing.price)_removeAdsPrice=p.pricing.price;})
+      .approved(tx=>tx.verify())
+      .verified(rc=>{_setAdsRemoved(true);_iapBusy=false;rc.finish();spawnFloater(W/2,H*0.5,t('adsRemovedMsg'),TH.success);})
+      .receiptUpdated(()=>{const p=store.get(REMOVE_ADS_ID,plat);if(p&&p.owned)_setAdsRemoved(true);})
+      .finished(()=>{_iapBusy=false;});
+    store.error(e=>{_iapBusy=false;_logAdErr('iap',e);});
+    store.initialize([plat]);
+  }catch(e){_logAdErr('initIAP',e);}
+}
+function buyRemoveAds(){
+  if(adsRemoved||_iapBusy)return;
+  if(typeof CdvPurchase==='undefined'){spawnFloater(W/2,H*0.5,t('iapUnavailable'),TH.arrowBlock);return;}
+  try{
+    const store=CdvPurchase.store, p=store.get(REMOVE_ADS_ID,_iapPlatform());
+    const offer=p&&p.getOffer&&p.getOffer();
+    if(!offer){spawnFloater(W/2,H*0.5,t('iapUnavailable'),TH.arrowBlock);return;}
+    _iapBusy=true;
+    Promise.resolve(store.order(offer)).catch(e=>{_iapBusy=false;_logAdErr('order',e);});
+  }catch(e){_iapBusy=false;_logAdErr('buyRemoveAds',e);}
+}
+function restorePurchases(){
+  if(typeof CdvPurchase==='undefined'){spawnFloater(W/2,H*0.5,t('iapUnavailable'),TH.arrowBlock);return;}
+  try{
+    _iapBusy=true;
+    Promise.resolve(CdvPurchase.store.restorePurchases()).catch(e=>_logAdErr('restore',e)).finally(()=>{_iapBusy=false;});
+  }catch(e){_iapBusy=false;_logAdErr('restore',e);}
+}
+
 // Defer AdMob init until AFTER the splash screen has dismissed and the
 // WebView is fully visible — Apple requires the ATT prompt to appear in the
 // foreground after the app's UI is rendered, never during launch/splash.
 function _scheduleAdMobInit(){
   // 1.5s gives the Capacitor splash time to fade and the WebView to attach.
-  setTimeout(initAdMob,1500);
+  setTimeout(()=>{initAdMob();initIAP();},1500);
 }
 if(document.readyState==='complete') _scheduleAdMobInit();
 else window.addEventListener('load',_scheduleAdMobInit);
@@ -2607,7 +2770,9 @@ function drawArrow(x,y,dir,sz,col,alpha){
   const headL=sz*.13;
   X.save();X.translate(x,y);X.rotate(a);
   X.globalAlpha=alpha||1;
-  const c=col||TH.arrow;
+  // Resolve skin paint in the arrow's LOCAL space (tail at -len, head at +len),
+  // so gradient skins run along the arrow after the translate/rotate above.
+  const c=_resolvePaint(col,X,-len,0,len,0);
   const lw=max(1.8,sz*.035);
   // Long-shadow pass (skipped in reduced-motion / high-contrast — both add
   // visual noise that those modes are explicitly trying to remove)
@@ -2667,11 +2832,15 @@ function drawArrowPolyline(pts,sz,col,alpha){
   // Per competitor reference screenshots (Arrow Jam Go, Arrows Escape):
   // arrows visually fill ~25-30% of cell width so adjacent snakes form
   // contiguous-looking maze walls. Bumped .14 → .28.
-  const thick=max(2.5,sz*.22);
-  const headL=sz*.38,headW=sz*.32;
+  const thick=max(2.5,sz*.25);
+  const headL=sz*.40,headW=sz*.34;
 
   X.save();
   X.globalAlpha=alpha==null?1:alpha;
+
+  // Resolve skin paint along the arrow's tail→head span (gradient skins flow
+  // from the first point to the head). Plain-colour cols pass through.
+  const paint=_resolvePaint(col,X,pts[0][0],pts[0][1],pts[pts.length-1][0],pts[pts.length-1][1]);
 
   // Determine head direction from last body segment
   const last=pts[pts.length-1],prev=pts[pts.length-2];
@@ -2689,34 +2858,73 @@ function drawArrowPolyline(pts,sz,col,alpha){
   // read as sharp. arcTo at every interior vertex replaces each corner
   // with a real curve of `cornerR` radius — the path reads like a
   // soft pipe winding through cells, not a stair-step.
-  X.strokeStyle=col;
-  X.lineWidth=thick;
+  // Optional per-skin render STYLE (carried on the paint function). The body
+  // path is always built the same way (arcTo rounded corners → clean turns);
+  // the style only changes how it's painted, so corners never break.
+  const style=(typeof col==='function'&&col._style)||'solid';
+  const cornerR=sz*0.10;
   X.lineCap='round';
   X.lineJoin='round';
-  const cornerR=sz*0.10;
-  X.beginPath();
-  X.moveTo(modPts[0][0],modPts[0][1]);
-  if(modPts.length<3){
-    for(let i=1;i<modPts.length;i++)X.lineTo(modPts[i][0],modPts[i][1]);
-  }else{
-    for(let i=1;i<modPts.length-1;i++){
-      X.arcTo(modPts[i][0],modPts[i][1],modPts[i+1][0],modPts[i+1][1],cornerR);
+  const bodyPath=()=>{
+    X.beginPath();
+    X.moveTo(modPts[0][0],modPts[0][1]);
+    if(modPts.length<3){
+      for(let i=1;i<modPts.length;i++)X.lineTo(modPts[i][0],modPts[i][1]);
+    }else{
+      for(let i=1;i<modPts.length-1;i++){
+        X.arcTo(modPts[i][0],modPts[i][1],modPts[i+1][0],modPts[i+1][1],cornerR);
+      }
+      X.lineTo(modPts[modPts.length-1][0],modPts[modPts.length-1][1]);
     }
-    X.lineTo(modPts[modPts.length-1][0],modPts[modPts.length-1][1]);
-  }
-  X.stroke();
-
-  // Triangular arrowhead at the head (tip at `last`, base extending backward)
+  };
   const pxv=-ny,pyv=nx;
   const tipX=last[0],tipY=last[1];
   const baseX=tipX-nx*headL,baseY=tipY-ny*headL;
-  X.fillStyle=col;
-  X.beginPath();
-  X.moveTo(tipX,tipY);
-  X.lineTo(baseX+pxv*headW,baseY+pyv*headW);
-  X.lineTo(baseX-pxv*headW,baseY-pyv*headW);
-  X.closePath();
-  X.fill();
+  const headPath=(scale)=>{
+    const hw=headW*(scale||1), hl=headL*(scale||1);
+    const bx=tipX-nx*hl, by=tipY-ny*hl;
+    X.beginPath();
+    X.moveTo(tipX,tipY);
+    X.lineTo(bx+pxv*hw,by+pyv*hw);
+    X.lineTo(bx-pxv*hw,by-pyv*hw);
+    X.closePath();
+  };
+
+  if(style==='glow'){
+    // Neon tube: a soft colour halo (several low-alpha layers, wide→narrow, for
+    // a smooth falloff — no shadowBlur, which is the iOS perf cliff), then the
+    // coloured body, then a white-hot core line. Reads like a glowing neon sign.
+    X.save();
+    X.strokeStyle=paint;
+    const halo=[[2.2,0.10],[1.8,0.15],[1.5,0.24],[1.25,0.36]];
+    for(let q=0;q<halo.length;q++){X.globalAlpha=halo[q][1];X.lineWidth=thick*halo[q][0];bodyPath();X.stroke();}
+    X.globalAlpha=0.28;X.fillStyle=paint;headPath(1.55);X.fill();
+    X.restore();
+    // Coloured body + head
+    X.strokeStyle=paint;X.lineWidth=thick;bodyPath();X.stroke();
+    X.fillStyle=paint;headPath(1);X.fill();
+    // White-hot core
+    X.save();X.globalAlpha=0.92;X.strokeStyle='#ecfdff';X.lineWidth=max(1.5,thick*0.32);bodyPath();X.stroke();X.restore();
+  }else if(style==='outline'){
+    // Line-art: stroke the body, then carve the centre with the bg colour to
+    // leave a hollow outline; head is an outlined triangle.
+    X.strokeStyle=paint;X.lineWidth=thick;bodyPath();X.stroke();
+    X.strokeStyle=TH.bg;X.lineWidth=max(1,thick-max(3.5,thick*0.46));bodyPath();X.stroke();
+    X.strokeStyle=paint;X.lineWidth=max(2,thick*0.42);X.lineJoin='round';headPath(1);X.stroke();
+  }else if(style==='bevel'){
+    // 3D: flat body + a light top-left highlight and dark bottom-right shadow
+    // edge for volume.
+    X.strokeStyle=paint;X.lineWidth=thick;bodyPath();X.stroke();
+    X.fillStyle=paint;headPath(1);X.fill();
+    const off=max(1,thick*0.16);
+    X.save();X.globalAlpha=0.40;X.strokeStyle='#ffffff';X.lineWidth=max(1.5,thick*0.20);
+    X.translate(-off,-off);bodyPath();X.stroke();X.restore();
+    X.save();X.globalAlpha=0.30;X.strokeStyle='#000000';X.lineWidth=max(1.5,thick*0.20);
+    X.translate(off,off);bodyPath();X.stroke();X.restore();
+  }else{
+    X.strokeStyle=paint;X.lineWidth=thick;bodyPath();X.stroke();
+    X.fillStyle=paint;headPath(1);X.fill();
+  }
 
   X.globalAlpha=1;
   X.restore();
@@ -3258,10 +3466,17 @@ function drawMenu(){
     X.beginPath();X.arc(gx+cos(a)*10,gy+sin(a)*10,2,0,TAU);X.fill()}
   if(tapped&&abs(tapX-gx)<20&&abs(tapY-gy)<20){sfx.tap();tapped=false;goto('settings')}
 
-  // Coins — nudged slightly below the gear for better visual balance
+  // Coins — nudged slightly below the gear for better visual balance.
+  // The whole coin chip is a tappable entry to the Skins shop (tap-your-coins
+  // -to-spend idiom); a small chevron hints it's interactive.
   const _topY=Math.max(55,safeTop+19);
+  const _coinHv=mx>=20&&mx<=104&&abs(my-_topY)<16;
   drawCoin(36,_topY,7);
   txt(coins+'',52,_topY,13,TH.star,'left');
+  _drawChevron(94,_topY,5,_coinHv?TH.accent:TH.textDim,'right');
+  if(tapped&&mx>=20&&mx<=104&&abs(tapY-_topY)<16&&tapX>=20&&tapX<=104){
+    sfx.tap();tapped=false;goto('skins');
+  }
 
   // "Update available" nudge — when checkForUpdate() finds a newer App
   // Store version. v2 redesign: previously a quiet 28-px pill at the
@@ -4259,6 +4474,15 @@ function _settingsRow(rx, ry, rw, rh, draw, inCard){
   return false;
 }
 
+// "No ads" glyph — a small ad-banner rectangle with a diagonal slash through it.
+function _drawNoAdsIcon(cx, cy, col){
+  X.save();
+  X.strokeStyle = col; X.lineWidth = 1.7; X.lineCap = 'round'; X.lineJoin = 'round';
+  X.beginPath(); X.roundRect(cx - 8, cy - 6, 16, 12, 3); X.stroke();
+  X.beginPath(); X.moveTo(cx - 10, cy + 8); X.lineTo(cx + 10, cy - 8); X.stroke();
+  X.restore();
+}
+
 // iOS-style toggle switch. ON = filled accent track + thumb on right.
 // OFF = grey track + thumb on left.
 function _drawToggle(cx, cy, on){
@@ -4433,6 +4657,50 @@ function drawSettings(){
         });
       }
     },
+    // Arrow Skins shop → goto('skins'). Icon previews the active skin's paint.
+    (rx, ry, rw, rh) => {
+      if (_settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
+        const _sk = _activeSkinDef();
+        drawArrow(rx + 28, ry + rh / 2, 0, 26, _skinPaint(_sk, 1), 1);
+        txt(t('skins'), rx + 56, ry + rh / 2, 14, TH.text, 'left');
+        txt(_sk.name, rx + rw - 36, ry + rh / 2, 13, TH.textSec, 'right');
+        _drawChevron(rx + rw - 18, ry + rh / 2, 8);
+      })) goto('skins');
+    },
+  ]);
+
+  yCursor += 28;
+
+  // ----- Remove Ads (IAP) -----
+  _drawSectionHeader(t('removeAds'), yCursor);
+  yCursor += 14;
+  yCursor = _drawSettingsCard(yCursor, [
+    // Buy row — or an "ads removed ✓" status once owned.
+    (rx, ry, rw, rh) => {
+      if (adsRemoved) {
+        _settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
+          _drawNoAdsIcon(rx + 28, ry + rh / 2, TH.success);
+          txt(t('adsRemovedLabel'), rx + 56, ry + rh / 2, 14, TH.success, 'left');
+          X.strokeStyle = TH.success; X.lineWidth = 2.2; X.lineCap = 'round'; X.lineJoin = 'round';
+          const ck = rx + rw - 26, cy = ry + rh / 2;
+          X.beginPath(); X.moveTo(ck - 7, cy); X.lineTo(ck - 2, cy + 5); X.lineTo(ck + 7, cy - 6); X.stroke();
+        });
+      } else {
+        if (_settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
+          _drawNoAdsIcon(rx + 28, ry + rh / 2, TH.textSec);
+          txt(t('removeAds'), rx + 56, ry + rh / 2, 14, TH.text, 'left');
+          if (_removeAdsPrice) txt(_removeAdsPrice, rx + rw - 40, ry + rh / 2, 14, TH.star, 'right');
+          _drawChevron(rx + rw - 18, ry + rh / 2, 8, TH.star);
+        })) buyRemoveAds();
+      }
+    },
+    // Restore Purchases — always available (Apple requires it).
+    (rx, ry, rw, rh) => {
+      if (_settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
+        txt(t('restorePurchases'), rx + 56, ry + rh / 2, 14, TH.textSec, 'left');
+        _drawChevron(rx + rw - 18, ry + rh / 2, 8);
+      })) restorePurchases();
+    },
   ]);
 
   yCursor += 28;
@@ -4458,7 +4726,9 @@ function drawSettings(){
         })) {
           const PROGRESS_KEYS = ['ae_level', 'ae_maxlevel', 'ae_coins', 'ae_stars', 'ae_ach',
             'ae_total_coins', 'ae_streakdays', 'ae_lastday', 'ae_perfects', 'ae_dailies',
-            'ae_nohint', 'ae_fastest', 'ae_playtime', 'ae_noads'];
+            'ae_nohint', 'ae_fastest', 'ae_playtime', 'ae_skins', 'ae_skin'];
+          // NOTE: ae_noads (Remove Ads purchase) is intentionally NOT reset —
+          // a progress wipe must never revoke a real paid purchase.
           for (const k of PROGRESS_KEYS) localStorage.removeItem(k);
           for (let i = localStorage.length - 1; i >= 0; i--) {
             const k = localStorage.key(i);
@@ -4469,6 +4739,7 @@ function drawSettings(){
           achUnlocked = {}; totalPerfect = 0; totalDailies = 0; noHintCount = 0;
           totalCoinsEarned = 0; streakDays = 0; totalPlayTime = 0; fastestLevel = 99999;
           lastPlayDay = 0; hintUsedThisLevel = false;
+          ownedSkins = new Set(['classic']); activeSkin = 'classic';
           resetConfirm = false; save();
           goto('menu');
         }
@@ -4665,6 +4936,111 @@ function drawLevels(){
 // ================================================================
 let _lastT=0;
 let fadingOut=false;
+// --- SKINS SHOP ---
+// 3-column grid of arrow skins. Each card previews the skin (a right-pointing
+// arrow painted by it), its name, and a footer: EQUIPPED (active), EQUIP
+// (owned → tap to equip), or a coin + price (tap to buy if affordable, dimmed
+// otherwise). Buying auto-equips. Paid with the in-game coins earned in play /
+// rewarded ads — NOT real money (that's the separate Remove Ads IAP).
+function drawSkins(){
+  drawBg(true);
+  txtP(t('skins'),W/2,64,24,TH.text);
+  // Coin balance, top-right — mirrors the play/complete/gameover screens.
+  drawCoin(W-52,64,8);
+  txt(coins+'',W-40,64,13,TH.star,'left');
+
+  // 2 columns → big, easy-to-read cards. Card HEIGHT is derived from the
+  // available vertical space so all rows always fit (never clips the bottom
+  // row on shorter phones), then capped so cards stay roughly square on tall
+  // screens instead of stretching into letterboxes.
+  const cols=3, n=SKINS.length;
+  const rows=Math.ceil(n/cols);
+  const margin=16, gap=11, topY=104, bottomPad=20;
+  const cardW=(W-margin*2-gap*(cols-1))/cols;
+  const availH=H-topY-bottomPad;
+  const cardH=Math.min((availH-gap*(rows-1))/rows, cardW*0.82);
+  // Centre the grid in the leftover vertical space (cards are capped square, so
+  // they don't fill the whole height) — balanced instead of top-heavy.
+  const gridH=rows*cardH+(rows-1)*gap;
+  const startY=topY+Math.max(0,(availH-gridH)*0.42);
+  const lastRowCount=n-(rows-1)*cols; // cards on the final row
+
+  for(let idx=0;idx<n;idx++){
+    const sk=SKINS[idx];
+    const cIdx=idx%cols, rIdx=floor(idx/cols);
+    // Centre the final row when it isn't full (e.g. a lone 9th card).
+    const rowCount=(rIdx===rows-1)?lastRowCount:cols;
+    const rowW=rowCount*cardW+(rowCount-1)*gap;
+    const rowLeft=(W-rowW)/2;
+    const x=rowLeft+cIdx*(cardW+gap)+cardW/2;
+    const y=startY+rIdx*(cardH+gap)+cardH/2;
+    const owned=ownedSkins.has(sk.id);
+    const active=sk.id===activeSkin;
+    const afford=coins>=sk.price;
+    const hv=abs(mx-x)<cardW/2&&abs(my-y)<cardH/2;
+
+    const cardX=x-cardW/2, cardY=y-cardH/2;
+    const pc=_skinPaint(sk,1); // paint function — gradient skins resolve at draw
+
+    // Card surface. Equipped card gets a faint accent wash so it reads as
+    // "selected" beyond just the border.
+    X.fillStyle=hv?TH.btnHover:TH.btnBg;
+    X.beginPath();X.roundRect(cardX,cardY,cardW,cardH,16);X.fill();
+    if(active){
+      X.save();X.globalAlpha=0.07;X.fillStyle=TH.accent;
+      X.beginPath();X.roundRect(cardX,cardY,cardW,cardH,16);X.fill();X.restore();
+    }
+    X.strokeStyle=active?TH.accent:TH.border;X.lineWidth=active?2.5:1;
+    X.beginPath();X.roundRect(cardX,cardY,cardW,cardH,16);X.stroke();
+
+    // Bold, game-style thick arrow — the hero of the card. drawArrowPolyline
+    // gives the same rounded thick look as the arrows in play.
+    const ay=y-cardH*0.12, aw=cardW*0.26;
+    drawArrowPolyline([[x-aw,ay],[x+aw,ay]], cardW*0.50, pc, 1);
+
+    // Name
+    txtP(sk.name, x, y+cardH*0.17, 12, owned?TH.text:TH.textSec);
+
+    // Status chip / price pill
+    const chipY=y+cardH*0.37;
+    if(active){
+      txtP(t('equipped'), x, chipY, 9, TH.accent);
+      // Corner check badge so "equipped" reads at a glance.
+      const bx=cardX+cardW-13, by=cardY+13, br=8;
+      X.fillStyle=TH.accent;X.beginPath();X.arc(bx,by,br,0,TAU);X.fill();
+      X.strokeStyle='#fff';X.lineWidth=1.7;X.lineCap='round';X.lineJoin='round';
+      X.beginPath();X.moveTo(bx-3.2,by+0.4);X.lineTo(bx-1,by+2.8);X.lineTo(bx+3.4,by-2.4);X.stroke();
+    }else if(owned){
+      txtP(t('equip'), x, chipY, 9, TH.textSec);
+    }else{
+      // Price pill — gold when affordable, muted when not.
+      const pw=56, ph=20;
+      X.save();X.globalAlpha=afford?0.14:0.06;X.fillStyle=afford?TH.star:TH.text;
+      X.beginPath();X.roundRect(x-pw/2,chipY-ph/2,pw,ph,ph/2);X.fill();X.restore();
+      drawCoin(x-13,chipY,5);
+      txt(sk.price+'', x-2, chipY, 11, afford?TH.star:TH.textDim, 'left');
+    }
+
+    // Tap: active → no-op; owned → equip; else → buy (auto-equips) or reject.
+    if(tapped&&hv){
+      tapped=false;
+      if(active){sfx.tap();}
+      else if(owned){setActiveSkin(sk.id);sfx.tap();haptic(8);}
+      else{
+        const r=buySkin(sk.id);
+        if(r==='bought'){sfx.tap();haptic(12);save();spawnFloater(x,y,'-'+sk.price,TH.star);}
+        else{sfx.tap();spawnFloater(x,y-cardH*0.3,t('notEnough'),TH.arrowBlock);}
+      }
+    }
+  }
+
+  // Back chevron — identical pattern to Settings.
+  if(_settingsRow(12,36,90,44,(rx,ry,rw,rh)=>{
+    _drawChevron(rx+16,ry+rh/2,7,TH.text,'left');
+    txt(t('back'),rx+30,ry+rh/2,13,TH.text,'left');
+  },false)){goto('menu');}
+}
+
 function goto(newState,action){
   if(fadingOut)return;
   // Reset transient screen-local UI flags when leaving screens — avoids the
@@ -4702,6 +5078,7 @@ function loop(t){
   else if(S==='levels')drawLevels();
   else if(S==='achievements')drawAchievements();
   else if(S==='stats')drawStats();
+  else if(S==='skins')drawSkins();
 
   // Global: floating coin popups + achievement unlock popup
   drawFloaters();
