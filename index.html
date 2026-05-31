@@ -2841,16 +2841,20 @@ function drawArrowPolyline(pts,sz,col,alpha){
   };
 
   if(style==='glow'){
-    // Neon: soft colour halo behind a bright core (no shadowBlur — layered
-    // low-alpha strokes instead, which is far cheaper on iOS).
+    // Neon tube: a soft colour halo (several low-alpha layers, wide→narrow, for
+    // a smooth falloff — no shadowBlur, which is the iOS perf cliff), then the
+    // coloured body, then a white-hot core line. Reads like a glowing neon sign.
     X.save();
     X.strokeStyle=paint;
-    X.globalAlpha=0.22;X.lineWidth=thick*2.2;bodyPath();X.stroke();
-    X.globalAlpha=0.40;X.lineWidth=thick*1.5;bodyPath();X.stroke();
-    X.globalAlpha=0.30;X.fillStyle=paint;headPath(1.5);X.fill();
+    const halo=[[2.2,0.10],[1.8,0.15],[1.5,0.24],[1.25,0.36]];
+    for(let q=0;q<halo.length;q++){X.globalAlpha=halo[q][1];X.lineWidth=thick*halo[q][0];bodyPath();X.stroke();}
+    X.globalAlpha=0.28;X.fillStyle=paint;headPath(1.55);X.fill();
     X.restore();
+    // Coloured body + head
     X.strokeStyle=paint;X.lineWidth=thick;bodyPath();X.stroke();
     X.fillStyle=paint;headPath(1);X.fill();
+    // White-hot core
+    X.save();X.globalAlpha=0.92;X.strokeStyle='#ecfdff';X.lineWidth=max(1.5,thick*0.32);bodyPath();X.stroke();X.restore();
   }else if(style==='outline'){
     // Line-art: stroke the body, then carve the centre with the bg colour to
     // leave a hollow outline; head is an outlined triangle.
