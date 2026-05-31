@@ -19,16 +19,17 @@ Each level presents a maze of intertwined arrows. Tap an arrow to send it flying
 - Complete with all hearts intact — earn 3 stars
 
 FEATURES
-- 2000+ procedurally generated levels
+- Hundreds of handcrafted levels plus endless procedurally generated puzzles
 - Smooth difficulty progression — starts easy, gets insanely hard
 - Daily Challenge — one unique puzzle every day (+50 coins)
 - Weekly Challenge — hardcore puzzle every week (+200 coins)
+- Unlockable arrow skins — fire, ice, gold, neon, galaxy and more
 - 18 Achievements to unlock
 - Detailed statistics tracking
 - Dark mode support
 - Hint system (50 coins) and Skip level (150 coins)
-- Works completely offline
-- No ads, no tracking, no data collection
+- Core gameplay works offline
+- Free to play with optional rewarded ads — or remove ads forever with a one-time purchase
 
 PROGRESSION
 - Earn coins by completing levels
@@ -51,16 +52,17 @@ Stray Arrows — минималистичная головоломка, где �
 - Пройди без ошибок — получи 3 звезды
 
 ОСОБЕННОСТИ
-- 2000+ процедурно сгенерированных уровней
+- Сотни рукотворных уровней плюс бесконечная процедурная генерация
 - Плавная прогрессия сложности
 - Ежедневный челлендж (+50 монет)
 - Еженедельный хардкор-челлендж (+200 монет)
+- Открываемые скины стрелок — огонь, лёд, золото, неон, галактика и другие
 - 18 достижений
 - Подробная статистика
 - Тёмная тема
 - Подсказки (50 монет) и пропуск уровня (150 монет)
-- Работает полностью оффлайн
-- Без рекламы и сбора данных
+- Базовая игра работает оффлайн
+- Бесплатно, с опциональной рекламой за награду — или уберите рекламу навсегда разовой покупкой
 
 ## Category
 Games > Puzzle

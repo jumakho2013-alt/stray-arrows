@@ -163,7 +163,7 @@ function _devWarn(stage, err){
 
 // Single source of truth for the displayed app version. Bump alongside
 // CFBundleShortVersionString in ios/App/App.xcodeproj/project.pbxproj.
-const APP_VERSION='v1.0.22';
+const APP_VERSION='v1.0.23';
 // App Store deep link — used by the in-app "update available" nudge.
 const APP_STORE_URL='https://apps.apple.com/app/stray-arrows/id6763406927';
 const PI=Math.PI,TAU=PI*2,sin=Math.sin,cos=Math.cos,abs=Math.abs,floor=Math.floor,min=Math.min,max=Math.max,sqrt=Math.sqrt;
@@ -1202,7 +1202,8 @@ const DIR_NAMES=['→','↑','←','↓'];
 
 function save(){
   _safeSet('ae_level',level);
-  if(level>maxLevel){maxLevel=level;_safeSet('ae_maxlevel',maxLevel)}
+  if(level>maxLevel)maxLevel=level;   // floor: maxLevel never below the level being played
+  _safeSet('ae_maxlevel',maxLevel);   // always persist — completing a level unlocks level+1 (set in win handler)
   _safeSet('ae_coins',coins);
   _safeSet('ae_stars',JSON.stringify(stars));
   _safeSet('ae_ach',JSON.stringify(achUnlocked));
@@ -2661,6 +2662,7 @@ function tapArrowByIndex(idx){
         }else{
           const wasNewStars=(stars[level]||0)<s;
           stars[level]=max(stars[level]||0,s);
+          maxLevel=max(maxLevel,level+1);  // beating level N unlocks N+1 — even if the player taps Home instead of Next
           totalStars=Object.values(stars).reduce((a,b)=>a+b,0);
           gained=5+s*5;
           const key='ae_best_'+level;
