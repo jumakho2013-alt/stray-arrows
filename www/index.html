@@ -163,7 +163,7 @@ function _devWarn(stage, err){
 
 // Single source of truth for the displayed app version. Bump alongside
 // CFBundleShortVersionString in ios/App/App.xcodeproj/project.pbxproj.
-const APP_VERSION='v1.0.21';
+const APP_VERSION='v1.0.22';
 // App Store deep link — used by the in-app "update available" nudge.
 const APP_STORE_URL='https://apps.apple.com/app/stray-arrows/id6763406927';
 const PI=Math.PI,TAU=PI*2,sin=Math.sin,cos=Math.cos,abs=Math.abs,floor=Math.floor,min=Math.min,max=Math.max,sqrt=Math.sqrt;
@@ -332,9 +332,11 @@ function _grad(ctx,x0,y0,x1,y1,stops){
 // t=0 under reduced-motion by the caller.
 const SKINS=[
   // Free default — the theme's own arrow colour (adapts to dark/contrast).
-  {id:'classic', name:'Classic', price:0,    animated:false, paint:()=>TH.arrow},
+  // `solid:true` → arrowColor() can return the colour string directly (no
+  // per-arrow-per-frame closure), since these need no geometry/style/time.
+  {id:'classic', name:'Classic', price:0,    animated:false, solid:true, paint:()=>TH.arrow},
   // --- solid tier ---
-  {id:'ink',     name:'Mono Ink',price:1000, animated:false, paint:()=>darkMode?'#f2ece4':'#241c1a'},
+  {id:'ink',     name:'Mono Ink',price:1000, animated:false, solid:true, paint:()=>darkMode?'#f2ece4':'#241c1a'},
   {id:'neon',    name:'Neon',    price:1500, animated:false, style:'glow',    paint:()=>'#19e6ff'},
   // --- shape/style tier (different rendering, not just colour) ---
   {id:'outline', name:'Outline', price:3000, animated:false, style:'outline', paint:()=>darkMode?'#f4ecdf':'#2a211c'},
@@ -401,7 +403,13 @@ function _skinPaint(sk,i){
   if(sk.style)fn._style=sk.style; // 'glow' | 'outline' | 'bevel' — drives drawArrowPolyline
   return fn;
 }
-function arrowColor(a,i){ return _skinPaint(_activeSkinDef(),i||0); }
+function arrowColor(a,i){
+  const sk=_activeSkinDef();
+  // Fast path for plain solid skins (Classic/Mono Ink): return the colour
+  // string directly — no closure allocated per arrow per frame.
+  if(sk.solid){try{return sk.paint();}catch(e){return TH.arrow;}}
+  return _skinPaint(sk,i||0);
+}
 // Resolve a `col` (string OR paint-function) to a concrete fillStyle/strokeStyle.
 // Semantic overrides (TH.star hint, TH.arrowBlock shake) stay plain strings;
 // skins arrive as functions and get the arrow geometry to build their gradient.
@@ -1446,6 +1454,11 @@ async function initAdMob(){
 const REMOVE_ADS_ID='remove_ads';
 let _removeAdsPrice='';   // localized price string from the store (e.g. "$2.99")
 let _iapBusy=false;       // a purchase/restore is in flight
+let _iapBusyTimer=0;
+// Set the in-flight flag with a self-clearing safety timeout, so the button
+// can never latch dead if the StoreKit sheet is dismissed without firing any
+// approved/finished/error callback (rare, OS-dependent).
+function _iapSetBusy(){_iapBusy=true;clearTimeout(_iapBusyTimer);_iapBusyTimer=setTimeout(()=>{_iapBusy=false;},60000);}
 function _iapPlatform(){const CP=CdvPurchase;return _isIOS()?CP.Platform.APPLE_APPSTORE:CP.Platform.GOOGLE_PLAY;}
 function initIAP(){
   try{
@@ -1454,8 +1467,18 @@ function initIAP(){
     store.register([{id:REMOVE_ADS_ID,type:CP.ProductType.NON_CONSUMABLE,platform:plat}]);
     store.when()
       .productUpdated(()=>{const p=store.get(REMOVE_ADS_ID,plat);if(p&&p.pricing&&p.pricing.price)_removeAdsPrice=p.pricing.price;})
-      .approved(tx=>tx.verify())
-      .verified(rc=>{_setAdsRemoved(true);_iapBusy=false;rc.finish();spawnFloater(W/2,H*0.5,t('adsRemovedMsg'),TH.success);})
+      // No backend / receipt validator → grant entitlement locally on approval
+      // and finish() the transaction immediately. (Relying on .verified() would
+      // never fire without a store.validator, so the user would be charged but
+      // never granted, and StoreKit would keep re-presenting the unfinished
+      // transaction. This is the documented no-backend local flow.)
+      .approved(tx=>{
+        const was=adsRemoved;
+        _setAdsRemoved(true);_iapBusy=false;
+        try{tx.finish();}catch(e){_logAdErr('finish',e);}
+        if(!was)spawnFloater(W/2,H*0.5,t('adsRemovedMsg'),TH.success);
+      })
+      // Reflects restores / already-owned on relaunch.
       .receiptUpdated(()=>{const p=store.get(REMOVE_ADS_ID,plat);if(p&&p.owned)_setAdsRemoved(true);})
       .finished(()=>{_iapBusy=false;});
     store.error(e=>{_iapBusy=false;_logAdErr('iap',e);});
@@ -1469,14 +1492,14 @@ function buyRemoveAds(){
     const store=CdvPurchase.store, p=store.get(REMOVE_ADS_ID,_iapPlatform());
     const offer=p&&p.getOffer&&p.getOffer();
     if(!offer){spawnFloater(W/2,H*0.5,t('iapUnavailable'),TH.arrowBlock);return;}
-    _iapBusy=true;
+    _iapSetBusy();
     Promise.resolve(store.order(offer)).catch(e=>{_iapBusy=false;_logAdErr('order',e);});
   }catch(e){_iapBusy=false;_logAdErr('buyRemoveAds',e);}
 }
 function restorePurchases(){
   if(typeof CdvPurchase==='undefined'){spawnFloater(W/2,H*0.5,t('iapUnavailable'),TH.arrowBlock);return;}
   try{
-    _iapBusy=true;
+    _iapSetBusy();
     Promise.resolve(CdvPurchase.store.restorePurchases()).catch(e=>_logAdErr('restore',e)).finally(()=>{_iapBusy=false;});
   }catch(e){_iapBusy=false;_logAdErr('restore',e);}
 }
