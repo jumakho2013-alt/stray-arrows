@@ -163,7 +163,7 @@ function _devWarn(stage, err){
 
 // Single source of truth for the displayed app version. Bump alongside
 // CFBundleShortVersionString in ios/App/App.xcodeproj/project.pbxproj.
-const APP_VERSION='v1.0.23';
+const APP_VERSION='v1.0.24';
 // App Store deep link — used by the in-app "update available" nudge.
 const APP_STORE_URL='https://apps.apple.com/app/stray-arrows/id6763406927';
 const PI=Math.PI,TAU=PI*2,sin=Math.sin,cos=Math.cos,abs=Math.abs,floor=Math.floor,min=Math.min,max=Math.max,sqrt=Math.sqrt;
@@ -1474,6 +1474,15 @@ function initIAP(){
       // never granted, and StoreKit would keep re-presenting the unfinished
       // transaction. This is the documented no-backend local flow.)
       .approved(tx=>{
+        // Grant the entitlement ONLY for a store-confirmed, fully-paid purchase of
+        // our exact product — never on a bare "approved fired" signal.
+        //   • tx.isPending === true  → payment not settled yet (deferred / Ask-to-Buy):
+        //     do NOT grant and do NOT finish; .approved fires again once it settles.
+        //   • tx.products is the store-verified list of purchased product ids; require
+        //     REMOVE_ADS_ID to be present so an unrelated transaction can't grant.
+        if(tx&&tx.isPending){_iapBusy=false;return;}
+        const ours=!!(tx&&Array.isArray(tx.products)&&tx.products.some(p=>p&&p.id===REMOVE_ADS_ID));
+        if(!ours){try{tx&&tx.finish&&tx.finish();}catch(e){_logAdErr('finishOther',e);}_iapBusy=false;return;}
         const was=adsRemoved;
         _setAdsRemoved(true);_iapBusy=false;
         try{tx.finish();}catch(e){_logAdErr('finish',e);}
