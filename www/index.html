@@ -1490,6 +1490,22 @@ function initIAP(){
       })
       // Reflects restores / already-owned on relaunch.
       .receiptUpdated(()=>{const p=store.get(REMOVE_ADS_ID,plat);if(p&&p.owned)_setAdsRemoved(true);})
+      // Authoritative reconcile once ALL platform receipts have loaded (fires even
+      // when the user never purchased). This is the only moment "not owned" is
+      // definitive, so it's the safe place to RECLAIM a local flag that was never
+      // backed by a real purchase — genuine owners keep their entitlement.
+      // Conservative: only revoke when the product is loaded AND store says not owned;
+      // if ownership is unknown (product not loaded), leave the flag untouched so a
+      // real buyer is never wrongly shown ads. Store entitlement is cached on-device
+      // by StoreKit/Play Billing, so this stays correct even offline. Never runs on web.
+      .receiptsReady(()=>{
+        try{
+          const p=store.get(REMOVE_ADS_ID,plat);
+          if(!p)return;                                   // ownership unknown — never revoke on uncertainty
+          if(p.owned){ if(!adsRemoved)_setAdsRemoved(true); }   // real owner / restore — keep
+          else if(adsRemoved){ _setAdsRemoved(false); }         // local flag not backed by a purchase — reclaim
+        }catch(e){_logAdErr('reconcile',e);}
+      })
       .finished(()=>{_iapBusy=false;});
     store.error(e=>{_iapBusy=false;_logAdErr('iap',e);});
     store.initialize([plat]);
