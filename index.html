@@ -1328,12 +1328,24 @@ const DAILY_REWARD=100;   // first daily completion of the day (was 50)
 const WEEKLY_REWARD=150;  // first weekly completion (was 200, rebalanced so the
                           // ad path stays competitive — 60 coins for 30s view)
 
-// Remove Ads — one-time non-consumable IAP. `adsRemoved` persists in ae_noads
-// and is set true when the purchase is approved OR restored. It only gates the
-// timed interstitial; user-initiated rewarded ads keep working (standard for
+// Remove Ads — one-time non-consumable IAP. It only gates the timed
+// interstitial; user-initiated rewarded ads keep working (standard for
 // "remove ads"). See initIAP / buyRemoveAds / restorePurchases below.
-let adsRemoved=(()=>{try{return localStorage.getItem('ae_noads')==='1';}catch(e){return false;}})();
-function _setAdsRemoved(v){adsRemoved=!!v;_safeSet('ae_noads',v?'1':'0');}
+//
+// The legacy `ae_noads=1` flag ALONE is no longer trusted: a debug/test/sandbox
+// click could leave it behind and make the next launch look paid. We require a
+// companion store-source marker, so the entitlement is only honoured when it was
+// written by a real grant path. (The receiptsReady reconcile in initIAP then
+// re-verifies against actual store ownership and reclaims any stale flag.)
+const NOADS_KEY='ae_noads';
+const NOADS_SOURCE_KEY='ae_noads_source';
+const NOADS_STORE_SOURCE='store-local-v1';
+let adsRemoved=(()=>{try{return localStorage.getItem(NOADS_KEY)==='1'&&localStorage.getItem(NOADS_SOURCE_KEY)===NOADS_STORE_SOURCE;}catch(e){return false;}})();
+function _setAdsRemoved(v,source){
+  adsRemoved=!!v;
+  if(adsRemoved){_safeSet(NOADS_KEY,'1');_safeSet(NOADS_SOURCE_KEY,source||NOADS_STORE_SOURCE);}
+  else{_safeSet(NOADS_KEY,'0');try{localStorage.removeItem(NOADS_SOURCE_KEY);}catch(e){}}
+}
 // (Interstitial cadence now lives in showInterstitialAd — wall-clock
 // 5-7 min randomized window persisted in localStorage. The old `gt`-
 // based cooldown constants were removed in v1.0.20.)
