@@ -1198,6 +1198,17 @@ let isWeekly=false; // true when playing the weekly challenge
 let gameMode='classic';
 let _genOverride=null;   // {cols,rows,maxLen} — grid override for rush boards
 let zenCount=+localStorage.getItem('ae_zen_count')||0; // total zen boards (drives difficulty drift)
+// v2.0 booster runtime state — per-level, reset by _resetBoosterState()
+// from generateLevel. shieldArmed eats the next heart loss; zapArmed puts
+// the next arrow tap into "remove it" mode; reveal shows numbered badges
+// on the next 3 solvable arrows until revealUntil (game-clock seconds).
+let boosterMenuOpen=false;
+let shieldArmed=false;
+let zapArmed=false;
+let _zapPaid='coins'; // 'inv'|'coins' — remembered so cancelling refunds the right pocket
+let revealUntil=0;
+let revealList=[];
+function _resetBoosterState(){boosterMenuOpen=false;shieldArmed=false;zapArmed=false;revealUntil=0;revealList=[];}
 let rushScore=0;         // arrows cleared this rush run
 let rushEndAt=0;         // gt timestamp when the run expires (+5s per board, −3s per block)
 let _lastRushTick=-1;    // last whole second we tick-haptic'd at (<10s warning)
@@ -1371,6 +1382,10 @@ function updateStreak(){
 const HINT_COST=100;
 const CONTINUE_COST=100;
 const SKIP_COST=200;
+// v2.0 boosters — costs sit between hint (100) and skip (200) so they're
+// real decisions, not impulse buys. Inventory (from login rewards) is
+// consumed before coins.
+const BOOST_COSTS={shield:75,reveal:125,zap:150};
 const AD_COIN_REWARD=60;  // rewarded ad payout (30s view)
 const DAILY_REWARD=100;   // first daily completion of the day (was 50)
 const WEEKLY_REWARD=150;  // first weekly completion (was 200, rebalanced so the
@@ -1726,6 +1741,78 @@ function useHint(){
   return false;
 }
 
+// ── v2.0 boosters ────────────────────────────────────────────────────
+// Inventory (login-reward grants) is consumed before coins. Returns true
+// if the booster activated.
+function useBooster(kind){
+  if(kind==='skip'){
+    if(skipLevel())boosterMenuOpen=false;
+    else spawnFloater(W/2,H*.3,t('notEnough'),TH.arrowBlock);
+    return;
+  }
+  const inv=kind==='shield'?bstShield:kind==='zap'?bstZap:bstReveal;
+  if(kind==='shield'&&shieldArmed)return;      // already armed
+  if(kind==='zap'&&zapArmed){
+    // Tap again = cancel target mode; refund whatever paid for it.
+    zapArmed=false;boosterMenuOpen=false;
+    if(_zapPaid==='inv'){bstZap++;_safeSet('ae_bst_zap',bstZap);}
+    else{coins+=BOOST_COSTS.zap;_safeSet('ae_coins',coins);}
+    boostersUsed=max(0,boostersUsed-1);_safeSet('ae_boost_used',boostersUsed);
+    return;
+  }
+  if(inv>0){
+    if(kind==='shield'){bstShield--;_safeSet('ae_bst_shield',bstShield);}
+    else if(kind==='zap'){bstZap--;_safeSet('ae_bst_zap',bstZap);_zapPaid='inv';}
+    else{bstReveal--;_safeSet('ae_bst_reveal',bstReveal);}
+  }else if(coins>=BOOST_COSTS[kind]){
+    coins-=BOOST_COSTS[kind];
+    _safeSet('ae_coins',coins);
+    if(kind==='zap')_zapPaid='coins';
+  }else{
+    spawnFloater(W/2,H*.3,t('notEnough'),TH.arrowBlock);
+    return;
+  }
+  boostersUsed++;_safeSet('ae_boost_used',boostersUsed);
+  checkAchievements({boostersUsed});
+  save();
+  sfx.tap();haptic(12);
+  if(kind==='shield'){
+    shieldArmed=true;
+  }else if(kind==='zap'){
+    zapArmed=true;
+  }else{
+    // Reveal: greedy 3-step solve simulation on a scratch alive-mask —
+    // the same escape rule as canEscape but against the mask, so the
+    // 1/2/3 badges form a genuinely playable order.
+    revealList=[];
+    const alive=arrows.map(x=>x.alive);
+    for(let step=0;step<3;step++){
+      let found=-1;
+      for(let i=0;i<arrows.length&&found<0;i++){
+        if(!alive[i])continue;
+        const ar=arrows[i];
+        const head=ar.cells[ar.cells.length-1];
+        let cr=head[0]+DY[ar.dir],cc=head[1]+DX[ar.dir],clear=true;
+        while(cr>=0&&cr<gridRows&&cc>=0&&cc<gridCols&&clear){
+          for(let j=0;j<arrows.length&&clear;j++){
+            if(j===i||!alive[j])continue;
+            for(const[or,oc] of arrows[j].cells){
+              if(or===cr&&oc===cc){clear=false;break}
+            }
+          }
+          cr+=DY[ar.dir];cc+=DX[ar.dir];
+        }
+        if(clear)found=i;
+      }
+      if(found<0)break;
+      revealList.push(found);
+      alive[found]=false;
+    }
+    revealUntil=gt+4;
+  }
+  boosterMenuOpen=false;
+}
+
 // Continue from game over — spend coins to restore hearts, keep arrow progress
 function continueFromGameover(){
   if(coins<CONTINUE_COST)return false;
@@ -1824,6 +1911,7 @@ function generateLevel(lvl,customSeed){
     _recordCells();
     minMoves=arrows.length;
     moves=0;timer=0;undosLeft=3;
+    _resetBoosterState();
     _startZoomIntro();
     const key='ae_best_'+lvl;
     bestTime=+localStorage.getItem(key)||0;
@@ -2267,6 +2355,7 @@ function generateLevel(lvl,customSeed){
   moves=0;
   timer=0;
   undosLeft=3;
+  _resetBoosterState();
   _startZoomIntro();
 
   const key='ae_best_'+lvl;
@@ -2748,11 +2837,31 @@ function tapArrowByIndex(idx){
   const a=arrows[idx];
   if(!a||!a.alive)return;
 
+  // v2.0 Zap booster: the armed tap removes ANY arrow — no escape-line
+  // check needed because removal is monotone (it only ever unblocks
+  // others). Doesn't count as a move and doesn't score in rush (bought,
+  // not earned).
+  if(zapArmed){
+    zapArmed=false;
+    a.alive=false;
+    _flyOutArrow(a,idx);
+    return;
+  }
+
   if(canEscape(idx)){
     a.alive=false;
     moves++;
     if(gameMode==='rush')rushScore++;
+    _flyOutArrow(a,idx);
+  }else{
+    _blockedTap(a,idx);
+  }
+}
 
+// The escape animation + win detection, shared by normal taps and the Zap
+// booster. `a.alive` must already be false.
+function _flyOutArrow(a,idx){
+  {
     const cs=getCellSize(),gx=getGridX(),gy=getGridY();
     const bodyLen=arrowBodyLen(a,cs);
     const extLen=1600;
@@ -2847,26 +2956,35 @@ function tapArrowByIndex(idx){
         spawnConfetti();
       },1600);
     }
+  }
+}
+
+// Blocked-tap consequences, branched by mode. Shield (booster) eats the
+// penalty in the modes that have one.
+function _blockedTap(a,idx){
+  // Blocked — shake the head cell, lose a heart (life)
+  const cs=getCellSize(),gx=getGridX(),gy=getGridY();
+  const head=a.cells[a.cells.length-1];
+  const sx=gx+head[1]*cs+cs/2;
+  const sy=gy+head[0]*cs+cs/2;
+  shakeAnims.push({x:sx,y:sy,idx,t:0,dur:.2});
+  sfx.blocked();haptic([5,30,5]);
+  if(isTutorial()){
+    // Tutorial mode (levels 1-TUTORIAL_LEVELS): wrong tap is a teaching
+    // moment, not a punishment. Player sees the shake + blocked sfx,
+    // then the highlighted next arrow re-pulses so they can try again.
+    spawnFloater(sx,sy-cs*.6,'blocked',TH.arrowBlock);
+  }else if(gameMode==='zen'){
+    // Zen: mistakes are free — that's the whole point of the mode.
+    spawnFloater(sx,sy-cs*.6,'blocked',TH.arrowBlock);
+  }else if(gameMode==='rush'){
+    // Rush: mistakes cost time, not hearts — Shield can eat the time hit.
+    if(shieldArmed){shieldArmed=false;spawnFloater(sx,sy-cs*.6,t('shield')+'!',TH.success);}
+    else{rushEndAt-=3;spawnFloater(sx,sy-cs*.6,'-3s',TH.arrowBlock);}
   }else{
-    // Blocked — shake the head cell, lose a heart (life)
-    const cs=getCellSize(),gx=getGridX(),gy=getGridY();
-    const head=a.cells[a.cells.length-1];
-    const sx=gx+head[1]*cs+cs/2;
-    const sy=gy+head[0]*cs+cs/2;
-    shakeAnims.push({x:sx,y:sy,idx,t:0,dur:.2});
-    sfx.blocked();haptic([5,30,5]);
-    if(isTutorial()){
-      // Tutorial mode (levels 1-TUTORIAL_LEVELS): wrong tap is a teaching
-      // moment, not a punishment. Player sees the shake + blocked sfx,
-      // then the highlighted next arrow re-pulses so they can try again.
-      spawnFloater(sx,sy-cs*.6,'blocked',TH.arrowBlock);
-    }else if(gameMode==='zen'){
-      // Zen: mistakes are free — that's the whole point of the mode.
-      spawnFloater(sx,sy-cs*.6,'blocked',TH.arrowBlock);
-    }else if(gameMode==='rush'){
-      // Rush: mistakes cost time, not hearts.
-      rushEndAt-=3;
-      spawnFloater(sx,sy-cs*.6,'-3s',TH.arrowBlock);
+    if(shieldArmed){
+      shieldArmed=false;
+      spawnFloater(sx,sy-cs*.6,t('shield')+'!',TH.success);
     }else{
       undosLeft--;
       spawnFloater(sx,sy-cs*.6,'-1',TH.arrowBlock);
@@ -3787,6 +3905,33 @@ function drawPlay(){
     }
   }
 
+  // ── v2.0 boosters — bolt chip on the LEFT edge (mirror of the hint),
+  // expanding into a horizontal flyout of 4 chips. Hidden during the
+  // tutorial (nothing to teach yet, and Skip would let a player skip the
+  // teaching levels).
+  if(!isTutorial()){
+    const bcX=50,bcY=TOP_Y+30;
+    const bhv=abs(mx-bcX)<26&&abs(my-bcY)<18;
+    // Bolt glyph — accent when armed states are live
+    const armed=shieldArmed||zapArmed;
+    X.save();
+    X.strokeStyle=armed?TH.accent:(bhv?TH.text:TH.textSec);
+    X.lineWidth=2;X.lineCap='round';X.lineJoin='round';
+    X.beginPath();
+    X.moveTo(bcX+3,bcY-9);X.lineTo(bcX-4,bcY+2);X.lineTo(bcX,bcY+2);
+    X.lineTo(bcX-3,bcY+9);X.lineTo(bcX+4,bcY-2);X.lineTo(bcX,bcY-2);
+    X.closePath();X.stroke();
+    // Shield-armed pip so the player sees the protection is live
+    if(shieldArmed){
+      X.fillStyle=TH.success;
+      X.beginPath();X.arc(bcX+12,bcY-8,3.2,0,TAU);X.fill();
+    }
+    X.restore();
+    if(tapped&&abs(tapX-bcX)<26&&abs(tapY-bcY)<18){
+      sfx.tap();boosterMenuOpen=!boosterMenuOpen;tapped=false;
+    }
+  }
+
   // Advance level reveal animation (staggered fade-in of all arrows)
   if(levelRevealT<1)levelRevealT=min(1,levelRevealT+dt/.9);
 
@@ -3958,6 +4103,28 @@ function drawPlay(){
   // Tick down hint timer
   if(hintTime>0){hintTime-=dt;if(hintTime<=0)hintArrow=-1}
 
+  // ── v2.0 Reveal booster: numbered 1/2/3 badges over the next solvable
+  // arrows (greedy order computed at purchase). World coords — pans and
+  // zooms with the board.
+  if(gt<revealUntil){
+    for(let k=0;k<revealList.length;k++){
+      const ar=arrows[revealList[k]];
+      if(!ar||!ar.alive)continue;
+      const head=ar.cells[ar.cells.length-1];
+      const bx=gx+head[1]*cs+cs/2,by=gy+head[0]*cs+cs/2;
+      const fade=min(1,(revealUntil-gt)/.4); // quick fade-out at the end
+      X.save();
+      X.globalAlpha=fade;
+      X.fillStyle=TH.star;
+      X.beginPath();X.arc(bx,by-cs*.75,9,0,TAU);X.fill();
+      X.strokeStyle=darkMode?'rgba(0,0,0,.35)':'rgba(255,255,255,.9)';
+      X.lineWidth=1.5;
+      X.beginPath();X.arc(bx,by-cs*.75,9,0,TAU);X.stroke();
+      txtP(String(k+1),bx,by-cs*.75,11,darkMode?'#2a1f1d':'#fff');
+      X.restore();
+    }
+  }
+
   // Tutorial — first TUTORIAL_LEVELS regular levels permanently highlight
   // the next solvable arrow until the level is cleared. Combined with the
   // no-penalty wrong-tap handling in tapArrowByIndex(), this gives new
@@ -4050,7 +4217,7 @@ function drawPlay(){
   // but arrow cells are stored in world coords, so we invert the active
   // zoom/pan transform first via _screenToWorld(). When zoom=1 this is a
   // no-op so non-zoomed gameplay is unaffected.
-  if(tapped){
+  if(tapped&&!boosterMenuOpen){ // flyout (drawn after this block) owns the tap while open
     const w=_screenToWorld(tapX,tapY);
     let bestIdx=-1,bestDist=cs*.85;
     for(let i=0;i<arrows.length;i++){
@@ -4092,6 +4259,77 @@ function drawPlay(){
   }
 
   X.restore(); // === ZOOM/PAN BLOCK END === — UI below stays in screen coords
+
+  // ── v2.0 booster flyout + zap banner — drawn ABOVE the board (screen
+  // coords). The board's tap detection is gated on !boosterMenuOpen, so
+  // input naturally falls through to this block while the flyout is open.
+  if(!isTutorial()){
+    if(boosterMenuOpen){
+      const items=[];
+      if(gameMode!=='zen')items.push('shield');
+      items.push('reveal','zap');
+      if(gameMode==='classic'&&!isDaily&&!isWeekly)items.push('skip');
+      const chipW=82,chipH=40,gap=8;
+      const rowW=items.length*chipW+(items.length-1)*gap;
+      const x0=W/2-rowW/2,fy=TOP_Y+64;
+      let consumed=false;
+      for(let i=0;i<items.length;i++){
+        const kind=items[i];
+        const cx=x0+i*chipW+chipW/2;
+        const hv2=abs(mx-cx)<chipW/2&&abs(my-fy)<chipH/2;
+        X.fillStyle=hv2?TH.btnHover:(darkMode?'rgba(58,44,42,.96)':'rgba(254,244,230,.96)');
+        X.beginPath();X.roundRect(cx-chipW/2,fy-chipH/2,chipW,chipH,12);X.fill();
+        X.strokeStyle=TH.border;X.lineWidth=1;
+        X.beginPath();X.roundRect(cx-chipW/2,fy-chipH/2,chipW,chipH,12);X.stroke();
+        // Glyph
+        const gxp=cx-24,gyp=fy;
+        X.save();
+        X.strokeStyle=TH.text;X.lineWidth=1.8;X.lineCap='round';X.lineJoin='round';
+        if(kind==='shield'){
+          X.beginPath();X.moveTo(gxp,gyp-7);X.lineTo(gxp+6,gyp-5);X.lineTo(gxp+6,gyp+1);
+          X.quadraticCurveTo(gxp+6,gyp+5,gxp,gyp+8);X.quadraticCurveTo(gxp-6,gyp+5,gxp-6,gyp+1);
+          X.lineTo(gxp-6,gyp-5);X.closePath();X.stroke();
+        }else if(kind==='zap'){
+          X.beginPath();X.moveTo(gxp+2,gyp-8);X.lineTo(gxp-4,gyp+1);X.lineTo(gxp,gyp+1);
+          X.lineTo(gxp-2,gyp+8);X.lineTo(gxp+4,gyp-1);X.lineTo(gxp,gyp-1);X.closePath();X.stroke();
+        }else if(kind==='reveal'){
+          X.beginPath();X.ellipse(gxp,gyp,8,5,0,0,TAU);X.stroke();
+          X.fillStyle=TH.text;
+          X.beginPath();X.arc(gxp,gyp,2.4,0,TAU);X.fill();
+        }else{ // skip — double chevron
+          X.beginPath();X.moveTo(gxp-6,gyp-6);X.lineTo(gxp,gyp);X.lineTo(gxp-6,gyp+6);X.stroke();
+          X.beginPath();X.moveTo(gxp+1,gyp-6);X.lineTo(gxp+7,gyp);X.lineTo(gxp+1,gyp+6);X.stroke();
+        }
+        X.restore();
+        // Price / inventory badge
+        const invN=kind==='shield'?bstShield:kind==='zap'?bstZap:kind==='reveal'?bstReveal:0;
+        if(kind!=='skip'&&invN>0){
+          txtP('×'+invN,cx+14,fy,13,TH.success,'left');
+        }else{
+          const cost=kind==='skip'?SKIP_COST:BOOST_COSTS[kind];
+          drawCoin(cx+8,fy,5);
+          txt(cost+'',cx+16,fy,11,coins>=cost?TH.star:TH.textDim,'left');
+        }
+        if(tapped&&hv2){
+          useBooster(kind);
+          tapped=false;consumed=true;
+        }
+      }
+      // Tap anywhere else closes the flyout AND swallows the tap so the
+      // board underneath doesn't receive it next frame.
+      if(tapped&&!consumed){
+        boosterMenuOpen=false;tapped=false;
+      }
+    }
+
+    // Zap target-mode banner
+    if(zapArmed){
+      const pulse=.7+.3*sin(gt*5);
+      X.save();X.globalAlpha=pulse;
+      txtP(t('tapAnyArrow'),W/2,TOP_Y+58,13,TH.warning);
+      X.restore();
+    }
+  }
 
   // Bottom stats row. v2: bumped font 11 -> 13, switched key numbers
   // (moves count, time) to bold so they're scannable at a glance, and

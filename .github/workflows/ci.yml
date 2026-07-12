@@ -56,6 +56,6 @@ jobs:
         run: |
           test -f www/index.html || (echo "build did not produce www/index.html"; exit 1)
           test -f www/sw.js || (echo "build did not produce www/sw.js"; exit 1)
-          test -f www/levels-baked.js || (echo "build did not produce www/levels-baked.js"; exit 1)
           test -f www/handcrafted-levels.js || (echo "build did not produce www/handcrafted-levels.js"; exit 1)
+          test ! -f www/levels-baked.js || (echo "www/levels-baked.js should NOT ship (retired in v2.0)"; exit 1)
           test -d www/sounds || (echo "build did not produce www/sounds/"; exit 1)
