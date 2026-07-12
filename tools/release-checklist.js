@@ -57,13 +57,10 @@ run('lint clean', 'npm run lint --silent');
 // 5. npm audit (high+)
 run('npm audit clean (high+)', 'npm run audit:check --silent');
 
-// 6. Handcrafted levels validate
-run('handcrafted levels valid', 'npm run validate:handcrafted --silent');
+// 6. Levels validate (tutorial 1-20 + 441 shape levels)
+run('levels valid', 'npm run validate --silent');
 
-// 7. Imported chunks validate
-run('imported chunks valid', 'npm run validate:imported --silent');
-
-// 8. Build succeeds
+// 7. Build succeeds
 run('build succeeds', 'npm run build --silent');
 
 // Summary
