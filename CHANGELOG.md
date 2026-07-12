@@ -19,7 +19,7 @@ All notable changes to Stray Arrows are documented here. Format follows
 - **Rush mode** — 75-second time attack on small boards; +5s per cleared
   board, −3s per blocked tap; local best score.
 - **Boosters** — Shield (block one mistake), Reveal (show next 3 moves),
-  Zap (remove any arrow), Skip (finally surfaced) — coins or inventory.
+  Zap (remove any arrow) — coins or inventory.
 - 8 new achievements (login, zen, rush, shape, booster families).
 - Premium visual pass: directional screen transitions, board backdrop,
   deeper arrow rendering, shape silhouette reveal, global impact shake,

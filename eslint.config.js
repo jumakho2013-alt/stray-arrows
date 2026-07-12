@@ -17,9 +17,7 @@ module.exports = [
       'www/**',
       'android/**',
       'ios/**',
-      'levels-baked.js',       // generated, multi-MB
-      'handcrafted-levels.js', // data, not really code
-      'tools/handcrafted-levels.js',
+      'handcrafted-levels.js', // generated data, not really code
       'index.html',            // see header comment
       'tools/level-editor.html',
     ],

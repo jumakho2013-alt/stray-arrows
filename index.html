@@ -1417,9 +1417,8 @@ function updateStreak(){
 // Currency sinks — expensive so players run out and watch ads
 const HINT_COST=100;
 const CONTINUE_COST=100;
-const SKIP_COST=200;
-// v2.0 boosters — costs sit between hint (100) and skip (200) so they're
-// real decisions, not impulse buys. Inventory (from login rewards) is
+// v2.0 boosters — costs sit above hint (100) so they're real decisions,
+// not impulse buys. Inventory (from login rewards) is
 // consumed before coins.
 const BOOST_COSTS={shield:75,reveal:125,zap:150};
 const AD_COIN_REWARD=60;  // rewarded ad payout (30s view)
@@ -1781,11 +1780,6 @@ function useHint(){
 // Inventory (login-reward grants) is consumed before coins. Returns true
 // if the booster activated.
 function useBooster(kind){
-  if(kind==='skip'){
-    if(skipLevel())boosterMenuOpen=false;
-    else spawnFloater(W/2,H*.3,t('notEnough'),TH.arrowBlock);
-    return;
-  }
   const inv=kind==='shield'?bstShield:kind==='zap'?bstZap:bstReveal;
   if(kind==='shield'&&shieldArmed)return;      // already armed
   if(kind==='zap'&&zapArmed){
@@ -1857,22 +1851,6 @@ function continueFromGameover(){
   save();
   S='play';
   sfx.tap();haptic(10);
-  return true;
-}
-
-// Skip current level for a fat coin cost — marks 1 star and advances.
-// Disabled for daily/weekly: those are challenge modes with fixed seeds and
-// no `level` progression — skipping them would bump the global `level` while
-// leaving `isDaily`/`isWeekly` flags set, breaking state on next entry.
-function skipLevel(){
-  if(coins<SKIP_COST||isDaily||isWeekly)return false;
-  coins-=SKIP_COST;
-  stars[level]=max(stars[level]||0,1);
-  totalStars=Object.values(stars).reduce((a,b)=>a+b,0);
-  level++;
-  save();
-  sfx.complete();haptic(20);
-  generateLevel(level);
   return true;
 }
 
@@ -4539,7 +4517,6 @@ function drawPlay(){
       const items=[];
       if(gameMode!=='zen')items.push('shield');
       items.push('reveal','zap');
-      if(gameMode==='classic'&&!isDaily&&!isWeekly)items.push('skip');
       const chipW=82,chipH=40,gap=8;
       const rowW=items.length*chipW+(items.length-1)*gap;
       const x0=W/2-rowW/2,fy=TOP_Y+64;
@@ -4563,21 +4540,18 @@ function drawPlay(){
         }else if(kind==='zap'){
           X.beginPath();X.moveTo(gxp+2,gyp-8);X.lineTo(gxp-4,gyp+1);X.lineTo(gxp,gyp+1);
           X.lineTo(gxp-2,gyp+8);X.lineTo(gxp+4,gyp-1);X.lineTo(gxp,gyp-1);X.closePath();X.stroke();
-        }else if(kind==='reveal'){
+        }else{ // reveal — eye
           X.beginPath();X.ellipse(gxp,gyp,8,5,0,0,TAU);X.stroke();
           X.fillStyle=TH.text;
           X.beginPath();X.arc(gxp,gyp,2.4,0,TAU);X.fill();
-        }else{ // skip — double chevron
-          X.beginPath();X.moveTo(gxp-6,gyp-6);X.lineTo(gxp,gyp);X.lineTo(gxp-6,gyp+6);X.stroke();
-          X.beginPath();X.moveTo(gxp+1,gyp-6);X.lineTo(gxp+7,gyp);X.lineTo(gxp+1,gyp+6);X.stroke();
         }
         X.restore();
         // Price / inventory badge
-        const invN=kind==='shield'?bstShield:kind==='zap'?bstZap:kind==='reveal'?bstReveal:0;
-        if(kind!=='skip'&&invN>0){
+        const invN=kind==='shield'?bstShield:kind==='zap'?bstZap:bstReveal;
+        if(invN>0){
           txtP('×'+invN,cx+14,fy,13,TH.success,'left');
         }else{
-          const cost=kind==='skip'?SKIP_COST:BOOST_COSTS[kind];
+          const cost=BOOST_COSTS[kind];
           drawCoin(cx+8,fy,5);
           txt(cost+'',cx+16,fy,11,coins>=cost?TH.star:TH.textDim,'left');
         }

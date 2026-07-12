@@ -15,7 +15,6 @@
 // We don't reject anything here; this prints summaries that you eyeball.
 
 const path = require('path');
-const fs = require('fs');
 
 const ROOT = path.resolve(__dirname, '..');
 const HANDCRAFTED = require(path.join(ROOT, 'handcrafted-levels.js'));
@@ -31,7 +30,7 @@ function metricsOf(level) {
   A.forEach((a, i) => a.c.forEach(([r, c]) => occ.set(r * C + c, i)));
   const deps = A.map((a, i) => {
     const s = new Set();
-    let [hr, hc] = a.c[a.c.length - 1];
+    const [hr, hc] = a.c[a.c.length - 1];
     const dr = DY[a.d], dc = DX[a.d];
     let r = hr + dr, c = hc + dc;
     while (r >= 0 && r < R && c >= 0 && c < C) {

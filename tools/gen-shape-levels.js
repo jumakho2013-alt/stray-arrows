@@ -30,10 +30,9 @@
 
 const fs = require('fs');
 const path = require('path');
-const { MASKS, SHAPE_NAMES, MULTI_OK, composeNumber, validateMask, rasterize, toBoard } = require('./shape-masks.js');
+const { MASKS, SHAPE_NAMES, composeNumber, rasterize, toBoard } = require('./shape-masks.js');
 
 // Game direction encoding: 0=R 1=U 2=L 3=D (index.html DX/DY).
-const DIRS = [[0, 1], [-1, 0], [0, -1], [1, 0]]; // [dr,dc] for d=0..3
 function dirOf(dr, dc) {
   if (dr === 0 && dc === 1) return 0;
   if (dr === -1 && dc === 0) return 1;
@@ -427,7 +426,7 @@ function rayBlockers(board, snakes, cells, flip) {
 
 function peel(board, snakes, rng, bias, budget = 1200) {
   const n = snakes.length;
-  const info = snakes.map((cells, i) => [
+  const info = snakes.map((cells) => [
     rayBlockers(board, snakes, cells, 0),
     rayBlockers(board, snakes, cells, 1),
   ]);
@@ -466,7 +465,7 @@ function peel(board, snakes, rng, bias, budget = 1200) {
 
   while (alive.size) {
     if (++steps > budget) return null;
-    let frame = stack.length && stack[stack.length - 1].pending ? stack.pop() : null;
+    const frame = stack.length && stack[stack.length - 1].pending ? stack.pop() : null;
     let choices, tried;
     if (frame) { ({ choices, tried } = frame); }
     else {
@@ -504,7 +503,6 @@ function peel(board, snakes, rng, bias, budget = 1200) {
 
 // ── Metrics on the final configuration ──────────────────────────────
 function metrics(board, snakes, orientation) {
-  const { occ, cols, rows } = board;
   const n = snakes.length;
   const deps = [];
   for (let i = 0; i < n; i++) {

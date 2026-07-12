@@ -30,7 +30,7 @@ function dirOfSegment(a, b) {
   return -1;
 }
 
-function validateGeometry(level, lvl) {
+function validateGeometry(level) {
   const errs = [];
   const occ = {};
   for (let i = 0; i < level.arrows.length; i++) {
@@ -65,7 +65,7 @@ function validateGeometry(level, lvl) {
 
 function isSolvable(level) {
   const arrs = level.arrows.map(a => ({ ...a, alive: true }));
-  let removed = 0, total = arrs.length;
+  let removed = 0; const total = arrs.length;
   while (removed < total) {
     let progressed = false;
     for (const a of arrs) {
@@ -127,11 +127,12 @@ const bytes = fs.statSync(HC_PATH).size;
 if (bytes > 4.5 * 1024 * 1024) { console.log(`✗ file is ${(bytes / 1048576).toFixed(2)} MB (max 4.5)`); ok = false; }
 
 // ── Per-level checks ─────────────────────────────────────────────────
-let checked = 0, shapeCount = 0, warns = 0;
+let checked = 0, shapeCount = 0;
+const warns = 0;
 for (const lvlKey in HANDCRAFTED) {
   const lvl = Number(lvlKey);
   const level = HANDCRAFTED[lvlKey];
-  const errs = validateGeometry(level, lvl);
+  const errs = validateGeometry(level);
   const solv = isSolvable(level);
   const open = initialOpenness(level);
   const arrows = level.arrows.length;

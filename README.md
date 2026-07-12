@@ -46,7 +46,7 @@ levels and re-generates procedurally (QA only).
 | `www/` | **build output** — Capacitor's `webDir` points here |
 | `ios/` | Xcode project |
 | `android/` | Gradle project |
-| `tools/` | level editor, generator (Python), validator |
+| `tools/` | shape-level generator, masks, validator, playtest CLI, level editor |
 | `capacitor.config.json` | Capacitor + plugins config |
 | `STORE_LISTING.md` | App Store / Play descriptions, screenshots, age rating |
 | `privacy-policy.html` | hosted privacy policy |

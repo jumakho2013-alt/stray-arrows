@@ -19,12 +19,12 @@ Each level presents a maze of intertwined arrows. Tap an arrow to send it flying
 - Complete with all hearts intact — earn 3 stars
 
 FEATURES
-- SHAPE LEVELS — every 5th level is a picture: hearts, stars, cats, rockets…
-  and milestone levels spell their own number in arrows!
+- SHAPE LEVELS — every level from 21 to 300 is a picture: hearts, stars, cats,
+  rockets… and milestone levels spell their own number in arrows!
 - Zen mode — endless, no hearts, pure relaxation
 - Rush mode — 75-second time attack; every mistake costs seconds
 - Daily login rewards — a 7-day streak calendar with coin and booster gifts
-- Boosters: Shield, Reveal, Zap and Skip for the trickiest boards
+- Boosters: Shield, Reveal and Zap for the trickiest boards
 - Daily Challenge — one unique puzzle every day (+100 coins)
 - Weekly Challenge — hardcore puzzle every week (+150 coins)
 - Unlockable arrow skins — fire, ice, gold, neon, galaxy and more
@@ -36,7 +36,7 @@ FEATURES
 
 PROGRESSION
 - Earn coins by completing levels
-- Spend coins on Hints, Skip, or Continue after game over
+- Spend coins on Hints, Boosters, or Continue after game over
 - Track your streak, fastest time, and hint-free clears
 - Collect stars and unlock achievements
 
@@ -55,12 +55,12 @@ Stray Arrows — минималистичная головоломка, где �
 - Пройди без ошибок — получи 3 звезды
 
 ОСОБЕННОСТИ
-- ФИГУРНЫЕ УРОВНИ — каждый 5-й уровень это картинка: сердца, звёзды, коты,
-  ракеты… а юбилейные уровни пишут свой номер стрелками!
+- ФИГУРНЫЕ УРОВНИ — каждый уровень с 21-го по 300-й это картинка: сердца,
+  звёзды, коты, ракеты… а юбилейные уровни пишут свой номер стрелками!
 - Режим Дзен — бесконечный, без сердец, чистое расслабление
 - Режим Рывок — 75 секунд на время; каждая ошибка стоит секунд
 - Ежедневные награды за вход — календарь на 7 дней с монетами и бустерами
-- Бустеры: Щит, Взгляд, Удар и Пропуск для самых хитрых досок
+- Бустеры: Щит, Взгляд и Удар для самых хитрых досок
 - Ежедневный челлендж (+100 монет)
 - Еженедельный хардкор-челлендж (+150 монет)
 - Открываемые скины стрелок — огонь, лёд, золото, неон, галактика и другие
