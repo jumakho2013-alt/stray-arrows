@@ -1,7 +1,7 @@
 // ASCII render of handcrafted levels — sanity check for shape readability.
 // Each cell prints arrow direction symbol on heads, '#' on body, '.' on empty.
 
-const HC = require('./handcrafted-levels.js');
+const HC = require('../handcrafted-levels.js');
 const SYMBOLS = ['→', '↑', '←', '↓'];
 
 function render(level) {

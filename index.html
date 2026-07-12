@@ -1799,7 +1799,10 @@ function generateLevel(lvl,customSeed){
   //     more arrows per board = more to track per tap)
   // Tutorial: NO chain blockers — pure "tap clear arrow" gameplay so
   // brand-new players grasp the basic rule before any dependencies.
-  _maxBlockers=tut?0:1;
+  // v2.0: chain depth now SCALES with level (was a constant 1) — the
+  // "levels aren't strong" feedback traced to every escape being at most
+  // one arrow away from clear. Mid-game allows 2-deep locks, late-game 3.
+  _maxBlockers=tut?0:(lvl<25?1:lvl<120?2:3);
   // Late-game ramp (extended in v2): caps were 24 clusters / 2.5
   // lateExtra, which meant by lvl 3500 every parameter saturated and a
   // lvl-6000 board looked the same as a lvl-3500 one. User flagged
@@ -1809,8 +1812,10 @@ function generateLevel(lvl,customSeed){
   // the difficulty shift rather than seeing a wall.
   let numClusters, lateExtra;
   if(lvl<=1500){
-    const q=Math.max(0,(lvl-75)/1425);
-    numClusters=floor(lrp(3,12,q)+.5);
+    // v2.0: ramp starts at lvl 40 (was 75) and peaks at 14 clusters
+    // (was 12) — mid-game boards pick up density much sooner.
+    const q=Math.max(0,(lvl-40)/1100);
+    numClusters=floor(lrp(4,14,q)+.5);
     lateExtra=q;
   }else{
     numClusters=12+floor((lvl-1500)/25);
@@ -1851,7 +1856,7 @@ function generateLevel(lvl,customSeed){
   // shaft" pockets get eaten by neighbouring snakes.
   let safety=3000;
   const longMinBase=floor(maxLen*lrp(.55,.70,p)*pattern.longMinScale);
-  const longMin=tut?tut.longMin:max(10,floor(longMinBase*max(0.30,1-lateExtra*0.30)));
+  const longMin=tut?tut.longMin:max(8,floor(longMinBase*max(0.30,1-lateExtra*0.30)));
   while(safety-->0){
     const arrow=tryBuildArrow(occ,rows,cols,rng,minLen,maxLen,placed,{minAcceptLen:longMin});
     if(!arrow)break;
@@ -2138,7 +2143,14 @@ function generateLevel(lvl,customSeed){
   //      stayed identical across retries.
   const _retryDepth=arguments.length>=3?arguments[2]:0;
   const MAX_RETRIES=30;
-  if(!_isLevelSolvable(placed,rows,cols)&&_retryDepth<MAX_RETRIES&&lvl>=1){
+  // v2.0 quality gate: a solvable board can still be BORING — too many
+  // arrows tappable from the start, no dependency depth. Retry those too,
+  // but only while _retryDepth<10; past that accept any solvable board so
+  // daily/weekly generation time stays bounded and the lvl-halving escape
+  // hatch below keeps its guarantees.
+  const _solvableHere=_isLevelSolvable(placed,rows,cols);
+  const _qualityHere=_solvableHere&&(_retryDepth>=10||_levelQualityOK(placed,rows,cols,lvl));
+  if((!_solvableHere||!_qualityHere)&&_retryDepth<MAX_RETRIES&&lvl>=1){
     const baseSeed=customSeed!=null?customSeed:(lvl*7919+31337);
     // 0x9E3779B1 ≈ 2^32 / phi — Knuth's golden-ratio multiplier, classic
     // tool for spreading sequential indices across a 32-bit space.
@@ -2322,13 +2334,14 @@ function tryBuildArrow(occ,rows,cols,rng,minLen,maxLen,placed,opts){
         // exit corridor are now strongly preferred, so subsequent arrows
         // routinely have something meaningful to BLOCK.
         if(CHAIN_MODE)s+=escLen*4;
-        // Real-puzzle bonus: prefer heads whose exit is blocked by exactly
-        // one already placed arrow. Solvability filtering rejects cycles,
-        // but this makes the generator actively build locks instead of
-        // mostly independent snakes.
+        // Real-puzzle bonus: prefer heads whose exit is blocked by already
+        // placed arrows. Solvability filtering rejects cycles, but this
+        // makes the generator actively build locks instead of mostly
+        // independent snakes. v2.0: deeper locks (up to _maxBlockers)
+        // score progressively HIGHER — a 3-deep lock beats a 1-deep one.
         if(CHAIN_MODE&&placed&&placed.length>4){
-          if(blockerCount===1)s+=10;
-          else s-=4;
+          if(blockerCount>=1&&blockerCount<=_maxBlockers)s+=10+blockerCount*4;
+          else if(blockerCount===0)s-=4;
         }
         // Direction-variance bonus: every level should present all four
         // exit directions or the player can spam-tap a single column
@@ -2545,6 +2558,50 @@ function _isLevelSolvable(placed,rows,cols){
     if(!progress)return false;
   }
   return true;
+}
+
+// v2.0 quality gate for procedural boards (assumes solvable input).
+// Builds the dependency graph once (occupancy map, O(N·ray)) and checks:
+//   • initialOpen — how many arrows are tappable on move 1. Too many =
+//     the board plays itself. Cap tightens with level.
+//   • waves — dependency depth (how many "unlock rounds" the solve has).
+//     Too shallow = no puzzle. Floor rises with level.
+function _levelQualityOK(placed,rows,cols,lvl){
+  const N=placed.length;
+  if(N===0)return false;
+  const occ=new Map();
+  for(let i=0;i<N;i++)for(const[r,c] of placed[i].cells)occ.set(r*cols+c,i);
+  const deps=[];
+  for(let i=0;i<N;i++){
+    const head=placed[i].cells[placed[i].cells.length-1];
+    const dir=placed[i].dir;
+    const s=new Set();
+    let cr=head[0]+DY[dir],cc=head[1]+DX[dir];
+    while(cr>=0&&cr<rows&&cc>=0&&cc<cols){
+      const j=occ.get(cr*cols+cc);
+      if(j!==undefined&&j!==i)s.add(j);
+      cr+=DY[dir];cc+=DX[dir];
+    }
+    deps.push(s);
+  }
+  const rem=new Set();
+  for(let i=0;i<N;i++)rem.add(i);
+  let waves=0,initialOpen=0;
+  while(rem.size){
+    const ready=[];
+    for(const i of rem){
+      let ok=true;
+      for(const b of deps[i])if(rem.has(b)){ok=false;break}
+      if(ok)ready.push(i);
+    }
+    if(!ready.length)return true; // shouldn't happen (solvable input) — don't retry on it
+    if(waves===0)initialOpen=ready.length;
+    waves++;
+    for(const i of ready)rem.delete(i);
+  }
+  const openCap=lvl<10?N:lvl<50?5:max(3,Math.ceil(N*0.10));
+  const wavesMin=lvl<15?1:lvl<40?2:lvl<120?3:4;
+  return initialOpen<=openCap&&waves>=wavesMin;
 }
 
 // ================================================================
