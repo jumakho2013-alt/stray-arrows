@@ -6,7 +6,7 @@
   "scripts": {
     "version": "node tools/sync-versions.js && git add package.json sw.js index.html android/app/build.gradle ios/App/App.xcodeproj/project.pbxproj",
     "prebuild": "node tools/sync-versions.js",
-    "build": "mkdir -p www/sounds && cp index.html manifest.json sw.js handcrafted-levels.js www/ && cp sounds/*.mp3 www/sounds/ && rm -rf www/levels www/levels-baked.js && echo 'Build done'",
+    "build": "mkdir -p www/sounds && cp index.html manifest.json sw.js handcrafted-levels.js www/ && cp sounds/*.mp3 sounds/*.wav www/sounds/ && rm -rf www/levels www/levels-baked.js && echo 'Build done'",
     "sync": "npm run build && npx cap sync",
     "open:android": "npx cap open android",
     "open:ios": "npx cap open ios",
@@ -24,6 +24,7 @@
     "@capacitor/android": "^8.3.0",
     "@capacitor/cli": "^8.3.0",
     "@capacitor/core": "^8.3.0",
+    "@capacitor/haptics": "^8.0.2",
     "@capacitor/ios": "^8.3.0",
     "@capacitor/status-bar": "^8.0.2",
     "cordova-plugin-purchase": "^13.16.1"

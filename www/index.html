@@ -580,19 +580,24 @@ function loadSnd(name,src){
   }).catch(e=>_devWarn('loadSnd:'+name,e));
 }
 loadSnd('swoosh','sounds/whoosh-effect.mp3');
-loadSnd('tap','sounds/click sound.mp3');
+// v2.0: UI taps are a soft piano C4 (Mini-Metro "note, not click" cue);
+// the win arpeggio replays it at 1/1.26/1.5 = C-E-G, zero extra assets.
+loadSnd('tap','sounds/piano-c4.wav');
 loadSnd('blocked','sounds/error.mp3');
 loadSnd('complete','sounds/new-level.mp3');
 loadSnd('gameover','sounds/Game over.mp3');
 loadSnd('coin','sounds/coin reward.mp3');
 loadSnd('achievement','sounds/coin reward.mp3');
+loadSnd('fanfare','sounds/fanfare.wav');
 
-function playSnd(name){
+// rate: Web Audio playbackRate — free pitch variation (v2.0).
+function playSnd(name,rate){
   if(!sndOn||!audioCtx||!sndBuf[name])return;
   const go=()=>{
     try{
       const src=audioCtx.createBufferSource();
       src.buffer=sndBuf[name];
+      if(rate&&src.playbackRate)src.playbackRate.value=rate;
       src.connect(masterGain);
       src.start(0);
     }catch(e){_devWarn('playSnd:'+name,e);}
@@ -605,13 +610,21 @@ function playSnd(name){
 }
 
 const sfx={
-  swoosh(){playSnd('swoosh')},
+  // Longer arrows whoosh deeper — length rides the pitch (v2.0).
+  swoosh(dir,len){playSnd('swoosh',len?clp(1.22-len/40,.85,1.22):1)},
   blocked(){playSnd('blocked')},
-  complete(){playSnd('complete')},
+  complete(){
+    playSnd('complete');
+    // C-E-G arpeggio on the piano note, 60ms apart
+    playSnd('tap',1);
+    setTimeout(()=>playSnd('tap',1.26),60);
+    setTimeout(()=>playSnd('tap',1.5),120);
+  },
   tap(){playSnd('tap')},
   achievement(){playSnd('achievement')},
   gameover(){playSnd('gameover')},
   coin(){playSnd('coin')},
+  fanfare(){playSnd('fanfare')},
 };
 
 // ================================================================
@@ -952,7 +965,22 @@ C.addEventListener('touchcancel',()=>{
   _pinchStartDist=0;_pinchStartMid=null;_pinchStartWorld=null;_tapStart=null;_onePanLast=null;
 });
 
-function haptic(ms){try{navigator.vibrate(ms)}catch(e){_devWarn('haptic',e);}}
+// v2.0: real haptics on iOS via @capacitor/haptics (navigator.vibrate is
+// Android-only, so iPhones felt NOTHING before). Signature unchanged for
+// the 15+ call sites: small ms → light tap, big ms → heavy, array
+// patterns (blocked taps) → warning notification.
+const _capHaptics=(typeof window!=='undefined'&&window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.Haptics)||null;
+function haptic(ms){
+  try{
+    if(_capHaptics){
+      if(Array.isArray(ms)){_capHaptics.notification({type:'WARNING'});return;}
+      const style=ms<10?'LIGHT':ms<25?'MEDIUM':'HEAVY';
+      _capHaptics.impact({style});
+      return;
+    }
+    navigator.vibrate(ms);
+  }catch(e){_devWarn('haptic',e);}
+}
 
 // ================================================================
 //  GAME STATE
@@ -1168,6 +1196,8 @@ let undosLeft=3;
 let lastGained=0;
 let anims=[]; // flying arrow animations
 let shakeAnims=[]; // blocked shake animations
+let _trail=[]; // v2.0 exit-trail sparkles (pooled, hard cap 60)
+let _showcaseCache=null,_showcaseCacheLvl=0; // menu next-shape thumb
 let confetti=[]; // completion confetti
 let completeEnterT=0; // game-clock seconds when state became 'complete'; used to drive star fly-in animation
 // Win ripple — a soft expanding ring from the last-cleared arrow's head
@@ -1183,11 +1213,11 @@ let dt=1/60;
 let levelSeed=0;
 let streak=0; // levels without undo
 let bestTime=0;
-let fadeAlpha=0; // screen transition
+let _hurtT=0; // v2.0 global hurt-shake timer (heart/time loss)
 let hintArrow=-1; // arrow index currently being hinted
 let hintTime=0; // remaining hint animation seconds
-let pendingState=null; // state change queued during fade-out
 let levelRevealT=0; // 0→1 over ~0.8s after a level starts (staggered fade-in)
+let _shapeRevealT=1; // v2.0: shape silhouette glow progress (0→1 over 0.8s)
 let levelsPage=0; // current page in level select
 let achPage=0; // current page in achievements list
 let isDaily=false; // true when playing the daily challenge
@@ -1911,6 +1941,7 @@ function generateLevel(lvl,customSeed){
      &&window.HANDCRAFTED_LEVELS&&window.HANDCRAFTED_LEVELS[lvl]){
     const hc=window.HANDCRAFTED_LEVELS[lvl];
     currentShape=hc.t||null;
+    _shapeRevealT=currentShape?0:1;
     gridCols=hc.cols;gridRows=hc.rows;
     arrows=hc.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d,alive:true}));
     _recordCells();
@@ -1927,6 +1958,7 @@ function generateLevel(lvl,customSeed){
   // procedural generator below. (Rush Hour IMPORTED branch removed in
   // v1.0.19; BAKED branch removed in v2.0 — handcrafted + procedural only.)
   currentShape=null;
+  _shapeRevealT=1;
 
   // Difficulty curve. Power-0.8 early ramp + cap at lvl 150. The previous
   // 26×34 grid looked sparse once 1-cell dots were removed. Competitor boards
@@ -2884,7 +2916,7 @@ function _flyOutArrow(a,idx){
       bodyLen,totalDist:bodyLen+extLen,
       path,
     });
-    sfx.swoosh(a.dir);haptic(10);
+    sfx.swoosh(a.dir,a.cells.length);haptic(10);
 
     // Win check
     let allGone=true;
@@ -2988,13 +3020,14 @@ function _blockedTap(a,idx){
   }else if(gameMode==='rush'){
     // Rush: mistakes cost time, not hearts — Shield can eat the time hit.
     if(shieldArmed){shieldArmed=false;spawnFloater(sx,sy-cs*.6,t('shield')+'!',TH.success);}
-    else{rushEndAt-=3;spawnFloater(sx,sy-cs*.6,'-3s',TH.arrowBlock);}
+    else{rushEndAt-=3;_hurtT=.25;spawnFloater(sx,sy-cs*.6,'-3s',TH.arrowBlock);}
   }else{
     if(shieldArmed){
       shieldArmed=false;
       spawnFloater(sx,sy-cs*.6,t('shield')+'!',TH.success);
     }else{
       undosLeft--;
+      _hurtT=.25; // global 3px screen jolt — losing a heart should be FELT
       spawnFloater(sx,sy-cs*.6,'-1',TH.arrowBlock);
       if(undosLeft<=0){
         inputLocked=true;
@@ -3074,12 +3107,23 @@ function getGridY(){return getStageY()+floor((_stageR()-gridRows)/2)*getCellSize
 // ================================================================
 //  DRAWING HELPERS
 // ================================================================
+// `font` is overloaded: a weight ('600'/'700') keeps Nunito; 'Poppins'
+// switches to the display face at weight 700 WITH letter-spacing (the
+// TH.letterSpacingTitle token, dead since v2.5, finally applied).
+// ctx.letterSpacing needs Chrome 99+/Safari 17.4+; feature-detected so
+// older WebKit simply renders untracked.
+const _canTrack=(typeof CanvasRenderingContext2D!=='undefined')&&('letterSpacing' in CanvasRenderingContext2D.prototype);
 function txt(t,x,y,sz,col,align,font){
-  X.font=`${font||'600'} ${sz}px ${font==='Poppins'?'Poppins':'Nunito'},sans-serif`;
+  const disp=font==='Poppins';
+  X.font=`${disp?'700':(font||'600')} ${sz}px ${disp?'Poppins':'Nunito'},sans-serif`;
+  if(_canTrack&&disp)X.letterSpacing=(sz*TH.letterSpacingTitle).toFixed(2)+'px';
   X.fillStyle=col||TH.text;X.textAlign=align||'center';X.textBaseline='middle';
   X.fillText(t,x,y);
+  if(_canTrack&&disp)X.letterSpacing='0px';
 }
 function txtP(t,x,y,sz,col,align){txt(t,x,y,sz,col,align,'700')}
+// Display text: Poppins 700 + tracking — titles, level header, big scores.
+function txtD(t,x,y,sz,col,align){txt(t,x,y,sz,col,align,'Poppins')}
 
 function drawArrow(x,y,dir,sz,col,alpha){
   // Simple straight arrow (used for menu animation and flying arrows).
@@ -3156,7 +3200,9 @@ function drawArrowPolyline(pts,sz,col,alpha){
   // arrows visually fill ~25-30% of cell width so adjacent snakes form
   // contiguous-looking maze walls. Bumped .14 → .28.
   const thick=max(2.5,sz*.25);
-  const headL=sz*.40,headW=sz*.34;
+  // v2.0: bigger arrowhead (.40/.34 → .46/.38) — the tap target reads
+  // clearer and the head stops disappearing into dense weaves.
+  const headL=sz*.46,headW=sz*.38;
 
   X.save();
   X.globalAlpha=alpha==null?1:alpha;
@@ -3245,6 +3291,17 @@ function drawArrowPolyline(pts,sz,col,alpha){
     X.save();X.globalAlpha=0.30;X.strokeStyle='#000000';X.lineWidth=max(1.5,thick*0.20);
     X.translate(off,off);bodyPath();X.stroke();X.restore();
   }else{
+    // v2.0 solid: one offset "long shadow" pass under the body+head —
+    // the Monument-Valley depth cue drawArrow() already had, finally on
+    // the board arrows too. One extra stroke per arrow, zero shadowBlur.
+    X.save();
+    X.globalAlpha=(alpha==null?1:alpha)*.35;
+    X.strokeStyle=TH.arrowShadow;
+    X.lineWidth=thick;
+    X.translate(1.5,1.5);
+    bodyPath();X.stroke();
+    X.fillStyle=TH.arrowShadow;headPath(1);X.fill();
+    X.restore();
     X.strokeStyle=paint;X.lineWidth=thick;bodyPath();X.stroke();
     X.fillStyle=paint;headPath(1);X.fill();
   }
@@ -3327,6 +3384,32 @@ function _renderBg(dark, withBlobs){
   }
   return cv;
 }
+// v2.0 film grain (Puffies/ADA reference): a cached 128×128 noise tile
+// tiled at ~1.5-3% alpha. One-time ImageData build, zero per-frame
+// allocation. Skipped under high contrast (it would read as dirt).
+let _grainPat=null;
+function _grain(){
+  if(highContrast)return;
+  if(!_grainPat){
+    const cv=document.createElement('canvas');
+    cv.width=128;cv.height=128;
+    const gx=cv.getContext('2d');
+    const img=gx.createImageData(128,128);
+    for(let i=0;i<img.data.length;i+=4){
+      const v=Math.random()<.5?0:255;
+      img.data[i]=v;img.data[i+1]=v;img.data[i+2]=v;
+      img.data[i+3]=Math.random()*28;
+    }
+    gx.putImageData(img,0,0);
+    _grainPat=X.createPattern(cv,'repeat');
+  }
+  X.save();
+  X.globalAlpha=darkMode?.05:.03;
+  X.fillStyle=_grainPat;
+  X.fillRect(0,0,W,H);
+  X.restore();
+}
+
 function drawBg(plain){
   if(_bgCacheDirty||_bgCacheDark!==darkMode){
     _bgCache=_renderBg(darkMode,true);
@@ -3385,7 +3468,11 @@ function _drawPillBtn(label,x,y,w,h,color,fontFrac){
   // Label takes the button colour. Default colour (TH.accent) renders
   // as the text token on neutral buttons, so PLAY/etc. stay readable.
   const labelCol = (c === TH.accent) ? TH.text : c;
-  txt(label,x,y,floor(h*fontFrac),labelCol);
+  // Button tracking — the letterSpacingButton token, applied at last.
+  const lsz=floor(h*fontFrac);
+  if(_canTrack)X.letterSpacing=(lsz*TH.letterSpacingButton).toFixed(2)+'px';
+  txt(label,x,y,lsz,labelCol);
+  if(_canTrack)X.letterSpacing='0px';
   if(!blocked&&tapped&&abs(tapX-x)<w/2&&abs(tapY-y)<h/2){sfx.tap();tapped=false;return true}
   return false;
 }
@@ -3641,9 +3728,9 @@ function drawMenu(){
   // deepGold→gold gradient flow (cycle TH.motionTitleCycle ms). Reduced-
   // motion players see the static accent. The phase is a function of gt
   // (game-clock seconds) so the gradient is in lockstep across re-renders.
-  txtP(t('title1'),W/2,H*.16,36,TH.text);
+  txtD(t('title1'),W/2,H*.16,36,TH.text);
   if (reducedMotion) {
-    txtP(t('title2'),W/2,H*.22,36,TH.accent);
+    txtD(t('title2'),W/2,H*.22,36,TH.accent);
   } else {
     const phase = (gt * 1000 / TH.motionTitleCycle) % 1;
     // Smooth lerp between accent and accentDeep using a triangular wave so
@@ -3653,7 +3740,7 @@ function drawMenu(){
     grad.addColorStop(0, TH.accent);
     grad.addColorStop(0.5, tri < 0.5 ? TH.accentDeep : TH.accent);
     grad.addColorStop(1, TH.accent);
-    txtP(t('title2'),W/2,H*.22,36,grad);
+    txtD(t('title2'),W/2,H*.22,36,grad);
   }
   txt(t('tagline'),W/2,H*.265,12,TH.textSec);
 
@@ -3672,6 +3759,56 @@ function drawMenu(){
   txtP(streakDays+'d',col3,spY+9,17,TH.warning);
   txtP(t('trophy'),col4,spY-13,8,TH.textSec);
   txtP(achUnlockedCount()+'/'+ACHIEVEMENTS.length,col4,spY+9,13,TH.accent);
+
+  // v2.0 showcase card: teases the NEXT shape milestone as a dotted
+  // silhouette (no name — the mystery IS the pull). Tap → level select
+  // at that page. Cached offscreen per level id.
+  {
+    const nextL=Math.max(25,Math.ceil(maxLevel/5)*5);
+    const hcL=(typeof window!=='undefined'&&window.HANDCRAFTED_LEVELS)?window.HANDCRAFTED_LEVELS[nextL]:null;
+    if(hcL&&hcL.t){
+      const scY=H*.455,scW=300,scH=84;
+      const hv=abs(mx-W/2)<scW/2&&abs(my-scY)<scH/2;
+      X.fillStyle=hv?TH.btnHover:TH.btnBg;
+      X.beginPath();X.roundRect(W/2-scW/2,scY-scH/2,scW,scH,14);X.fill();
+      X.strokeStyle=TH.border;X.lineWidth=1;
+      X.beginPath();X.roundRect(W/2-scW/2,scY-scH/2,scW,scH,14);X.stroke();
+      // Silhouette thumb (cached): arrow cells of the level as dots.
+      // Cache key includes the theme so a dark/light toggle re-tints.
+      const _sck=nextL+(darkMode?'d':'l');
+      if(_showcaseCacheLvl!==_sck){
+        _showcaseCacheLvl=_sck;
+        _showcaseCache=document.createElement('canvas');
+        _showcaseCache.width=76*2;_showcaseCache.height=56*2;
+        const sc2=_showcaseCache.getContext('2d');
+        sc2.scale(2,2);
+        let minR=1e9,maxR=-1e9,minC=1e9,maxC=-1e9;
+        for(const a of hcL.arrows)for(const[r,c] of a.c){
+          if(r<minR)minR=r;if(r>maxR)maxR=r;
+          if(c<minC)minC=c;if(c>maxC)maxC=c;
+        }
+        const w=maxC-minC+1,h=maxR-minR+1;
+        const k=Math.min(76/w,56/h)*.92;
+        const ox=(76-w*k)/2,oy=(56-h*k)/2;
+        sc2.fillStyle=TH.accent;
+        for(const a of hcL.arrows)for(const[r,c] of a.c){
+          sc2.beginPath();
+          sc2.arc(ox+(c-minC+.5)*k,oy+(r-minR+.5)*k,Math.max(.8,k*.32),0,TAU);
+          sc2.fill();
+        }
+      }
+      X.drawImage(_showcaseCache,W/2-scW/2+14,scY-28,76,56);
+      // Copy
+      txtP(t('nextShape'),W/2+22,scY-16,9,TH.textSec);
+      txtP('LEVEL '+nextL,W/2+22,scY+2,16,TH.text);
+      const away=nextL-maxLevel;
+      txt(away>0?(away+' '+t('levelsAway')):'▶',W/2+22,scY+22,10,TH.accent);
+      if(!_inputBlocked()&&tapped&&abs(tapX-W/2)<scW/2&&abs(tapY-scY)<scH/2){
+        sfx.tap();tapped=false;
+        goto('levels',()=>{levelsPage=floor((nextL-1)/25)});
+      }
+    }
+  }
 
   // PLAY hero button — bigger than the secondary grid below, gold-tinted
   // fill (only place the accent colour appears as a SURFACE in the app),
@@ -3821,6 +3958,7 @@ function drawMenu(){
   }
 
   txt(APP_VERSION,W/2,H*.96,10,TH.textDim);
+  _grain();
 }
 
 // --- PLAY ---
@@ -3855,7 +3993,7 @@ function drawPlay(){
   }else if(gameMode==='rush'){
     const rem=max(0,rushEndAt-gt);
     const warn=rem<10;
-    txtP(floor(rem)+'s',W/2,TOP_Y,26,warn?TH.warning:TH.text);
+    txtD(floor(rem)+'s',W/2,TOP_Y,26,warn?TH.warning:TH.text);
     txt(t('score')+': '+rushScore,W/2,TOP_Y+22,11,TH.textSec);
     // Tick haptic each second under 10s — urgency you can feel.
     if(warn&&floor(rem)!==_lastRushTick){_lastRushTick=floor(rem);if(rem>0)haptic(5);}
@@ -3877,7 +4015,7 @@ function drawPlay(){
   }else{
     // Level title — bigger weight + slight letter-spacing for "Level N"
     // pill feel. Stars below preview the current run's star outcome.
-    txtP('LEVEL '+level,W/2,TOP_Y,20,TH.text);
+    txtD('LEVEL '+level,W/2,TOP_Y,20,TH.text);
     for(let i=0;i<3;i++){
       drawStar(W/2-26+i*26,TOP_Y+24,9,moves<=minMoves+i*1&&i<(moves<=minMoves?3:moves<=minMoves+2?2:1));
     }
@@ -3940,8 +4078,10 @@ function drawPlay(){
     }
   }
 
-  // Advance level reveal animation (staggered fade-in of all arrows)
-  if(levelRevealT<1)levelRevealT=min(1,levelRevealT+dt/.9);
+  // Advance level reveal animation (staggered fade-in of all arrows).
+  // On shape levels the arrows hold back until the silhouette glow has
+  // registered (~0.35s) — first you see the picture, then it materialises.
+  if(levelRevealT<1&&(!currentShape||_shapeRevealT>0.35||reducedMotion))levelRevealT=min(1,levelRevealT+dt/.9);
 
   // Intro zoom: lerp zoomLevel from the wide start to the auto-fit target
   // with an easeOutCubic curve. The pull-in lasts _zoomIntroDur seconds.
@@ -3962,6 +4102,41 @@ function drawPlay(){
   X.translate(_zoomC.x+panX,_zoomC.y+panY);
   X.scale(zoomLevel,zoomLevel);
   X.translate(-_zoomC.x,-_zoomC.y);
+
+  // v2.0 board "stage": a soft rounded backdrop under the whole grid —
+  // the puzzle sits ON something instead of floating in the void. Two
+  // fills fake the drop shadow (no shadowBlur, per house perf doctrine).
+  {
+    const pad=cs*.6;
+    const bx=gx-pad,by=gy-pad,bw=gridCols*cs+pad*2,bh=gridRows*cs+pad*2;
+    const r=TH.radiusLg;
+    X.fillStyle=darkMode?'rgba(0,0,0,.20)':'rgba(58,44,40,.08)';
+    X.beginPath();X.roundRect(bx,by+3,bw,bh,r);X.fill();
+    X.fillStyle=darkMode?'rgba(255,255,255,.045)':'rgba(255,255,255,.42)';
+    X.beginPath();X.roundRect(bx,by,bw,bh,r);X.fill();
+    X.strokeStyle=TH.border;X.lineWidth=1;
+    X.beginPath();X.roundRect(bx,by,bw,bh,r);X.stroke();
+  }
+
+  // v2.0 shape-level silhouette reveal: for the first ~0.8s every cell of
+  // the picture glows gold, so the player SEES the heart/cat/rocket before
+  // the arrows materialise over it. Layered alpha, no shadowBlur.
+  if(currentShape&&_shapeRevealT<1){
+    _shapeRevealT=min(1,_shapeRevealT+dt/.8);
+    const a=reducedMotion?(_shapeRevealT<.4?.12:0):(1-_shapeRevealT)*.22;
+    if(a>0.005){
+      X.save();
+      X.fillStyle=TH.star;
+      X.globalAlpha=a;
+      for(const key of _levelCells){
+        const[r,c]=key.split(',');
+        X.beginPath();
+        X.roundRect(gx+c*cs+cs*.08,gy+r*cs+cs*.08,cs*.84,cs*.84,cs*.18);
+        X.fill();
+      }
+      X.restore();
+    }
+  }
 
   // v2.2: Removed the connecting grid lines — they read as "tablet
   // ruler" between the cell crosses and competed with the arrows. The
@@ -4257,13 +4432,59 @@ function drawPlay(){
     const pts=getPathSegment(path,tailPos,headPos);
 
     const alpha=p>.85?1-(p-.85)/.15:1;
+    an._sparkPt=pts[0]; // trail emitter follows the tail
     drawArrowPolyline(pts,an.cs,an.col,alpha);
   }
 
-  // Shake animations
+  // Shake animations + v2.0 colorblind X-marker: the blocked state was
+  // signalled by red alone (audit 05-05 #13) — an X glyph over the head
+  // works in every theme and for every kind of colour vision.
   for(let i=shakeAnims.length-1;i>=0;i--){
-    shakeAnims[i].t+=dt;
-    if(shakeAnims[i].t>=shakeAnims[i].dur)shakeAnims.splice(i,1);
+    const sh=shakeAnims[i];
+    sh.t+=dt;
+    if(sh.t>=sh.dur){shakeAnims.splice(i,1);continue}
+    const a=1-sh.t/sh.dur;
+    const s=getCellSize()*.32;
+    X.save();
+    X.globalAlpha=a;
+    X.lineCap='round';
+    X.strokeStyle=darkMode?'rgba(0,0,0,.55)':'rgba(255,255,255,.95)';
+    X.lineWidth=4.5;
+    X.beginPath();X.moveTo(sh.x-s,sh.y-s);X.lineTo(sh.x+s,sh.y+s);
+    X.moveTo(sh.x+s,sh.y-s);X.lineTo(sh.x-s,sh.y+s);X.stroke();
+    X.strokeStyle=TH.arrowBlock;
+    X.lineWidth=2.5;
+    X.beginPath();X.moveTo(sh.x-s,sh.y-s);X.lineTo(sh.x+s,sh.y+s);
+    X.moveTo(sh.x+s,sh.y-s);X.lineTo(sh.x-s,sh.y+s);X.stroke();
+    X.restore();
+  }
+
+  // v2.0 exit particle trail: sparkles shed along the flying arrow's path.
+  if(!reducedMotion){
+    for(const an of anims){
+      if(_trail.length>=60)break;
+      if(an._sparkPt&&Math.random()<.5){
+        _trail.push({x:an._sparkPt[0],y:an._sparkPt[1],t:0,dur:.4,sz:2.5+Math.random()*2.5,col:an.col});
+      }
+    }
+  }
+  for(let i=_trail.length-1;i>=0;i--){
+    const p=_trail[i];
+    p.t+=dt;
+    if(p.t>=p.dur){_trail.splice(i,1);continue}
+    const a=(1-p.t/p.dur)*.7;
+    const s=p.sz*(1-p.t/p.dur*.5);
+    X.save();
+    X.globalAlpha=a;
+    X.fillStyle=typeof p.col==='string'?p.col:TH.star;
+    X.beginPath();
+    // 4-point sparkle silhouette (same family as the confetti)
+    X.moveTo(p.x,p.y-s);X.quadraticCurveTo(p.x+s*.25,p.y-s*.25,p.x+s,p.y);
+    X.quadraticCurveTo(p.x+s*.25,p.y+s*.25,p.x,p.y+s);
+    X.quadraticCurveTo(p.x-s*.25,p.y+s*.25,p.x-s,p.y);
+    X.quadraticCurveTo(p.x-s*.25,p.y-s*.25,p.x,p.y-s);
+    X.fill();
+    X.restore();
   }
 
   X.restore(); // === ZOOM/PAN BLOCK END === — UI below stays in screen coords
@@ -4430,7 +4651,7 @@ function drawComplete(){
   // Title fades in slightly delayed
   X.save();
   X.globalAlpha = clp((tNow - 0.2) / 0.4, 0, 1);
-  txtP(title, W/2, H*.27, 24, TH.text);
+  txtD(title, W/2, H*.27, 24, TH.text);
   X.restore();
 
   // Stars — staggered fly-in. Each star gets a 350 ms window starting
@@ -4510,7 +4731,7 @@ function drawComplete(){
     if(drawBtn(t('home'),W/2,H*.80,140,36)){goto('menu')}
   }
 
-
+  _grain();
 }
 
 // --- STATS ---
@@ -4833,7 +5054,7 @@ function drawGameOver(){
   drawHeart(W/2,H*.18,56,true,true);
 
   // Title + subtitle
-  txtP(t('gameOver'),W/2,H*.34,28,TH.text);
+  txtD(t('gameOver'),W/2,H*.34,28,TH.text);
   txt(t('outOfHearts'),W/2,H*.40,13,TH.textSec);
 
   // Action stack — strict y-rhythm: header → 60px → btn → 60px → btn …
@@ -4901,11 +5122,11 @@ function drawRushEnd(){
   X.beginPath();X.moveTo(hx,hy);X.lineTo(hx+13,hy+7);X.stroke();
   X.restore();
 
-  txtP(t('rush'),W/2,H*.34,28,TH.text);
+  txtD(t('rush'),W/2,H*.34,28,TH.text);
 
   // Score hero + best + coins gained
   const isRecord=rushScore>0&&rushScore>=rushBest;
-  txtP(rushScore+'',W/2,H*.44,44,TH.accent);
+  txtD(rushScore+'',W/2,H*.44,44,TH.accent);
   txt(t('score'),W/2,H*.49,12,TH.textSec);
   txt(t('best')+': '+rushBest+(isRecord?' ★':''),W/2,H*.54,14,isRecord?TH.star:TH.textSec);
   if(lastGained>0){
@@ -5455,7 +5676,7 @@ function drawLoginReward(){
     drawBigBtn(t('claim'),W/2,by,200,44,TH.accent);
     if(tapped&&abs(tapX-W/2)<100&&abs(tapY-by)<22){
       const amount=claimLoginReward();
-      if(amount){spawnFloater(W/2,py+panelH-78,'+'+amount,TH.star);sfx.coin();haptic(12);}
+      if(amount){spawnFloater(W/2,py+panelH-78,'+'+amount,TH.star);sfx.fanfare();haptic(12);}
       tapped=false;
     }
   }else{
@@ -5579,7 +5800,6 @@ function drawLevels(){
 //  MAIN LOOP
 // ================================================================
 let _lastT=0;
-let fadingOut=false;
 // --- SKINS SHOP ---
 // 3-column grid of arrow skins. Each card previews the skin (a right-pointing
 // arrow painted by it), its name, and a footer: EQUIPPED (active), EQUIP
@@ -5685,8 +5905,19 @@ function drawSkins(){
   },false)){goto('menu');}
 }
 
+// ── v2.0 screen transitions ─────────────────────────────────────────
+// Directional slide+fade (220ms): goto() snapshots the OLD frame (still
+// on the canvas from the last rAF), applies the new state IMMEDIATELY,
+// and the loop draws the snapshot on top sliding 24px away (left for
+// forward navigation, right for back) while fading — revealing the live
+// new screen underneath. Replaces the old fade-to-solid-colour, which
+// still carried pre-Macaron navy values. reducedMotion → pure 120ms
+// crossfade, no slide.
+let _transT=1,_transDur=.22,_transDir=1,_transSnap=null;
+const _SCREEN_RANK={menu:0,levels:1,settings:1,stats:1,achievements:1,skins:1,play:2,complete:3,gameover:3,rushend:3};
+function _transActive(){return _transT<1}
 function goto(newState,action){
-  if(fadingOut)return;
+  if(_transActive())return;
   // Reset transient screen-local UI flags when leaving screens — avoids the
   // settings reset-confirm row appearing already-toggled when you come back.
   if(newState!=='settings')resetConfirm=false;
@@ -5696,27 +5927,27 @@ function goto(newState,action){
   // A tap that triggered a transition must not leak into the next screen
   // (button at the same coords on the target screen would fire instantly).
   tapped=false;
-  fadingOut=true;
-  pendingState={state:newState,action:action||null};
+  if(!_transSnap)_transSnap=document.createElement('canvas');
+  _transSnap.width=C.width;_transSnap.height=C.height;
+  _transSnap.getContext('2d').drawImage(C,0,0);
+  _transDir=(_SCREEN_RANK[newState]||0)>=(_SCREEN_RANK[S]||0)?1:-1;
+  _transDur=reducedMotion?.12:.22;
+  _transT=0;
+  if(action)action();
+  S=newState;
 }
 function loop(t){
   // Compute and publish frame delta to module scope so draw/animation code
   // anywhere can use `dt` (was hardcoded `1/60` in 7+ spots).
   dt=min((t-_lastT)/1000,.05);_lastT=t;gt+=dt;
 
-  // Fade transition: fade-out then apply pending state then fade-in
-  if(fadingOut){
-    fadeAlpha=min(1,fadeAlpha+dt*5);
-    if(fadeAlpha>=1){
-      if(pendingState){
-        if(pendingState.action)pendingState.action();
-        S=pendingState.state;
-        pendingState=null;
-      }
-      fadingOut=false;
-    }
-  }else if(fadeAlpha>0){
-    fadeAlpha=max(0,fadeAlpha-dt*4);
+  // v2.0 hurt shake: 3px global jolt while _hurtT runs (heart / time
+  // loss). Wraps the whole screen render; skipped under reducedMotion.
+  const _shakeAmp=(_hurtT>0&&!reducedMotion)?(_hurtT/.25)*3:0;
+  if(_hurtT>0)_hurtT=max(0,_hurtT-dt);
+  if(_shakeAmp>0){
+    X.save();
+    X.translate((Math.random()*2-1)*_shakeAmp,(Math.random()*2-1)*_shakeAmp);
   }
 
   // Render
@@ -5736,8 +5967,8 @@ function loop(t){
   drawAchPopup();
 
   // v2.0: auto-open the daily reward calendar once per session when the
-  // menu is idle (no fade in progress) and today's claim is available.
-  if(S==='menu'&&!_loginAutoShown&&fadeAlpha<=0&&_loginClaimableToday()){
+  // menu is idle (no transition in progress) and today's claim is available.
+  if(S==='menu'&&!_loginAutoShown&&!_transActive()&&_loginClaimableToday()){
     _loginAutoShown=true;loginRewardOpen=true;
   }
 
@@ -5745,10 +5976,19 @@ function loop(t){
   if(loginRewardOpen)drawLoginReward();
   if(langPickerOpen)drawLangPicker();
 
-  // Screen fade overlay
-  if(fadeAlpha>0){
-    X.fillStyle=darkMode?`rgba(26,26,46,${fadeAlpha})`:`rgba(245,242,237,${fadeAlpha})`;
-    X.fillRect(0,0,W,H);
+  // End of hurt-shake wrap — overlays above shake with the screen; the
+  // transition snapshot below must NOT (it's the previous screen).
+  if(_shakeAmp>0)X.restore();
+
+  // v2.0 transition overlay: the old screen slides + fades away.
+  if(_transT<1){
+    _transT=min(1,_transT+dt/_transDur);
+    const p=1-Math.pow(1-_transT,3); // easeOutCubic
+    X.save();
+    X.globalAlpha=1-p;
+    const off=reducedMotion?0:-24*p*_transDir;
+    X.drawImage(_transSnap,0,0,_transSnap.width,_transSnap.height,off,0,W,H);
+    X.restore();
   }
 
   // Final tap reset — so modals/overlays drawn AFTER screen draws still get
@@ -5757,6 +5997,32 @@ function loop(t){
   tapped=false;
   requestAnimationFrame(loop);
 }
+
+// v2.0 splash→menu cross-fade: seed the transition system with a frame
+// that matches the native splash (bg + coral snake-arrow) so the first
+// menu render fades in from it instead of popping.
+(function _bootFade(){
+  try{
+    _transSnap=document.createElement('canvas');
+    _transSnap.width=C.width||W;_transSnap.height=C.height||H;
+    const k=_transSnap.width/W;
+    const sx=_transSnap.getContext('2d');
+    sx.scale(k,k);
+    sx.fillStyle=darkMode?'#3a2c2a':'#f9e9d8';
+    sx.fillRect(0,0,W,H);
+    sx.strokeStyle=darkMode?'#f0a890':'#d68f7a';
+    sx.lineWidth=14;sx.lineCap='round';sx.lineJoin='round';
+    sx.beginPath();
+    sx.moveTo(W/2-45,H/2+55);sx.lineTo(W/2-45,H/2-5);
+    sx.lineTo(W/2+22,H/2-5);sx.lineTo(W/2+22,H/2-30);
+    sx.stroke();
+    sx.fillStyle=sx.strokeStyle;
+    sx.beginPath();
+    sx.moveTo(W/2+22,H/2-55);sx.lineTo(W/2+6,H/2-32);sx.lineTo(W/2+38,H/2-32);
+    sx.closePath();sx.fill();
+    _transDur=.25;_transDir=1;_transT=0;
+  }catch(e){_devWarn('bootFade',e);_transT=1;}
+})();
 requestAnimationFrame(loop);
 
 // Register service worker for offline play + PWA install — but ONLY when
