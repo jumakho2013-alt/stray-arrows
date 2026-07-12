@@ -6083,7 +6083,11 @@ requestAnimationFrame(loop);
 // running as a real web page, NOT inside the Capacitor WebView. Capacitor
 // serves assets from the app bundle; a SW would intercept those fetches and
 // can serve stale content across app updates (we burned a build on this).
-if('serviceWorker' in navigator && typeof Capacitor==='undefined'){
+// v2.0.1: NEVER register the SW on localhost — during development it kept
+// serving a stale index.html against fresh assets ("опять заглючило"),
+// because the cache name only changes on version bumps, not per edit.
+if('serviceWorker' in navigator && typeof Capacitor==='undefined'
+   && location.hostname!=='localhost' && location.hostname!=='127.0.0.1'){
   navigator.serviceWorker.register('sw.js').catch(e=>_devWarn('serviceWorker.register',e));
 }
 window._ae={
