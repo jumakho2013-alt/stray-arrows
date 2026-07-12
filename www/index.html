@@ -4521,12 +4521,17 @@ function drawStats(){
   const playtimeStr=totalHours>0?(totalHours+'h '+(totalMinutes%60)+'m'):(totalMinutes+'m');
   const fastestStr=fastestLevel<99999?(fastestLevel+'s'):'—';
 
-  // List of {label, value} rows
+  // List of {label, value} rows (labels stay English — same convention
+  // as achievement names)
   const rows=[
     ['Current level',level+''],
     ['Levels completed',totalLevelsDone+''],
     ['Total stars',totalStars+''],
     ['3-star clears',totalPerfect+''],
+    ['Shape levels',shapeTotal+''],
+    ['Zen boards',zenTotal+''],
+    ['Rush best',rushBest+''],
+    ['Boosters used',boostersUsed+''],
     ['Play time',playtimeStr],
     ['Fastest clear',fastestStr],
     ['Coins earned (total)',totalCoinsEarned+''],
@@ -4645,13 +4650,37 @@ function drawAchIcon(id,cx,cy,sz,col){
     X.strokeStyle='rgba(255,255,255,.6)';X.lineWidth=1;
     X.beginPath();X.moveTo(-sz*.15,-sz*.1);X.lineTo(-sz*.15,sz*.2);X.stroke();
     X.beginPath();X.moveTo(sz*.15,-sz*.1);X.lineTo(sz*.15,sz*.2);X.stroke();
-  }else if(id==='speedrun'){
-    // Lightning bolt
+  }else if(id==='speedrun'||id.startsWith('rush_')||id.startsWith('boost_')){
+    // Lightning bolt (speed / rush / boosters share the energy motif)
     X.fillStyle=c;
     X.beginPath();
     X.moveTo(sz*.1,-sz*.6);X.lineTo(-sz*.4,sz*.05);X.lineTo(-sz*.05,sz*.1);
     X.lineTo(-sz*.15,sz*.6);X.lineTo(sz*.4,-sz*.05);X.lineTo(sz*.05,-sz*.1);
     X.closePath();X.fill();
+  }else if(id.startsWith('login_')){
+    // Gift box — login rewards
+    X.fillStyle=c;
+    X.beginPath();X.roundRect(-sz*.5,-sz*.15,sz,sz*.65,sz*.08);X.fill();
+    X.fillRect(-sz*.55,-sz*.35,sz*1.1,sz*.22);
+    X.strokeStyle='rgba(255,255,255,.85)';X.lineWidth=2;
+    X.beginPath();X.moveTo(0,-sz*.35);X.lineTo(0,sz*.5);X.stroke();
+    X.beginPath();X.arc(-sz*.14,-sz*.42,sz*.13,0,TAU);X.stroke();
+    X.beginPath();X.arc(sz*.14,-sz*.42,sz*.13,0,TAU);X.stroke();
+  }else if(id.startsWith('zen_')){
+    // Lotus — three petals
+    X.fillStyle=c;
+    X.beginPath();X.ellipse(0,sz*.05,sz*.22,sz*.5,0,0,TAU);X.fill();
+    X.fillStyle=c+'99';
+    X.beginPath();X.ellipse(-sz*.3,sz*.15,sz*.2,sz*.42,-.5,0,TAU);X.fill();
+    X.beginPath();X.ellipse(sz*.3,sz*.15,sz*.2,sz*.42,.5,0,TAU);X.fill();
+  }else if(id.startsWith('shape_')){
+    // Small heart — the signature shape level
+    X.fillStyle=c;
+    X.beginPath();
+    X.moveTo(0,sz*.5);
+    X.bezierCurveTo(-sz*.7,sz*.05,-sz*.45,-sz*.5,0,-sz*.15);
+    X.bezierCurveTo(sz*.45,-sz*.5,sz*.7,sz*.05,0,sz*.5);
+    X.fill();
   }else{
     // Fallback: filled star
     X.fillStyle=c;
