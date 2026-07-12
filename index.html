@@ -1236,6 +1236,7 @@ let zenCount=+localStorage.getItem('ae_zen_count')||0; // total zen boards (driv
 // shape level, or null on procedural boards. Drives the silhouette
 // reveal moment and the per-win shape counter.
 let currentShape=null;
+let _shapeCells=null; // v2.0.1: [[r,c],…] precomputed for the reveal (no per-frame string splits)
 let boosterMenuOpen=false;
 let shieldArmed=false;
 let zapArmed=false;
@@ -1945,6 +1946,7 @@ function generateLevel(lvl,customSeed){
     gridCols=hc.cols;gridRows=hc.rows;
     arrows=hc.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d,alive:true}));
     _recordCells();
+    _shapeCells=currentShape?[..._levelCells].map(k=>{const p=k.split(',');return[+p[0],+p[1]]}):null;
     minMoves=arrows.length;
     moves=0;timer=0;undosLeft=3;
     _resetBoosterState();
@@ -2359,8 +2361,11 @@ function generateLevel(lvl,customSeed){
   // but only while _retryDepth<10; past that accept any solvable board so
   // daily/weekly generation time stays bounded and the lvl-halving escape
   // hatch below keeps its guarantees.
+  // Quality gate only below lvl 400 — late-game boards are organically
+  // deep (100+ arrows, dense chains), and each extra retry on them costs
+  // real milliseconds at level entry.
   const _solvableHere=_isLevelSolvable(placed,rows,cols);
-  const _qualityHere=_solvableHere&&(_retryDepth>=10||_levelQualityOK(placed,rows,cols,lvl));
+  const _qualityHere=_solvableHere&&(lvl>400||_retryDepth>=10||_levelQualityOK(placed,rows,cols,lvl));
   if((!_solvableHere||!_qualityHere)&&_retryDepth<MAX_RETRIES&&lvl>=1){
     const baseSeed=customSeed!=null?customSeed:(lvl*7919+31337);
     // 0x9E3779B1 ≈ 2^32 / phi — Knuth's golden-ratio multiplier, classic
@@ -2744,7 +2749,15 @@ function onEscapeLine(r,c,hr,hc,dir){
 // stuck with arrows remaining, there's a cycle in the chain-dependency
 // graph and the level is unwinnable — caller should regenerate.
 function _isLevelSolvable(placed,rows,cols){
+  // v2.0.1 perf: occupancy map instead of the old triple loop. The
+  // previous version rescanned EVERY arrow's EVERY cell for EVERY ray
+  // step — O(N²·cells) per removal round, ~100ms+ per check on 170-arrow
+  // boards. With up to 40 generation retries that was the "freeze on
+  // level entry" the 2.0 beta feedback reported. Map lookups make each
+  // round O(N·ray).
   const N=placed.length;
+  const occ=new Int16Array(rows*cols).fill(-1);
+  for(let i=0;i<N;i++)for(const[r,c] of placed[i].cells)occ[r*cols+c]=i;
   const alive=new Array(N).fill(true);
   let removed=0;
   while(removed<N){
@@ -2755,14 +2768,9 @@ function _isLevelSolvable(placed,rows,cols){
       const dir=placed[i].dir;
       let cr=head[0]+DY[dir],cc=head[1]+DX[dir];
       let clear=true;
-      while(cr>=0&&cr<rows&&cc>=0&&cc<cols&&clear){
-        for(let j=0;j<N;j++){
-          if(j===i||!alive[j])continue;
-          for(const[or,oc] of placed[j].cells){
-            if(or===cr&&oc===cc){clear=false;break}
-          }
-          if(!clear)break;
-        }
+      while(cr>=0&&cr<rows&&cc>=0&&cc<cols){
+        const j=occ[cr*cols+cc];
+        if(j>=0&&j!==i&&alive[j]){clear=false;break}
         cr+=DY[dir];cc+=DX[dir];
       }
       if(clear){alive[i]=false;removed++;progress=true;break}
@@ -3123,7 +3131,10 @@ function txt(t,x,y,sz,col,align,font){
 }
 function txtP(t,x,y,sz,col,align){txt(t,x,y,sz,col,align,'700')}
 // Display text: Poppins 700 + tracking — titles, level header, big scores.
-function txtD(t,x,y,sz,col,align){txt(t,x,y,sz,col,align,'Poppins')}
+// Poppins' em-box sits higher than Nunito's at textBaseline='middle', so
+// display lines looked lifted next to Nunito neighbours ("буквы выше" in
+// the 2.0 beta feedback). +4% of the size re-centres it optically.
+function txtD(t,x,y,sz,col,align){txt(t,x,y+sz*.04,sz,col,align,'Poppins')}
 
 function drawArrow(x,y,dir,sz,col,alpha){
   // Simple straight arrow (used for menu animation and flying arrows).
@@ -3293,17 +3304,32 @@ function drawArrowPolyline(pts,sz,col,alpha){
   }else{
     // v2.0 solid: one offset "long shadow" pass under the body+head —
     // the Monument-Valley depth cue drawArrow() already had, finally on
-    // the board arrows too. One extra stroke per arrow, zero shadowBlur.
+    // the board arrows too. v2.0.1: the path is built ONCE into a Path2D
+    // and stroked twice — rebuilding it per pass doubled the historical
+    // "path construction every frame" cost on 150-arrow boards.
+    const bp=new Path2D();
+    bp.moveTo(modPts[0][0],modPts[0][1]);
+    if(modPts.length<3){
+      for(let i=1;i<modPts.length;i++)bp.lineTo(modPts[i][0],modPts[i][1]);
+    }else{
+      for(let i=1;i<modPts.length-1;i++)bp.arcTo(modPts[i][0],modPts[i][1],modPts[i+1][0],modPts[i+1][1],cornerR);
+      bp.lineTo(modPts[modPts.length-1][0],modPts[modPts.length-1][1]);
+    }
+    const hp=new Path2D();
+    hp.moveTo(tipX,tipY);
+    hp.lineTo(baseX+pxv*headW,baseY+pyv*headW);
+    hp.lineTo(baseX-pxv*headW,baseY-pyv*headW);
+    hp.closePath();
     X.save();
     X.globalAlpha=(alpha==null?1:alpha)*.35;
     X.strokeStyle=TH.arrowShadow;
     X.lineWidth=thick;
     X.translate(1.5,1.5);
-    bodyPath();X.stroke();
-    X.fillStyle=TH.arrowShadow;headPath(1);X.fill();
+    X.stroke(bp);
+    X.fillStyle=TH.arrowShadow;X.fill(hp);
     X.restore();
-    X.strokeStyle=paint;X.lineWidth=thick;bodyPath();X.stroke();
-    X.fillStyle=paint;headPath(1);X.fill();
+    X.strokeStyle=paint;X.lineWidth=thick;X.stroke(bp);
+    X.fillStyle=paint;X.fill(hp);
   }
 
   X.globalAlpha=1;
@@ -3468,11 +3494,10 @@ function _drawPillBtn(label,x,y,w,h,color,fontFrac){
   // Label takes the button colour. Default colour (TH.accent) renders
   // as the text token on neutral buttons, so PLAY/etc. stay readable.
   const labelCol = (c === TH.accent) ? TH.text : c;
-  // Button tracking — the letterSpacingButton token, applied at last.
-  const lsz=floor(h*fontFrac);
-  if(_canTrack)X.letterSpacing=(lsz*TH.letterSpacingButton).toFixed(2)+'px';
-  txt(label,x,y,lsz,labelCol);
-  if(_canTrack)X.letterSpacing='0px';
+  // v2.0.1: no per-button letterSpacing — toggling the ctx property twice
+  // per button per frame forced font re-shaping ~40×/frame. Tracking is
+  // reserved for display text (txtD), where it's actually visible.
+  txt(label,x,y,floor(h*fontFrac),labelCol);
   if(!blocked&&tapped&&abs(tapX-x)<w/2&&abs(tapY-y)<h/2){sfx.tap();tapped=false;return true}
   return false;
 }
@@ -3897,19 +3922,25 @@ function drawMenu(){
   // Coins — nudged slightly below the gear for better visual balance.
   // The whole coin chip is a tappable entry to the Skins shop (tap-your-coins
   // -to-spend idiom); a small chevron hints it's interactive.
+  // v2.0.1: layout flows from the ACTUAL text width — a 5-digit balance
+  // used to run straight into the chevron and calendar chip.
   const _topY=Math.max(55,safeTop+19);
-  const _coinHv=mx>=20&&mx<=104&&abs(my-_topY)<16;
+  X.font='600 13px Nunito,sans-serif';
+  const _coinTxtW=X.measureText(coins+'').width;
+  const _chevX=52+_coinTxtW+12;
+  const _coinHitR=_chevX+8;
+  const _coinHv=mx>=20&&mx<=_coinHitR&&abs(my-_topY)<16;
   drawCoin(36,_topY,7);
   txt(coins+'',52,_topY,13,TH.star,'left');
-  _drawChevron(94,_topY,5,_coinHv?TH.accent:TH.textDim,'right');
-  if(tapped&&mx>=20&&mx<=104&&abs(tapY-_topY)<16&&tapX>=20&&tapX<=104){
+  _drawChevron(_chevX,_topY,5,_coinHv?TH.accent:TH.textDim,'right');
+  if(tapped&&tapX>=20&&tapX<=_coinHitR&&abs(tapY-_topY)<16){
     sfx.tap();tapped=false;goto('skins');
   }
 
   // v2.0: daily-reward calendar chip next to the coins. A pulsing dot
   // marks an unclaimed reward; tapping (re)opens the calendar modal.
   {
-    const calX=124,calHv=abs(mx-calX)<16&&abs(my-_topY)<16;
+    const calX=_coinHitR+24,calHv=abs(mx-calX)<16&&abs(my-_topY)<16;
     X.save();
     X.strokeStyle=calHv?TH.text:TH.textSec;X.lineWidth=1.5;X.lineJoin='round';
     X.beginPath();X.roundRect(calX-8,_topY-7,16,14,3);X.stroke();
@@ -4121,17 +4152,16 @@ function drawPlay(){
   // v2.0 shape-level silhouette reveal: for the first ~0.8s every cell of
   // the picture glows gold, so the player SEES the heart/cat/rocket before
   // the arrows materialise over it. Layered alpha, no shadowBlur.
-  if(currentShape&&_shapeRevealT<1){
+  if(currentShape&&_shapeCells&&_shapeRevealT<1){
     _shapeRevealT=min(1,_shapeRevealT+dt/.8);
     const a=reducedMotion?(_shapeRevealT<.4?.12:0):(1-_shapeRevealT)*.22;
     if(a>0.005){
       X.save();
       X.fillStyle=TH.star;
       X.globalAlpha=a;
-      for(const key of _levelCells){
-        const[r,c]=key.split(',');
+      for(const rc of _shapeCells){
         X.beginPath();
-        X.roundRect(gx+c*cs+cs*.08,gy+r*cs+cs*.08,cs*.84,cs*.84,cs*.18);
+        X.roundRect(gx+rc[1]*cs+cs*.08,gy+rc[0]*cs+cs*.08,cs*.84,cs*.84,cs*.18);
         X.fill();
       }
       X.restore();
@@ -5913,9 +5943,9 @@ function drawSkins(){
 // new screen underneath. Replaces the old fade-to-solid-colour, which
 // still carried pre-Macaron navy values. reducedMotion → pure 120ms
 // crossfade, no slide.
-let _transT=1,_transDur=.22,_transDir=1,_transSnap=null;
+let _transT=1,_transDur=.22,_transDir=1,_transSnap=null,_transPending=null;
 const _SCREEN_RANK={menu:0,levels:1,settings:1,stats:1,achievements:1,skins:1,play:2,complete:3,gameover:3,rushend:3};
-function _transActive(){return _transT<1}
+function _transActive(){return _transT<1||!!_transPending}
 function goto(newState,action){
   if(_transActive())return;
   // Reset transient screen-local UI flags when leaving screens — avoids the
@@ -5932,9 +5962,12 @@ function goto(newState,action){
   _transSnap.getContext('2d').drawImage(C,0,0);
   _transDir=(_SCREEN_RANK[newState]||0)>=(_SCREEN_RANK[S]||0)?1:-1;
   _transDur=reducedMotion?.12:.22;
-  _transT=0;
-  if(action)action();
-  S=newState;
+  // v2.0.1: run the action on the NEXT frame, not synchronously in the tap
+  // handler. Heavy actions (generateLevel on a 170-arrow board) froze the
+  // frame right at the click — the "game lags" beta feedback. Deferring one
+  // frame lets the snapshot cover the screen first, so the hitch hides
+  // behind a static image instead of a stuck button press.
+  _transPending={action:action||null,state:newState};
 }
 function loop(t){
   // Compute and publish frame delta to module scope so draw/animation code
@@ -5981,7 +6014,16 @@ function loop(t){
   if(_shakeAmp>0)X.restore();
 
   // v2.0 transition overlay: the old screen slides + fades away.
-  if(_transT<1){
+  // A pending goto applies HERE, one frame after the snapshot was taken:
+  // this frame still shows the old screen at full alpha, so a slow action
+  // (level generation) stalls behind a static image, invisibly.
+  if(_transPending){
+    const p=_transPending;_transPending=null;
+    X.drawImage(_transSnap,0,0,_transSnap.width,_transSnap.height,0,0,W,H);
+    if(p.action)p.action();
+    S=p.state;
+    _transT=0;
+  }else if(_transT<1){
     _transT=min(1,_transT+dt/_transDur);
     const p=1-Math.pow(1-_transT,3); // easeOutCubic
     X.save();

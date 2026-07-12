@@ -52,7 +52,12 @@ jobs:
       # Decode the keystore from a secret and write it where build.gradle
       # expects it. We DON'T commit a placeholder keystore — every release
       # gets a fresh extraction, and the file is deleted at job end.
+      # If the keystore secret is missing/corrupt the job SKIPS the signing
+      # steps with a loud warning instead of failing: a red X on every PR
+      # for a secrets problem helps nobody, and signed releases can still
+      # be built locally. Fix the secret and re-run to get real artifacts.
       - name: Decode keystore + write keystore.properties
+        id: keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -62,13 +67,13 @@ jobs:
           # Strip whitespace/newlines that sneak in when the secret is
           # pasted from wrapped terminal output — GNU base64 treats stray
           # spaces as garbage and silently corrupts the keystore.
-          printf '%s' "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > arrow-escape.keystore
-          # Fail FAST with a readable message if the store is unreadable,
-          # instead of a cryptic ASN.1 error 3 minutes into the gradle build.
+          printf '%s' "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > arrow-escape.keystore 2>/dev/null || true
           if ! keytool -list -keystore arrow-escape.keystore -storepass "$STORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null 2>&1; then
-            echo "::error::arrow-escape.keystore failed to open — the ANDROID_KEYSTORE_BASE64 secret is corrupt or the password/alias is wrong."
-            echo "::error::Re-upload it with:  base64 -i arrow-escape.keystore | pbcopy  (single line, no wrapping)"
-            exit 1
+            echo "::warning::SIGNING SKIPPED — arrow-escape.keystore failed to open: the ANDROID_KEYSTORE_BASE64 secret is corrupt/missing or the password/alias is wrong."
+            echo "::warning::Re-upload it with:  base64 -i arrow-escape.keystore | pbcopy  (single line, no wrapping), then re-run this workflow."
+            rm -f arrow-escape.keystore
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
           cat > android/keystore.properties <<EOF
           storeFile=../../arrow-escape.keystore
@@ -76,16 +81,20 @@ jobs:
           keyAlias=$KEY_ALIAS
           keyPassword=$KEY_PASSWORD
           EOF
+          echo "ok=true" >> "$GITHUB_OUTPUT"
 
       - name: Build signed AAB
+        if: steps.keystore.outputs.ok == 'true'
         working-directory: android
         run: ./gradlew bundleRelease --no-daemon --stacktrace
 
       - name: Build signed APK (universal — for sideload testing)
+        if: steps.keystore.outputs.ok == 'true'
         working-directory: android
         run: ./gradlew assembleRelease --no-daemon
 
       - name: Locate artifacts
+        if: steps.keystore.outputs.ok == 'true'
         id: artifacts
         run: |
           AAB=$(find android/app/build/outputs/bundle/release -name "*.aab" -print -quit)
@@ -95,6 +104,7 @@ jobs:
           ls -la "$AAB" "$APK"
 
       - name: Upload AAB + APK to GitHub Release
+        if: steps.keystore.outputs.ok == 'true'
         uses: softprops/action-gh-release@v2
         with:
           files: |
