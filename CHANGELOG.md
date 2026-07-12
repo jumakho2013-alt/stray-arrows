@@ -5,7 +5,7 @@ All notable changes to Stray Arrows are documented here. Format follows
 / deprecated / removed / fixed / security. Versioning is
 [SemVer](https://semver.org).
 
-## [Unreleased] — 2.0.0 "BIG UPDATE" (in progress)
+## [2.0.0] — 2026-07-12 — THE BIG UPDATE
 
 ### Added
 - **Shape levels** — every 5th level (25…2225, 441 total) is now a generated
@@ -35,6 +35,12 @@ All notable changes to Stray Arrows are documented here. Format follows
 ### Removed
 - Dead code: unused `_renderGlass` Liquid-Glass renderer, unreachable
   `BAKED_LEVELS` branch, orphaned Rush Hour source data in `tools/data/`.
+
+### Fixed
+- CSP `connect-src` now allows `https://itunes.apple.com` — the in-app
+  update check was silently blocked by the enforced policy (Codex PR#22).
+- Stale manifest colours (`#5c7caa` navy) and missing `icon-192.png`;
+  splash screens redrawn in the Sunset Macaron palette.
 
 ## [1.0.25] — 2026-07-10
 

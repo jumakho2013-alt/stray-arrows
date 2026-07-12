@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-// Tiny terminal playtest harness for handcrafted + imported levels.
-// Render the board to ANSI, accept move input (or auto-solve via the
-// greedy walker), report whether the level looks fair: arrow count,
-// initially-tappable count, solvability, optimal solution length.
+// Tiny terminal playtest harness for the handcrafted/shape levels.
+// Renders boards to ANSI, auto-solves via the greedy walker, reports
+// whether a level looks fair: arrow count, initially-tappable count,
+// solvability, dependency waves.
 //
 // Usage:
-//   node tools/playtest-cli.js                       # 10 random imported levels
-//   node tools/playtest-cli.js handcrafted 50        # show level 50 (handcrafted)
-//   node tools/playtest-cli.js imported 350          # show imported level 350
-//   node tools/playtest-cli.js random imported 5     # 5 random imported
+//   node tools/playtest-cli.js sweep            # metrics table over ALL levels
+//   node tools/playtest-cli.js handcrafted 50   # render one level
+//   node tools/playtest-cli.js shapes heart     # render every heart instance
+//   node tools/playtest-cli.js random 10        # N random levels, rendered
 //
 // Goal: catch boards that pass _isLevelSolvable but FEEL bad — e.g. only
 // one arrow ever tappable, or solution forces a tedious linear path.
@@ -24,16 +24,34 @@ const DX = [1, 0, -1, 0];
 const DY = [0, -1, 0, 1];
 const DIR_CHAR = ['→', '↑', '←', '↓'];
 
-function loadImported() {
-  // imported-meta.js sets window.IMPORTED_LEVELS_META — but in a Node
-  // require it returns the meta array directly via module.exports.
-  const meta = require(path.join(ROOT, 'levels/imported-meta.js'));
-  const all = {};
-  for (const m of meta) {
-    const chunk = require(path.join(ROOT, 'levels', m.file));
-    Object.assign(all, chunk);
+// Dependency metrics — same math as tools/gen-shape-levels.js bands.
+function metricsOf(level) {
+  const { rows: R, cols: C, arrows: A } = level;
+  const occ = new Map();
+  A.forEach((a, i) => a.c.forEach(([r, c]) => occ.set(r * C + c, i)));
+  const deps = A.map((a, i) => {
+    const s = new Set();
+    let [hr, hc] = a.c[a.c.length - 1];
+    const dr = DY[a.d], dc = DX[a.d];
+    let r = hr + dr, c = hc + dc;
+    while (r >= 0 && r < R && c >= 0 && c < C) {
+      const j = occ.get(r * C + c);
+      if (j !== undefined && j !== i) s.add(j);
+      r += dr; c += dc;
+    }
+    return s;
+  });
+  const rem = new Set(A.map((_, i) => i));
+  let waves = 0, open = 0;
+  while (rem.size) {
+    const ready = [...rem].filter(i => [...deps[i]].every(b => !rem.has(b)));
+    if (!ready.length) return null;
+    if (waves === 0) open = ready.length;
+    waves++;
+    ready.forEach(i => rem.delete(i));
   }
-  return all;
+  const avgB = deps.reduce((s, d) => s + d.size, 0) / A.length;
+  return { open, waves, avgB };
 }
 
 function renderBoard(level) {
@@ -122,8 +140,8 @@ function summarize(level, lvlNum) {
 
 function main() {
   const args = process.argv.slice(2);
-  const imported = loadImported();
   const handcrafted = HANDCRAFTED;
+  const keys = Object.keys(handcrafted).map(Number).sort((a, b) => a - b);
 
   if (args[0] === 'handcrafted' && args[1]) {
     const lvl = handcrafted[args[1]];
@@ -131,20 +149,35 @@ function main() {
     summarize(lvl, args[1]);
     return;
   }
-  if (args[0] === 'imported' && args[1]) {
-    const lvl = imported[args[1]];
-    if (!lvl) { console.error(`no imported level ${args[1]}`); process.exit(1); }
-    summarize(lvl, args[1]);
+  if (args[0] === 'shapes' && args[1]) {
+    const hits = keys.filter(k => handcrafted[k].t === args[1]);
+    if (!hits.length) { console.error(`no levels with shape ${args[1]}`); process.exit(1); }
+    for (const k of hits) summarize(handcrafted[k], k);
     return;
   }
-  // default: 10 random imported levels — quick spread sample
-  const source = (args[0] === 'random' && args[1] === 'handcrafted') ? handcrafted :
-                 (args[0] === 'random' && args[1] === 'imported') ? imported : imported;
-  const count = parseInt(args[2] || (args[0] === 'random' ? args[1] : '10'), 10) || 10;
-  const keys = Object.keys(source).map(Number).sort((a, b) => a - b);
+  if (args[0] === 'sweep') {
+    // one line per level; flags at the end
+    let bad = 0;
+    for (const k of keys) {
+      const lvl = handcrafted[k];
+      const m = metricsOf(lvl);
+      const solvable = !!m;
+      const flags = [];
+      if (!solvable) { flags.push('NOT SOLVABLE'); bad++; }
+      else {
+        if (m.open > lvl.arrows.length * 0.7) flags.push('too open');
+        if (m.waves < 2 && k > 10) flags.push('shallow');
+      }
+      console.log(`${String(k).padStart(5)} ${String(lvl.t || '-').padEnd(10)} ${String(lvl.arrows.length).padStart(3)}a ${solvable ? 'open=' + String(m.open).padStart(2) + ' waves=' + String(m.waves).padStart(2) + ' avgB=' + m.avgB.toFixed(1) : ''} ${flags.join('; ')}`);
+    }
+    console.log(bad ? `\n${bad} level(s) FAILED` : `\nAll ${keys.length} levels solvable`);
+    process.exit(bad ? 1 : 0);
+  }
+  // default / random N: render a random sample
+  const count = parseInt(args[0] === 'random' ? args[1] : args[0], 10) || 10;
   const picked = [];
   for (let i = 0; i < count; i++) picked.push(keys[Math.floor(Math.random() * keys.length)]);
-  for (const k of picked) summarize(source[k], k);
+  for (const k of picked) summarize(handcrafted[k], k);
 }
 
 main();
