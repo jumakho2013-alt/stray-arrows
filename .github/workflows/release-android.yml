@@ -59,7 +59,17 @@ jobs:
           KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          echo "$KEYSTORE_BASE64" | base64 --decode > arrow-escape.keystore
+          # Strip whitespace/newlines that sneak in when the secret is
+          # pasted from wrapped terminal output — GNU base64 treats stray
+          # spaces as garbage and silently corrupts the keystore.
+          printf '%s' "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > arrow-escape.keystore
+          # Fail FAST with a readable message if the store is unreadable,
+          # instead of a cryptic ASN.1 error 3 minutes into the gradle build.
+          if ! keytool -list -keystore arrow-escape.keystore -storepass "$STORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null 2>&1; then
+            echo "::error::arrow-escape.keystore failed to open — the ANDROID_KEYSTORE_BASE64 secret is corrupt or the password/alias is wrong."
+            echo "::error::Re-upload it with:  base64 -i arrow-escape.keystore | pbcopy  (single line, no wrapping)"
+            exit 1
+          fi
           cat > android/keystore.properties <<EOF
           storeFile=../../arrow-escape.keystore
           storePassword=$STORE_PASSWORD
