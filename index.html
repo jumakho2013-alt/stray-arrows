@@ -75,7 +75,7 @@ body.letterboxed canvas{
      inline IIFE below instead of blocking initial render. By the time the
      player taps "play", DOMContentLoaded has fired and HANDCRAFTED_LEVELS
      is populated — generateLevel() never sees it undefined in practice. -->
-<script src="handcrafted-levels.js?v=26" defer></script>
+<script src="handcrafted-levels.js?v=27" defer></script>
 
 <script>
 // Surface any uncaught error visibly — without this a JS error gives a blank
@@ -1198,6 +1198,7 @@ let anims=[]; // flying arrow animations
 let shakeAnims=[]; // blocked shake animations
 let _trail=[]; // v2.0 exit-trail sparkles (pooled, hard cap 60)
 let _showcaseCache=null,_showcaseCacheLvl=0; // menu next-shape thumb
+let _showcaseNextL=0,_showcaseNextFor=-1;    // cached next-shape scan (per maxLevel)
 let confetti=[]; // completion confetti
 let completeEnterT=0; // game-clock seconds when state became 'complete'; used to drive star fly-in animation
 // Win ripple — a soft expanding ring from the last-cleared arrow's head
@@ -3789,8 +3790,19 @@ function drawMenu(){
   // silhouette (no name — the mystery IS the pull). Tap → level select
   // at that page. Cached offscreen per level id.
   {
-    const nextL=Math.max(25,Math.ceil(maxLevel/5)*5);
-    const hcL=(typeof window!=='undefined'&&window.HANDCRAFTED_LEVELS)?window.HANDCRAFTED_LEVELS[nextL]:null;
+    // v2.0.1: shapes are dense (every level 21..300, then every 5th) —
+    // scan forward for the next key carrying a shape id instead of
+    // assuming multiples of 5. Cached per maxLevel: the scan is ~2k map
+    // hits and this runs inside drawMenu.
+    if(_showcaseNextFor!==maxLevel&&typeof window!=='undefined'&&window.HANDCRAFTED_LEVELS){
+      _showcaseNextFor=maxLevel;_showcaseNextL=0;
+      for(let l=Math.max(21,maxLevel);l<=2225;l++){
+        const h=window.HANDCRAFTED_LEVELS[l];
+        if(h&&h.t){_showcaseNextL=l;break;}
+      }
+    }
+    const nextL=_showcaseNextL;
+    const hcL=nextL?window.HANDCRAFTED_LEVELS[nextL]:null;
     if(hcL&&hcL.t){
       const scY=H*.455,scW=300,scH=84;
       const hv=abs(mx-W/2)<scW/2&&abs(my-scY)<scH/2;

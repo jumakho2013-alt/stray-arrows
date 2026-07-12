@@ -99,8 +99,17 @@ function tierOf(lvl) { return lvl < 500 ? 'A' : lvl < 1200 ? 'B' : 'C'; }
 
 // Digit milestones read best near design scale — long numbers get wide
 // fast, so cap their scale regardless of tier.
-function scaleFor(shapeId, tier, isDigit) {
-  if (!isDigit) return TIERS[tier].scale;
+// v2.0.1: inside the dense early block (21..300) pictorial masks grow
+// smoothly with the level instead of jumping per tier, so 280 consecutive
+// shape levels ramp instead of plateauing.
+function scaleFor(shapeId, tier, isDigit, lvl) {
+  if (!isDigit) {
+    if (lvl <= 300) return 1.0 + Math.max(0, lvl - 21) / 700; // 1.0 → ~1.4
+    // Butterfly's four convex lobes keep too many free-both-ways snakes at
+    // full tier-C scale (584 cells) — the peel can't converge. Cap it.
+    if (shapeId === 'butterfly' && TIERS[tier].scale > 1.5) return 1.5;
+    return TIERS[tier].scale;
+  }
   const nDigits = shapeId.length;
   if (nDigits <= 2) return tier === 'A' ? 1.0 : 1.5;
   if (nDigits === 3) return tier === 'C' ? 1.5 : 1.0;
@@ -582,9 +591,12 @@ function buildLevel(board, snakes, orientation, shapeId) {
 }
 
 // ── Slot → shape mapping ─────────────────────────────────────────────
+// v2.0.1: the early game is ALL pictures — every level 21..300 is a shape
+// (the tutorial 1-20 stays curated), then every 5th from 305 to 2225.
 function slotList() {
   const out = [];
-  for (let l = 25; l <= 2225; l += 5) out.push(l);
+  for (let l = 21; l <= 300; l++) out.push(l);
+  for (let l = 305; l <= 2225; l += 5) out.push(l);
   return out;
 }
 function isDigitSlot(lvl) { return lvl === 50 || (lvl % 100 === 0); }
@@ -622,7 +634,7 @@ function generateSlot(lvl, shapeId, opts = {}) {
   const T = TIERS[tier];
   const isDigit = /^[0-9]+$/.test(shapeId);
   const designRows = isDigit ? composeNumber(shapeId) : MASKS[shapeId];
-  const scale = scaleFor(shapeId, tier, isDigit);
+  const scale = scaleFor(shapeId, tier, isDigit, lvl);
   const maskRows = rasterize(designRows, scale);
   const maxAttempts = opts.maxAttempts || 400;
 

@@ -25,11 +25,12 @@ const MAX_BYTES = 4.5 * 1024 * 1024;
 const existing = require(EXISTING);
 const shapes = JSON.parse(fs.readFileSync(SHAPES, 'utf8'));
 
-// Expected key coverage
+// Expected key coverage — v2.0.1: dense shape block 21..300, then every 5th
 const KEEP = [];
 for (let i = 1; i <= 20; i++) KEEP.push(i);
 const SLOTS = [];
-for (let l = 25; l <= 2225; l += 5) SLOTS.push(l);
+for (let l = 21; l <= 300; l++) SLOTS.push(l);
+for (let l = 305; l <= 2225; l += 5) SLOTS.push(l);
 
 for (const k of KEEP) {
   if (!existing[k]) { console.error(`existing file is missing key ${k}`); process.exit(1); }

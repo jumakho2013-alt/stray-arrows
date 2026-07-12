@@ -113,9 +113,10 @@ function initialOpenness(level) {
 }
 
 // ── Key coverage ─────────────────────────────────────────────────────
+// v2.0.1: dense shape block 21..300, then every 5th to 2225.
 const expected = new Set();
-for (let i = 1; i <= 20; i++) expected.add(i);
-for (let l = 25; l <= 2225; l += 5) expected.add(l);
+for (let i = 1; i <= 300; i++) expected.add(i);
+for (let l = 305; l <= 2225; l += 5) expected.add(l);
 const actual = new Set(Object.keys(HANDCRAFTED).map(Number));
 let ok = true;
 for (const k of expected) if (!actual.has(k)) { console.log(`✗ missing key ${k}`); ok = false; }
@@ -136,7 +137,7 @@ for (const lvlKey in HANDCRAFTED) {
   const arrows = level.arrows.length;
   if (!solv.solvable) errs.push(`NOT SOLVABLE — ${solv.stuck} arrows stuck`);
 
-  if (lvl >= 25) { // generated shape levels: stricter contract
+  if (lvl >= 21) { // generated shape levels: stricter contract
     shapeCount++;
     if (!level.t) errs.push('missing shape id `t`');
     else if (!SHAPE_NAMES.includes(level.t) && !/^[0-9]+$/.test(level.t)) errs.push(`unknown shape id ${level.t}`);

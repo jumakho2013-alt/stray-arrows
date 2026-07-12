@@ -1,9 +1,10 @@
 # Stray Arrows
 
 Sliding-arrow puzzle game for iOS and Android. Vanilla JS + HTML5 Canvas wrapped in
-Capacitor 8. Single-file `index.html` (~5200 lines), **20 curated tutorial levels +
-441 generated shape levels (every 5th, hearts/stars/animals/digits) + endless
-procedural generation** for everything in between and beyond.
+Capacitor 8. Single-file `index.html` (~6100 lines), **20 curated tutorial levels +
+665 generated shape levels (EVERY level 21-300, then every 5th to 2225 —
+hearts/stars/animals/digits from 83 masks) + endless procedural generation**
+for everything in between and beyond.
 
 ## Quick start
 
@@ -38,7 +39,7 @@ levels and re-generates procedurally (QA only).
 | Path | What |
 |------|------|
 | `index.html` | the whole game — UI, audio, ads, level loader, render loop |
-| `handcrafted-levels.js` | 461 levels: 1-20 tutorial/curated + 441 generated shape levels |
+| `handcrafted-levels.js` | 685 levels: 1-20 tutorial/curated + 665 generated shape levels |
 | `sw.js` | Service Worker — versioned cache |
 | `manifest.json` | PWA manifest |
 | `sounds/` | tap, swoosh, complete, gameover MP3s |
@@ -54,9 +55,11 @@ levels and re-generates procedurally (QA only).
 
 - **1-5**: hand-built tutorial (small grids, teaches mechanics)
 - **6-20**: curated early levels (denser, real puzzles)
-- **21+**: every 5th level (`25, 30, ..., 2225`) is a **generated shape level**
-  — the arrows fill a picture silhouette (heart, star, cat, rocket…); levels
-  50 and every 100th spell their own number. Everything else is procedural.
+- **21-300**: EVERY level is a **generated shape level** — the arrows fill a
+  picture silhouette (heart, star, cat, rocket… 83 masks); levels 50 and every
+  100th spell their own number in arrows.
+- **301+**: every 5th level (`305, 310, ..., 2225`) is a shape; the rest is
+  procedural.
 
 Shape-level pipeline (offline, deterministic seeds):
 
