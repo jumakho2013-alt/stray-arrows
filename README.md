@@ -1,9 +1,9 @@
 # Stray Arrows
 
 Sliding-arrow puzzle game for iOS and Android. Vanilla JS + HTML5 Canvas wrapped in
-Capacitor 8. Single-file `index.html` (~4000 lines), **461 hand-tuned levels +
-605 imported (Rush Hour) + 500 baked + procedural fallback** — total ~1500
-unique boards before the procedural generator takes over.
+Capacitor 8. Single-file `index.html` (~5200 lines), **20 curated tutorial levels +
+441 generated shape levels (every 5th, hearts/stars/animals/digits) + endless
+procedural generation** for everything in between and beyond.
 
 ## Quick start
 
@@ -20,9 +20,8 @@ Other useful scripts:
 ```sh
 npm run lint             # ESLint flat config (tools/ + sw.js)
 npm run audit:check      # npm audit, fail on high+ severity
-npm run validate         # handcrafted + imported level data
+npm run validate         # handcrafted level data (incl. shape levels)
 npm run regen-assets     # regenerate icons/splashes from resources/*.svg
-npm run import-rushhour  # re-run Rush Hour importer (needs tools/data/rush.txt)
 ```
 
 To run locally in a browser:
@@ -31,7 +30,7 @@ python3 -m http.server 8081
 # open http://localhost:8081/index.html
 ```
 
-URL flags: `?level=N` jumps to level N. `?fresh=1` bypasses baked
+URL flags: `?level=N` jumps to level N. `?fresh=1` bypasses handcrafted
 levels and re-generates procedurally (QA only).
 
 ## Project layout
@@ -39,8 +38,7 @@ levels and re-generates procedurally (QA only).
 | Path | What |
 |------|------|
 | `index.html` | the whole game — UI, audio, ads, level loader, render loop |
-| `handcrafted-levels.js` | 461 levels (1-5 tutorial + arrowsgo imports) |
-| `levels-baked.js` | 500 procedurally pre-baked levels (fallback) |
+| `handcrafted-levels.js` | 461 levels: 1-20 tutorial/curated + 441 generated shape levels |
 | `sw.js` | Service Worker — versioned cache |
 | `manifest.json` | PWA manifest |
 | `sounds/` | tap, swoosh, complete, gameover MP3s |
@@ -55,17 +53,25 @@ levels and re-generates procedurally (QA only).
 ## Levels
 
 - **1-5**: hand-built tutorial (small grids, teaches mechanics)
-- **6-20**: arrowsgo levels 1-15 (denser, real puzzles)
-- **21+**: every 5th level (`25, 30, 35, ...`) is arrowsgo `16, 17, 18, ...`;
-  the rest fall through to baked levels.
+- **6-20**: curated early levels (denser, real puzzles)
+- **21+**: every 5th level (`25, 30, ..., 2225`) is a **generated shape level**
+  — the arrows fill a picture silhouette (heart, star, cat, rocket…); levels
+  50 and every 100th spell their own number. Everything else is procedural.
 
-To replace a level: edit `handcrafted-levels.js`, then bump `?v=` in the
-`<script src="handcrafted-levels.js?v=N">` tag in `index.html`. Run
-`npm run build` to copy to `www/`.
+Shape-level pipeline (offline, deterministic seeds):
 
-To design new levels: open `tools/level-editor.html` in a browser. Drag-to-draw
-arrows. "Save lvl locally" stores to `localStorage`. "Export ALL saved" emits
-the JSON ready to paste into `handcrafted-levels.js`.
+```sh
+node tools/gen-shape-levels.js     # packs masks from tools/shape-masks.js,
+                                   # certifies solvability, writes tools/out/
+node tools/merge-shape-levels.js   # rewrites handcrafted-levels.js
+                                   # (keys 1-20 kept verbatim)
+```
+
+Then bump `?v=` in the `<script src="handcrafted-levels.js?v=N">` tag in
+`index.html` and run `npm run build`.
+
+To design one-off levels by hand: open `tools/level-editor.html` in a browser.
+Drag-to-draw arrows. "Export ALL saved" emits JSON for `handcrafted-levels.js`.
 
 To validate everything still solvable: `node tools/validate-handcrafted.js`.
 

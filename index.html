@@ -67,27 +67,15 @@ body.letterboxed canvas{
 </head>
 <body class="light">
 <canvas id="c"></canvas>
-<!-- v2 retired levels-baked.js (4.5 MB of pre-baked procedural layouts).
-     The Rush Hour import now densely covers levels 11-6000, so BAKED
-     never won the lookup chain in practice. Removing it shaves ~1-2 s
-     off cold start on low-end Android. The file is kept on disk but
-     out of the bundle; rebuild it with `node tools/bake-levels-v2.js`
-     if you ever need to fall back. -->
-<!-- Handcrafted milestone levels — tutorial (1-10) plus picture/showcase
-     levels at key milestones. These take priority over procedural / baked
-     when their level number matches.
-     `defer` lets the browser parse this 3.5 MB blob in parallel with the
+<!-- Handcrafted levels — tutorial (1-20) plus generated shape/picture
+     levels at every 5th milestone (hearts, stars, animals, digit numbers
+     at 50/100/…; see tools/gen-shape-levels.js). These take priority
+     over procedural when their level number matches.
+     `defer` lets the browser parse this blob in parallel with the
      inline IIFE below instead of blocking initial render. By the time the
      player taps "play", DOMContentLoaded has fired and HANDCRAFTED_LEVELS
      is populated — generateLevel() never sees it undefined in practice. -->
-<script src="handcrafted-levels.js?v=25" defer></script>
-<!-- v1.0.19: removed the Rush Hour import chain entirely. Boards were a
-     1:1 lift of a sliding-block puzzle dataset and didn't feel like
-     OUR game once playtested — flat, repetitive, mid-game pacing
-     broke. Level supply is now: handcrafted (~460 hand-tuned levels
-     including the tutorial and milestones) → procedural baker for
-     everything past that. Simpler, smaller bundle, content quality
-     under our control. -->
+<script src="handcrafted-levels.js?v=26" defer></script>
 
 <script>
 // Surface any uncaught error visibly — without this a JS error gives a blank
@@ -1759,36 +1747,9 @@ function generateLevel(lvl,customSeed){
     return;
   }
 
-  // v1.0.19: Rush Hour IMPORTED branch removed entirely. If HANDCRAFTED
-  // didn't claim this level, fall straight through to the procedural
-  // generator below — no on-demand chunk fetches, no third-party
-  // imported boards.
-
-  // BAKED branch retired in v2 — IMPORTED chunks now cover lvl 11-6000
-  // densely, with HANDCRAFTED owning lvl 1-10 (tutorial) plus milestones.
-  // Kept the variable check as a no-op so the leftover comment block below
-  // about "unsolvable baked level fall-through" still parses; the
-  // condition will always evaluate to false because BAKED_LEVELS is no
-  // longer loaded.
-  if(false&&!FORCE_FRESH_LEVELS&&customSeed==null&&lvl>=1&&lvl<=500&&typeof window!=='undefined'&&window.BAKED_LEVELS){
-    const baked=window.BAKED_LEVELS[lvl-1];
-    if(baked){
-      const _check=baked.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d}));
-      if(_isLevelSolvable(_check,baked.rows,baked.cols)){
-        gridCols=baked.cols;gridRows=baked.rows;
-        arrows=baked.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d,alive:true}));
-        _recordCells();
-        minMoves=arrows.length;
-        moves=0;timer=0;undosLeft=3;
-        _startZoomIntro();
-        const key='ae_best_'+lvl;
-        bestTime=+localStorage.getItem(key)||0;
-        return;
-      }
-      // Unsolvable baked level — fall through to procedural path below,
-      // which has its own retry-on-deadlock loop.
-    }
-  }
+  // If HANDCRAFTED didn't claim this level, fall straight through to the
+  // procedural generator below. (Rush Hour IMPORTED branch removed in
+  // v1.0.19; BAKED branch removed in v2.0 — handcrafted + procedural only.)
 
   // Difficulty curve. Power-0.8 early ramp + cap at lvl 150. The previous
   // 26×34 grid looked sparse once 1-cell dots were removed. Competitor boards
@@ -3078,47 +3039,6 @@ function drawBg(plain){
   else{X.fillStyle=darkMode?'#3a2c2a':'#f9e9d8';X.fillRect(0,0,W,H);}
 }
 
-// iOS 26 "Liquid Glass" overlay. Tuned separately for light & dark themes.
-// Cached per (w, h, r, dark) — buttons of the same size share the same render,
-// blitted via drawImage. This is the single biggest win for the menu screen
-// where 6+ same-sized buttons are drawn 60×/sec. Cache is invalidated when
-// theme toggles. Cache size is bounded by the small set of distinct sizes.
-function _renderGlass(w,h,r,dark){
-  const cv=document.createElement('canvas');
-  cv.width=Math.ceil(w);cv.height=Math.ceil(h);
-  const x=cv.getContext('2d');
-  if(!x)return null;
-  const rr=max(0,r-.5);
-  x.save();
-  x.beginPath();x.roundRect(0,0,w,h,r);x.clip();
-  x.fillStyle=dark?'rgba(255,255,255,.18)':'rgba(255,255,255,.22)';
-  x.fillRect(0,0,w,h);
-  const g1=x.createLinearGradient(0,0,0,h*.5);
-  g1.addColorStop(0,'rgba(255,255,255,'+(dark?'.95':'1')+')');
-  g1.addColorStop(.35,'rgba(255,255,255,.25)');
-  g1.addColorStop(1,'rgba(255,255,255,0)');
-  x.fillStyle=g1;x.fillRect(0,0,w,h*.5);
-  const g2=x.createLinearGradient(0,h*.4,0,h);
-  g2.addColorStop(0,'rgba(0,0,0,0)');
-  g2.addColorStop(1,'rgba(0,0,0,'+(dark?'.4':'.11')+')');
-  x.fillStyle=g2;x.fillRect(0,h*.4,w,h*.6);
-  const g3=x.createLinearGradient(0,h*.78,0,h);
-  g3.addColorStop(0,'rgba(255,255,255,0)');
-  g3.addColorStop(1,'rgba(255,255,255,'+(dark?'.55':'.65')+')');
-  x.fillStyle=g3;x.fillRect(0,h*.78,w,h*.22);
-  x.restore();
-  x.save();
-  x.beginPath();x.rect(0,0,w,h*.5);x.clip();
-  x.beginPath();x.roundRect(.75,.75,w-1.5,h-1.5,max(0,r-.75));
-  x.strokeStyle='rgba(255,255,255,1)';x.lineWidth=1.5;x.stroke();
-  x.restore();
-  x.save();
-  x.beginPath();x.rect(0,h*.6,w,h*.4);x.clip();
-  x.beginPath();x.roundRect(.5,.5,w-1,h-1,rr);
-  x.strokeStyle='rgba(255,255,255,'+(dark?'.7':'.8')+')';x.lineWidth=1;x.stroke();
-  x.restore();
-  return cv;
-}
 // True when a modal/overlay is on top — buttons under must NOT consume the
 // tap (the overlay needs it). Also disables their hover state for clarity.
 function _inputBlocked(){return langPickerOpen}
