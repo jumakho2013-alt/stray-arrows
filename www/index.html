@@ -1202,6 +1202,10 @@ let zenCount=+localStorage.getItem('ae_zen_count')||0; // total zen boards (driv
 // from generateLevel. shieldArmed eats the next heart loss; zapArmed puts
 // the next arrow tap into "remove it" mode; reveal shows numbered badges
 // on the next 3 solvable arrows until revealUntil (game-clock seconds).
+// v2.0: shape id ('heart', 'cat', '100'…) of the current handcrafted
+// shape level, or null on procedural boards. Drives the silhouette
+// reveal moment and the per-win shape counter.
+let currentShape=null;
 let boosterMenuOpen=false;
 let shieldArmed=false;
 let zapArmed=false;
@@ -1906,6 +1910,7 @@ function generateLevel(lvl,customSeed){
   if(!FORCE_FRESH_LEVELS&&customSeed==null&&typeof window!=='undefined'
      &&window.HANDCRAFTED_LEVELS&&window.HANDCRAFTED_LEVELS[lvl]){
     const hc=window.HANDCRAFTED_LEVELS[lvl];
+    currentShape=hc.t||null;
     gridCols=hc.cols;gridRows=hc.rows;
     arrows=hc.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d,alive:true}));
     _recordCells();
@@ -1921,6 +1926,7 @@ function generateLevel(lvl,customSeed){
   // If HANDCRAFTED didn't claim this level, fall straight through to the
   // procedural generator below. (Rush Hour IMPORTED branch removed in
   // v1.0.19; BAKED branch removed in v2.0 — handcrafted + procedural only.)
+  currentShape=null;
 
   // Difficulty curve. Power-0.8 early ramp + cap at lvl 150. The previous
   // 26×34 grid looked sparse once 1-cell dots were removed. Competitor boards
@@ -2930,10 +2936,12 @@ function _flyOutArrow(a,idx){
             totalDailies++;
           }
         }else{
+          const firstClear=!(stars[level]>0); // before stars[] is written below
           const wasNewStars=(stars[level]||0)<s;
           stars[level]=max(stars[level]||0,s);
           maxLevel=max(maxLevel,level+1);  // beating level N unlocks N+1 — even if the player taps Home instead of Next
           totalStars=Object.values(stars).reduce((a,b)=>a+b,0);
+          if(currentShape&&firstClear){shapeTotal++;_safeSet('ae_shape_total',shapeTotal);}
           gained=5+s*5;
           const key='ae_best_'+level;
           const prev=+localStorage.getItem(key)||99999;
@@ -2950,7 +2958,7 @@ function _flyOutArrow(a,idx){
         if(gained>0)spawnFloater(W/2,H*.58,'+'+gained);
         checkAchievements({
           level,stars:s,totalStars,streakDays,coins,perfect,isDaily,
-          totalPerfect,totalDailies,noHintCount,fastestLevel
+          totalPerfect,totalDailies,noHintCount,fastestLevel,shapeTotal
         });
         save();
         spawnConfetti();
