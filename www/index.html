@@ -1246,6 +1246,7 @@ let revealUntil=0;
 let revealList=[];
 function _resetBoosterState(){boosterMenuOpen=false;shieldArmed=false;zapArmed=false;revealUntil=0;revealList=[];}
 let rushScore=0;         // arrows cleared this rush run
+let rushBoardIdx=0;      // boards generated this run — drives size/difficulty variety
 let rushEndAt=0;         // gt timestamp when the run expires (+5s per board, −3s per block)
 let _lastRushTick=-1;    // last whole second we tick-haptic'd at (<10s warning)
 let _rushEnding=false;   // guards the expiry transition
@@ -1868,12 +1869,22 @@ function startZen(){
 function startRush(){
   gameMode='rush';isDaily=false;isWeekly=false;
   rushScore=0;rushEndAt=gt+75;_lastRushTick=-1;_rushEnding=false;
+  rushBoardIdx=0;
   startRushBoard();
 }
 function startRushBoard(){
-  _genOverride={cols:11,rows:14,maxLen:18};
-  // Seed varies per board within a run; Date.now makes runs differ.
-  generateLevel(12,(Date.now()%1000000007+rushScore*7919)|0);
+  // v2.0.1: every board must LOOK different and ramp up — the old rush
+  // pinned an 11×14 grid at lvl-12 forever, so each board was the same
+  // full-rectangle maze ("рывок один и тот же"). Now the grid size cycles
+  // and difficulty climbs with each board cleared. Seed keys off the board
+  // index (huge multiplier) so it's unique even within one millisecond.
+  rushBoardIdx++;
+  const tier=Math.min(rushBoardIdx,12);
+  const h=(rushBoardIdx*2654435761)>>>0;   // well-spread hash of the board index
+  const cols=9+(h%6);                       // 9..14 — widths spread, not alternating
+  const rows=12+((h>>3)%6);                 // 12..17 — heights spread
+  _genOverride={cols,rows,maxLen:12+tier};
+  generateLevel(Math.min(10+tier*3,120),(h^((Date.now()%1000000007)|0))>>>0);
   _genOverride=null;
 }
 
