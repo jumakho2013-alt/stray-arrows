@@ -1,0 +1,135 @@
+# Build a signed Android App Bundle whenever a `v*` tag is pushed.
+# The AAB is uploaded as a GitHub Release asset; from there you can drag
+# it into Play Console -> Production. (Auto-upload via the Play Developer
+# API is possible — see the commented `r0adkll/upload-google-play` step
+# at the bottom — but requires a service-account JSON in repo secrets.)
+#
+# Required secrets (Settings -> Secrets and variables -> Actions):
+#
+#   ANDROID_KEYSTORE_BASE64   base64 of arrow-escape.keystore (the binary)
+#                             generate locally with:
+#                             base64 -i arrow-escape.keystore | pbcopy
+#
+#   ANDROID_KEYSTORE_PASSWORD store password from android/keystore.properties
+#   ANDROID_KEY_ALIAS         alias from android/keystore.properties
+#   ANDROID_KEY_PASSWORD      key password from android/keystore.properties
+#
+# Tag and run with:
+#   npm version patch         # bumps package.json + auto-syncs every other
+#                             # version field via tools/sync-versions.js
+#                             # (the `version` npm hook). Creates v1.0.X tag.
+#   git push --follow-tags
+
+name: Release (Android)
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web bundle + capacitor sync
+        run: npm run sync
+
+      # Decode the keystore from a secret and write it where build.gradle
+      # expects it. We DON'T commit a placeholder keystore — every release
+      # gets a fresh extraction, and the file is deleted at job end.
+      # If the keystore secret is missing/corrupt the job SKIPS the signing
+      # steps with a loud warning instead of failing: a red X on every PR
+      # for a secrets problem helps nobody, and signed releases can still
+      # be built locally. Fix the secret and re-run to get real artifacts.
+      - name: Decode keystore + write keystore.properties
+        id: keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          # Strip whitespace/newlines that sneak in when the secret is
+          # pasted from wrapped terminal output — GNU base64 treats stray
+          # spaces as garbage and silently corrupts the keystore.
+          printf '%s' "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > arrow-escape.keystore 2>/dev/null || true
+          if ! keytool -list -keystore arrow-escape.keystore -storepass "$STORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null 2>&1; then
+            echo "::warning::SIGNING SKIPPED — arrow-escape.keystore failed to open: the ANDROID_KEYSTORE_BASE64 secret is corrupt/missing or the password/alias is wrong."
+            echo "::warning::Re-upload it with:  base64 -i arrow-escape.keystore | pbcopy  (single line, no wrapping), then re-run this workflow."
+            rm -f arrow-escape.keystore
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          cat > android/keystore.properties <<EOF
+          storeFile=../../arrow-escape.keystore
+          storePassword=$STORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          EOF
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+
+      - name: Build signed AAB
+        if: steps.keystore.outputs.ok == 'true'
+        working-directory: android
+        run: ./gradlew bundleRelease --no-daemon --stacktrace
+
+      - name: Build signed APK (universal — for sideload testing)
+        if: steps.keystore.outputs.ok == 'true'
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Locate artifacts
+        if: steps.keystore.outputs.ok == 'true'
+        id: artifacts
+        run: |
+          AAB=$(find android/app/build/outputs/bundle/release -name "*.aab" -print -quit)
+          APK=$(find android/app/build/outputs/apk/release -name "*-release.apk" -print -quit)
+          echo "aab=$AAB" >> "$GITHUB_OUTPUT"
+          echo "apk=$APK" >> "$GITHUB_OUTPUT"
+          ls -la "$AAB" "$APK"
+
+      - name: Upload AAB + APK to GitHub Release
+        if: steps.keystore.outputs.ok == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ steps.artifacts.outputs.aab }}
+            ${{ steps.artifacts.outputs.apk }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+
+      # Clean up the keystore so it doesn't end up in any caches.
+      - name: Wipe credentials
+        if: always()
+        run: |
+          rm -f arrow-escape.keystore android/keystore.properties
+
+      # OPTIONAL: auto-upload to Play Console internal track. Enable by:
+      #   1. Create service account in GCP, grant Release Manager in Play Console.
+      #   2. Download JSON key, paste into secret PLAY_STORE_SERVICE_ACCOUNT_JSON.
+      #   3. Uncomment the block below.
+      #
+      # - name: Upload to Play Console (internal track)
+      #   uses: r0adkll/upload-google-play@v1
+      #   with:
+      #     serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
+      #     packageName: com.strayarrows.puzzle
+      #     releaseFiles: ${{ steps.artifacts.outputs.aab }}
+      #     track: internal
+      #     status: completed

@@ -1,15 +1,36 @@
-// Validate handcrafted levels:
+// Validate handcrafted levels (the ROOT file that actually ships):
 //  • each arrow's cells are contiguous (4-connectivity, no diagonals)
 //  • each cell is inside the grid
 //  • no two arrows share a cell (heads or bodies)
 //  • level is solvable (topological unwinding succeeds)
-//  • initial openness reasonable (1-3 arrows immediately tappable)
+//  • shape keys (≥25): arrow len ≥ 2, d matches the last cell segment,
+//    known `t` shape id, initial openness within the tier's hard cap
+//  • key coverage is exactly {1..20} ∪ {25,30,…,2225}
+//  • file stays under 4.5 MB
 
-const HANDCRAFTED = require('./handcrafted-levels.js');
+const path = require('path');
+const fs = require('fs');
+const ROOT = path.resolve(__dirname, '..');
+const HC_PATH = path.join(ROOT, 'handcrafted-levels.js');
+const HANDCRAFTED = require(HC_PATH);
+const { SHAPE_NAMES } = require('./shape-masks.js');
 const DX = [1, 0, -1, 0];   // 0=right 1=up 2=left 3=down → DX[d] is column delta
 const DY = [0, -1, 0, 1];   // DY[d] is row delta
 
-function validateGeometry(level, lvl) {
+// Hard openness caps by tier (band targets are tighter; the caps catch
+// regressions while tolerating the documented off-band tail — see
+// tools/out/shape-manifest.json).
+function openCap(lvl) { return lvl < 500 ? 8 : lvl < 1200 ? 12 : 16; }
+function dirOfSegment(a, b) {
+  const dr = b[0] - a[0], dc = b[1] - a[1];
+  if (dr === 0 && dc === 1) return 0;
+  if (dr === -1 && dc === 0) return 1;
+  if (dr === 0 && dc === -1) return 2;
+  if (dr === 1 && dc === 0) return 3;
+  return -1;
+}
+
+function validateGeometry(level) {
   const errs = [];
   const occ = {};
   for (let i = 0; i < level.arrows.length; i++) {
@@ -44,7 +65,7 @@ function validateGeometry(level, lvl) {
 
 function isSolvable(level) {
   const arrs = level.arrows.map(a => ({ ...a, alive: true }));
-  let removed = 0, total = arrs.length;
+  let removed = 0; const total = arrs.length;
   while (removed < total) {
     let progressed = false;
     for (const a of arrs) {
@@ -91,22 +112,52 @@ function initialOpenness(level) {
   return open;
 }
 
+// ── Key coverage ─────────────────────────────────────────────────────
+// v2.0.1: dense shape block 21..300, then every 5th to 2225.
+const expected = new Set();
+for (let i = 1; i <= 300; i++) expected.add(i);
+for (let l = 305; l <= 2225; l += 5) expected.add(l);
+const actual = new Set(Object.keys(HANDCRAFTED).map(Number));
 let ok = true;
-for (const lvl in HANDCRAFTED) {
-  const level = HANDCRAFTED[lvl];
-  const geomErrs = validateGeometry(level, lvl);
+for (const k of expected) if (!actual.has(k)) { console.log(`✗ missing key ${k}`); ok = false; }
+for (const k of actual) if (!expected.has(k)) { console.log(`✗ unexpected key ${k}`); ok = false; }
+
+// ── File size gate ───────────────────────────────────────────────────
+const bytes = fs.statSync(HC_PATH).size;
+if (bytes > 4.5 * 1024 * 1024) { console.log(`✗ file is ${(bytes / 1048576).toFixed(2)} MB (max 4.5)`); ok = false; }
+
+// ── Per-level checks ─────────────────────────────────────────────────
+let checked = 0, shapeCount = 0;
+const warns = 0;
+for (const lvlKey in HANDCRAFTED) {
+  const lvl = Number(lvlKey);
+  const level = HANDCRAFTED[lvlKey];
+  const errs = validateGeometry(level);
   const solv = isSolvable(level);
   const open = initialOpenness(level);
   const arrows = level.arrows.length;
+  if (!solv.solvable) errs.push(`NOT SOLVABLE — ${solv.stuck} arrows stuck`);
 
-  if (geomErrs.length || !solv.solvable) {
-    console.log(`✗ lvl ${lvl}: ${arrows} arrows, ${level.rows}×${level.cols}`);
-    geomErrs.forEach(e => console.log(`   GEO: ${e}`));
-    if (!solv.solvable) console.log(`   NOT SOLVABLE — ${solv.stuck} arrows stuck`);
-    ok = false;
-  } else {
-    console.log(`✓ lvl ${lvl}: ${arrows} arrows, ${level.rows}×${level.cols}, initially open=${open}`);
+  if (lvl >= 21) { // generated shape levels: stricter contract
+    shapeCount++;
+    if (!level.t) errs.push('missing shape id `t`');
+    else if (!SHAPE_NAMES.includes(level.t) && !/^[0-9]+$/.test(level.t)) errs.push(`unknown shape id ${level.t}`);
+    for (let i = 0; i < level.arrows.length; i++) {
+      const a = level.arrows[i];
+      if (a.c.length < 2) { errs.push(`arrow ${i}: len ${a.c.length} < 2`); continue; }
+      const seg = dirOfSegment(a.c[a.c.length - 2], a.c[a.c.length - 1]);
+      if (seg !== a.d) errs.push(`arrow ${i}: d=${a.d} but last segment points ${seg}`);
+    }
+    if (open > openCap(lvl)) errs.push(`initially open=${open} exceeds hard cap ${openCap(lvl)}`);
   }
+
+  if (errs.length) {
+    console.log(`✗ lvl ${lvl}: ${arrows} arrows, ${level.rows}×${level.cols}`);
+    errs.forEach(e => console.log(`   ${e}`));
+    ok = false;
+  }
+  checked++;
 }
 
+console.log(`${ok ? '✓' : '✗'} ${checked} levels checked (${shapeCount} shape), file ${(bytes / 1048576).toFixed(2)} MB${warns ? `, ${warns} warnings` : ''}`);
 process.exit(ok ? 0 : 1);

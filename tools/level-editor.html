@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Arrow Escape — Level Editor</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, sans-serif; background: #1a1a1a; color: #eee; padding: 16px; user-select: none; }
+  h1 { margin: 0 0 8px; font-size: 18px; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+  label { font-size: 13px; color: #aaa; }
+  input[type="number"] { width: 56px; padding: 4px 6px; background: #2a2a2a; color: #eee; border: 1px solid #444; border-radius: 4px; font-size: 14px; }
+  button { padding: 8px 12px; background: #2a2a2a; color: #eee; border: 1px solid #555; border-radius: 6px; cursor: pointer; font-size: 13px; }
+  button:hover { background: #3a3a3a; }
+  button.danger { background: #c44; border-color: #c44; }
+  button.success { background: #2a8; border-color: #2a8; }
+  button.big { padding: 10px 18px; font-size: 14px; font-weight: bold; }
+  #canvas { background: #0a0a0a; border: 1px solid #333; cursor: crosshair; display: block; touch-action: none; }
+  .panel { background: #222; border: 1px solid #333; border-radius: 6px; padding: 10px; margin-top: 8px; }
+  textarea { width: 100%; height: 100px; background: #0a0a0a; color: #cfc; border: 1px solid #333; border-radius: 4px; padding: 8px; font-family: monospace; font-size: 11px; }
+  .status-ok { color: #4f9; font-weight: bold; }
+  .status-err { color: #f44; font-weight: bold; }
+  .hint { color: #888; font-size: 12px; line-height: 1.5; }
+  .hint b { color: #fff; }
+  .hint kbd { background: #333; border: 1px solid #555; border-radius: 3px; padding: 1px 5px; font-family: monospace; font-size: 11px; }
+  .arrow-list span { display: inline-block; padding: 3px 8px; background: #2a2a2a; border-radius: 3px; margin: 2px; font-family: monospace; font-size: 11px; cursor: pointer; }
+  .arrow-list span:hover { background: #c44; }
+</style>
+</head>
+<body>
+
+<h1 id="title">🎯 Arrow Escape — Level Editor</h1>
+
+<div class="row" style="background:#2a3550; border:2px solid #4a7eff; padding:8px 12px; border-radius:8px;">
+  <label style="font-size:16px; color:#fff;"><b>📌 Уровень №:</b>
+    <input type="number" id="levelNum" value="6" min="1" max="500" style="width:80px; font-size:18px; font-weight:bold;">
+  </label>
+  <button id="prevLvl">← prev</button>
+  <button id="nextLvl">next →</button>
+  <button id="saveLvl" class="success">💾 Save lvl locally</button>
+  <button id="loadLvl">📂 Load saved</button>
+  <button id="exportAll" class="success">📦 Export ALL saved</button>
+  <span id="savedInfo" style="color:#aaa; font-size:12px;"></span>
+</div>
+<div id="exportAllPanel" style="display:none; background:#222; border:1px solid #333; border-radius:6px; padding:10px; margin-top:8px;">
+  <label style="color:#fff;"><b>Все сохранённые уровни — выдели всё (Cmd+A) и скопируй (Cmd+C):</b></label>
+  <textarea id="exportAllText" style="width:100%; height:200px; background:#0a0a0a; color:#cfc; border:1px solid #333; border-radius:4px; padding:8px; font-family:monospace; font-size:11px; margin-top:6px;" readonly></textarea>
+</div>
+
+<div class="row">
+  <label>Cols:<input type="number" id="cols" value="8" min="3" max="24"></label>
+  <label>Rows:<input type="number" id="rows" value="8" min="3" max="30"></label>
+  <button id="resize">Apply</button>
+  <button id="undo" class="big">↶ Undo</button>
+  <button id="clearAll" class="danger">Clear all</button>
+  <button id="validate" class="big">🔍 Validate</button>
+  <button id="export" class="success big">📋 Copy JSON</button>
+  <span id="status"></span>
+</div>
+
+<div class="hint">
+  <b>Как рисовать:</b> зажми мышь на клетке → веди через соседние клетки → отпусти.
+  Направление стрелки = последнее движение мыши. Минимум 3 клетки.<br>
+  <b>Удалить стрелу:</b> клик по её клетке (или по чипу внизу). <kbd>Z</kbd> — undo, <kbd>Esc</kbd> — отмена текущей.
+  <span id="info" style="margin-left: 16px; color: #aaa;"></span>
+</div>
+
+<canvas id="canvas" width="640" height="640"></canvas>
+
+<div class="panel">
+  <div class="arrow-list" id="arrows"></div>
+</div>
+
+<div class="panel">
+  <label>JSON output:</label>
+  <textarea id="json" readonly></textarea>
+</div>
+
+<script>
+const DX = [1, 0, -1, 0];
+const DY = [0, -1, 0, 1];
+const DIR_SYMBOLS = ['→', '↑', '←', '↓'];
+const COLORS = ['#4a7eff','#ff4a7e','#7eff4a','#ffae4a','#ae4aff','#4affae','#ff4aae','#aeff4a','#4aaeff','#ffff4a','#4affff','#ff4a4a','#bae','#7afaff','#fa7','#a7f','#5cf','#fc5','#c5f','#5fc'];
+
+let cols = 8, rows = 8;
+let cellSize = 70;
+let arrows = [];
+let drawing = null;       // { cells: [...], lastMove: dir-index } while mousedown
+let canvas, ctx;
+
+function init() {
+  canvas = document.getElementById('canvas');
+  ctx = canvas.getContext('2d');
+  resize(); update();
+
+  canvas.addEventListener('mousedown', onDown);
+  canvas.addEventListener('mousemove', onMove);
+  canvas.addEventListener('mouseup', onUp);
+  canvas.addEventListener('mouseleave', onUp);
+  // Touch
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); const t = e.touches[0]; onDown({clientX:t.clientX, clientY:t.clientY}); }, { passive:false });
+  canvas.addEventListener('touchmove', e => { e.preventDefault(); const t = e.touches[0]; onMove({clientX:t.clientX, clientY:t.clientY}); }, { passive:false });
+  canvas.addEventListener('touchend', e => { e.preventDefault(); onUp(); }, { passive:false });
+
+  document.getElementById('resize').addEventListener('click', () => {
+    cols = +document.getElementById('cols').value;
+    rows = +document.getElementById('rows').value;
+    if (cols < 3 || rows < 3) return;
+    arrows = []; drawing = null; resize(); update();
+  });
+  document.getElementById('clearAll').addEventListener('click', () => {
+    if (confirm('Очистить всё?')) { arrows = []; drawing = null; update(); }
+  });
+  document.getElementById('undo').addEventListener('click', () => { arrows.pop(); update(); });
+  document.getElementById('validate').addEventListener('click', validate);
+  document.getElementById('export').addEventListener('click', exportJson);
+
+  // Level number controls
+  const lvlInput = document.getElementById('levelNum');
+  lvlInput.addEventListener('change', () => { updateTitle(); update(); });
+  lvlInput.addEventListener('input', updateTitle);
+  document.getElementById('prevLvl').addEventListener('click', () => { lvlInput.value = Math.max(1, +lvlInput.value - 1); updateTitle(); update(); });
+  document.getElementById('nextLvl').addEventListener('click', () => { lvlInput.value = +lvlInput.value + 1; updateTitle(); update(); });
+  document.getElementById('saveLvl').addEventListener('click', saveLevelLocal);
+  document.getElementById('loadLvl').addEventListener('click', loadLevelLocal);
+  document.getElementById('exportAll').addEventListener('click', exportAllSaved);
+  updateTitle(); refreshSavedInfo();
+
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === 'Escape') { drawing = null; draw(); }
+    if (e.key === 'z' || e.key === 'Z') { arrows.pop(); update(); }
+    if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); saveLevelLocal(); }
+  });
+  window.addEventListener('resize', () => { resize(); draw(); });
+}
+
+function currentLvl() { return +document.getElementById('levelNum').value; }
+function updateTitle() {
+  document.getElementById('title').innerHTML = `🎯 Arrow Escape — Level Editor &nbsp;<span style="color:#4a7eff;">| Делаешь LVL ${currentLvl()}</span>`;
+}
+
+function saveLevelLocal() {
+  if (arrows.length === 0) { flash('Сначала нарисуй стрелы'); return; }
+  const lvl = currentLvl();
+  const data = { cols, rows, arrows: arrows.map(a => ({ c: a.cells, d: a.dir })) };
+  const all = JSON.parse(localStorage.getItem('ae_editor_levels') || '{}');
+  all[lvl] = data;
+  localStorage.setItem('ae_editor_levels', JSON.stringify(all));
+  const s = document.getElementById('status');
+  s.textContent = `✓ Сохранён LVL ${lvl} (локально)`;
+  s.className = 'status-ok';
+  setTimeout(() => { s.textContent = ''; s.className = ''; }, 2000);
+  refreshSavedInfo();
+}
+
+function loadLevelLocal() {
+  const lvl = currentLvl();
+  const all = JSON.parse(localStorage.getItem('ae_editor_levels') || '{}');
+  if (!all[lvl]) { flash(`LVL ${lvl} не найден в сохранённых`); return; }
+  const d = all[lvl];
+  cols = d.cols; rows = d.rows;
+  document.getElementById('cols').value = cols;
+  document.getElementById('rows').value = rows;
+  arrows = d.arrows.map(a => ({ cells: a.c.map(c => [c[0], c[1]]), dir: a.d }));
+  drawing = null;
+  resize(); update();
+  flash(`Загружен LVL ${lvl}`);
+  document.getElementById('status').className = 'status-ok';
+}
+
+function refreshSavedInfo() {
+  const all = JSON.parse(localStorage.getItem('ae_editor_levels') || '{}');
+  const keys = Object.keys(all).map(n => +n).sort((a,b) => a-b);
+  document.getElementById('savedInfo').textContent = keys.length ? `сохранено локально: ${keys.join(', ')}` : 'пока ничего не сохранено';
+}
+
+function resize() {
+  const maxW = Math.min(window.innerWidth - 40, 1000);
+  const maxH = window.innerHeight - 380;
+  cellSize = Math.max(30, Math.floor(Math.min(maxW / cols, maxH / rows, 70)));
+  canvas.width = cols * cellSize;
+  canvas.height = rows * cellSize;
+  draw();
+}
+
+function eventCell(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left, y = e.clientY - rect.top;
+  const c = Math.floor(x / cellSize), r = Math.floor(y / cellSize);
+  if (r < 0 || r >= rows || c < 0 || c >= cols) return null;
+  return [r, c];
+}
+
+function findArrowAt(r, c) {
+  for (let i = 0; i < arrows.length; i++)
+    if (arrows[i].cells.some(([rr,cc]) => rr === r && cc === c)) return i;
+  return -1;
+}
+
+function isFree(r, c) {
+  return findArrowAt(r, c) === -1 && (!drawing || !drawing.cells.some(([rr,cc]) => rr === r && cc === c));
+}
+
+function onDown(e) {
+  const cell = eventCell(e);
+  if (!cell) return;
+  const [r, c] = cell;
+  const idx = findArrowAt(r, c);
+  if (idx >= 0) {
+    // Quick click on existing arrow → delete on mouseup; for now mark.
+    drawing = { deleteIdx: idx };
+    return;
+  }
+  drawing = { cells: [[r, c]], lastMove: -1 };
+  draw();
+}
+
+function onMove(e) {
+  if (!drawing || !drawing.cells) return;
+  const cell = eventCell(e);
+  if (!cell) return;
+  const [r, c] = cell;
+  const last = drawing.cells[drawing.cells.length - 1];
+  // Same cell → no-op.
+  if (last[0] === r && last[1] === c) return;
+  // Adjacent? extend.
+  const dr = r - last[0], dc = c - last[1];
+  if (Math.abs(dr) + Math.abs(dc) === 1) {
+    // Don't allow re-using cell already in drawing or in another arrow.
+    if (!isFree(r, c)) return;
+    const dir = dc === 1 ? 0 : dr === -1 ? 1 : dc === -1 ? 2 : 3;
+    drawing.cells.push([r, c]);
+    drawing.lastMove = dir;
+    if (drawing.cells.length > 13) {
+      // hard cap
+      drawing.cells.length = 13;
+    }
+    draw();
+  }
+  // Else: ignore (user can return path)
+}
+
+function onUp() {
+  if (!drawing) return;
+  if (drawing.deleteIdx !== undefined) {
+    arrows.splice(drawing.deleteIdx, 1);
+  } else if (drawing.cells && drawing.cells.length >= 3 && drawing.lastMove >= 0) {
+    arrows.push({ cells: drawing.cells, dir: drawing.lastMove });
+  } else if (drawing.cells && drawing.cells.length > 0 && drawing.cells.length < 3) {
+    flash(`Стрелка должна быть минимум 3 клетки (у тебя ${drawing.cells.length})`);
+  }
+  drawing = null;
+  update();
+}
+
+function flash(msg) {
+  const s = document.getElementById('status');
+  s.textContent = '⚠ ' + msg;
+  s.className = 'status-err';
+  setTimeout(() => { s.textContent = ''; s.className = ''; }, 2500);
+}
+
+function draw() {
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Grid
+  ctx.strokeStyle = '#222';
+  ctx.lineWidth = 1;
+  for (let r = 0; r <= rows; r++) {
+    ctx.beginPath(); ctx.moveTo(0, r * cellSize); ctx.lineTo(cols * cellSize, r * cellSize); ctx.stroke();
+  }
+  for (let c = 0; c <= cols; c++) {
+    ctx.beginPath(); ctx.moveTo(c * cellSize, 0); ctx.lineTo(c * cellSize, rows * cellSize); ctx.stroke();
+  }
+  ctx.fillStyle = '#444';
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++) {
+      ctx.beginPath();
+      ctx.arc(c * cellSize + cellSize/2, r * cellSize + cellSize/2, 2, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+  arrows.forEach((a, i) => drawArrow(a, COLORS[i % COLORS.length], 1));
+
+  if (drawing && drawing.cells) {
+    const dir = drawing.lastMove >= 0 ? drawing.lastMove : 1;
+    drawArrow({ cells: drawing.cells, dir }, '#fff', 0.7, true);
+  }
+}
+
+function drawArrow(a, color, alpha, isCurrent) {
+  ctx.globalAlpha = alpha;
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = Math.max(4, cellSize * 0.5);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  if (a.cells.length > 1) {
+    ctx.beginPath();
+    a.cells.forEach(([r, c], i) => {
+      const x = c * cellSize + cellSize/2, y = r * cellSize + cellSize/2;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+  // Tail dot.
+  const [tr, tc] = a.cells[0];
+  ctx.beginPath();
+  ctx.arc(tc * cellSize + cellSize/2, tr * cellSize + cellSize/2, cellSize * 0.18, 0, Math.PI*2);
+  ctx.fill();
+  // Head triangle.
+  const [hr, hc] = a.cells[a.cells.length - 1];
+  const hx = hc * cellSize + cellSize/2, hy = hr * cellSize + cellSize/2;
+  const dir = a.dir;
+  const tipX = hx + DX[dir] * cellSize * 0.45, tipY = hy + DY[dir] * cellSize * 0.45;
+  const perpX = DY[dir], perpY = -DX[dir];
+  ctx.beginPath();
+  ctx.moveTo(tipX, tipY);
+  ctx.lineTo(hx + perpX * cellSize * 0.28, hy + perpY * cellSize * 0.28);
+  ctx.lineTo(hx - perpX * cellSize * 0.28, hy - perpY * cellSize * 0.28);
+  ctx.closePath();
+  ctx.fill();
+  ctx.globalAlpha = 1;
+}
+
+function update() {
+  resize();
+  const total = arrows.reduce((s, a) => s + a.cells.length, 0);
+  const fillPct = (total / (cols * rows) * 100).toFixed(0);
+  document.getElementById('info').textContent = `${arrows.length} стрел, ${total}/${cols*rows} клеток (${fillPct}%)`;
+  const list = document.getElementById('arrows');
+  list.innerHTML = '';
+  arrows.forEach((a, i) => {
+    const span = document.createElement('span');
+    span.style.borderLeft = `4px solid ${COLORS[i % COLORS.length]}`;
+    span.textContent = `${i+1}: ${a.cells.length}c ${DIR_SYMBOLS[a.dir]}`;
+    span.title = 'Click to delete';
+    span.onclick = () => { arrows.splice(i, 1); update(); };
+    list.appendChild(span);
+  });
+  generateJson();
+  draw();
+}
+
+function generateJson() {
+  const lvl = currentLvl();
+  let s = `  // LVL ${lvl}\n  ${lvl}: {\n    cols: ${cols}, rows: ${rows},\n    arrows: [\n`;
+  arrows.forEach((a, i) => {
+    const cellStr = a.cells.map(([r,c]) => `[${r},${c}]`).join(',');
+    s += `      { c: [${cellStr}], d: ${a.dir} }${i < arrows.length-1 ? ',' : ''}\n`;
+  });
+  s += `    ]\n  },`;
+  document.getElementById('json').value = s;
+}
+
+function exportAllSaved() {
+  const all = JSON.parse(localStorage.getItem('ae_editor_levels') || '{}');
+  const keys = Object.keys(all).map(Number).sort((a,b)=>a-b);
+  if (keys.length === 0) { alert('Нет сохранённых уровней'); return; }
+  let txt = '';
+  for (const k of keys) {
+    const lvl = all[k];
+    txt += '// LVL ' + k + '\n  ' + k + ': {\n    cols: ' + lvl.cols + ', rows: ' + lvl.rows + ',\n    arrows: [\n';
+    lvl.arrows.forEach((a, i) => {
+      const cs = a.c.map(c => '['+c[0]+','+c[1]+']').join(',');
+      txt += '      { c: [' + cs + '], d: ' + a.d + ' }' + (i < lvl.arrows.length-1 ? ',' : '') + '\n';
+    });
+    txt += '    ]\n  }' + (k !== keys[keys.length-1] ? ',' : '') + '\n\n';
+  }
+  document.getElementById('exportAllPanel').style.display = 'block';
+  document.getElementById('exportAllText').value = txt;
+  document.getElementById('exportAllText').select();
+  navigator.clipboard.writeText(txt).catch(()=>{});
+}
+
+function exportJson() {
+  generateJson();
+  navigator.clipboard.writeText(document.getElementById('json').value).then(() => {
+    const s = document.getElementById('status');
+    s.textContent = '✓ JSON в буфере';
+    s.className = 'status-ok';
+    setTimeout(() => { s.textContent = ''; s.className = ''; }, 2000);
+  });
+}
+
+function validate() {
+  const errs = [];
+  const occ = {};
+  arrows.forEach((a, i) => {
+    if (a.cells.length < 3) errs.push(`arrow ${i+1}: <3 cells`);
+    a.cells.forEach(([r,c], j) => {
+      const k = r+','+c;
+      if (occ[k] !== undefined) errs.push(`arrow ${i+1} (${r},${c}) overlaps ${occ[k]+1}`);
+      occ[k] = i;
+      if (j > 0) {
+        const [pr,pc] = a.cells[j-1];
+        if (Math.abs(r-pr)+Math.abs(c-pc) !== 1) errs.push(`arrow ${i+1}: not connected at ${j}`);
+      }
+    });
+  });
+  // Solvability
+  const arrs = arrows.map(a => ({ ...a, alive: true }));
+  let removed = 0;
+  let openInitial = 0;
+  arrs.forEach(a => {
+    const [hr,hc] = a.cells[a.cells.length-1];
+    let cr = hr+DY[a.dir], cc = hc+DX[a.dir], clr = true;
+    while (cr>=0 && cr<rows && cc>=0 && cc<cols && clr) {
+      for (const o of arrs) { if (o===a) continue; if (o.cells.some(([or,oc])=>or===cr&&oc===cc)) { clr=false; break; } }
+      cr += DY[a.dir]; cc += DX[a.dir];
+    }
+    if (clr) openInitial++;
+  });
+  while (removed < arrs.length) {
+    let prog = false;
+    for (const a of arrs) {
+      if (!a.alive) continue;
+      const [hr,hc] = a.cells[a.cells.length-1];
+      let cr = hr+DY[a.dir], cc = hc+DX[a.dir], clr = true;
+      while (cr>=0 && cr<rows && cc>=0 && cc<cols && clr) {
+        for (const o of arrs) { if (o===a||!o.alive) continue; if (o.cells.some(([or,oc])=>or===cr&&oc===cc)) { clr=false; break; } }
+        cr += DY[a.dir]; cc += DX[a.dir];
+      }
+      if (clr) { a.alive = false; removed++; prog = true; break; }
+    }
+    if (!prog) break;
+  }
+  const stuck = arrs.filter(a => a.alive).length;
+  const blockers = arrows.map((a, i) => {
+    const blk = new Set();
+    const [hr,hc] = a.cells[a.cells.length-1];
+    let cr = hr+DY[a.dir], cc = hc+DX[a.dir];
+    while (cr>=0 && cr<rows && cc>=0 && cc<cols) {
+      arrows.forEach((o, j) => { if (j!==i && o.cells.some(([or,oc])=>or===cr&&oc===cc)) blk.add(j); });
+      cr += DY[a.dir]; cc += DX[a.dir];
+    }
+    return [...blk];
+  });
+  const memo = new Array(arrows.length).fill(0);
+  const dfs = (i, vis = new Set()) => {
+    if (memo[i]) return memo[i];
+    if (vis.has(i)) return -1;
+    vis.add(i);
+    let best = 1;
+    for (const j of blockers[i]) { const d = dfs(j, vis); if (d < 0) return -1; best = Math.max(best, 1+d); }
+    vis.delete(i); memo[i] = best;
+    return best;
+  };
+  let depth = 0, hasCycle = false;
+  for (let i = 0; i < arrows.length; i++) {
+    const d = dfs(i);
+    if (d < 0) { hasCycle = true; break; }
+    depth = Math.max(depth, d);
+  }
+  const s = document.getElementById('status');
+  if (errs.length) {
+    s.textContent = '✗ ' + errs.slice(0,3).join('; ');
+    s.className = 'status-err';
+  } else if (hasCycle) {
+    s.textContent = '✗ Цикл в зависимостях'; s.className = 'status-err';
+  } else if (stuck > 0) {
+    s.textContent = `✗ Нерешаемо (${stuck} стрел застряли)`; s.className = 'status-err';
+  } else {
+    const fill = (arrows.reduce((x,a)=>x+a.cells.length,0) / (cols*rows) * 100).toFixed(0);
+    s.textContent = `✓ ${fill}% fill, ${openInitial} exits, depth ${depth}`;
+    s.className = 'status-ok';
+  }
+}
+
+init();
+</script>
+</body>
+</html>

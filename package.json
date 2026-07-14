@@ -1,13 +1,19 @@
 {
   "name": "stray-arrows",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "sw.js",
   "scripts": {
-    "build": "mkdir -p www/sounds && cp index.html manifest.json sw.js levels-baked.js handcrafted-levels.js www/ && cp sounds/*.mp3 www/sounds/ && echo 'Build done'",
+    "version": "node tools/sync-versions.js && git add package.json sw.js index.html android/app/build.gradle ios/App/App.xcodeproj/project.pbxproj",
+    "prebuild": "node tools/sync-versions.js",
+    "build": "mkdir -p www/sounds && cp index.html manifest.json sw.js handcrafted-levels.js www/ && cp sounds/*.mp3 sounds/*.wav www/sounds/ && rm -rf www/levels www/levels-baked.js && echo 'Build done'",
     "sync": "npm run build && npx cap sync",
     "open:android": "npx cap open android",
-    "open:ios": "npx cap open ios"
+    "open:ios": "npx cap open ios",
+    "regen-assets": "npx --yes @capacitor/assets@^3 generate --iconBackgroundColor '#f5f2ed' --iconBackgroundColorDark '#1a1a2e' --splashBackgroundColor '#f5f2ed' --splashBackgroundColorDark '#1a1a2e'",
+    "audit:check": "npm audit --audit-level=high",
+    "validate": "node tools/validate-handcrafted.js",
+    "lint": "eslint tools/ sw.js"
   },
   "keywords": [],
   "author": "",
@@ -18,10 +24,12 @@
     "@capacitor/android": "^8.3.0",
     "@capacitor/cli": "^8.3.0",
     "@capacitor/core": "^8.3.0",
+    "@capacitor/haptics": "^8.0.2",
     "@capacitor/ios": "^8.3.0",
-    "@capacitor/status-bar": "^8.0.2"
+    "@capacitor/status-bar": "^8.0.2",
+    "cordova-plugin-purchase": "^13.16.1"
   },
   "devDependencies": {
-    "@capacitor/assets": "^3.0.5"
+    "eslint": "^9.39.4"
   }
 }

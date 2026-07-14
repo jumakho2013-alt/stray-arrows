@@ -1,1 +1,31 @@
-<svg xmlns='http://www.w3.org/2000/svg' width='2732' height='2732'><rect width='2732' height='2732' fill='#1a1a2e'/><g transform='translate(866,866)' stroke='#7a9cc8' stroke-width='60' stroke-linecap='round' stroke-linejoin='round' fill='none'><polyline points='280,660 280,300 580,300 580,500 750,500'/></g><polygon transform='translate(866,866)' points='820,500 680,420 680,580' fill='#7a9cc8'/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="2732" height="2732" viewBox="0 0 2732 2732">
+  <!-- Stray Arrows splash — dark (Sunset Macaron v2.5). Matches icon v3:
+       aubergine bg, salmon snake-arrow turning up, hero sparkle. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a3a37"/>
+      <stop offset="100%" stop-color="#3a2c2a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="47%" r="42%">
+      <stop offset="0%" stop-color="#f0a890" stop-opacity="0.30"/>
+      <stop offset="60%" stop-color="#f0a890" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#f0a890" stop-opacity="0"/>
+    </radialGradient>
+    <path id="sparkle" d="M 0,-100 C 25,-30 25,-25 100,0 C 25,25 25,30 0,100 C -25,30 -25,25 -100,0 C -25,-25 -25,-30 0,-100 Z"/>
+  </defs>
+  <rect width="2732" height="2732" fill="url(#bg)"/>
+  <rect width="2732" height="2732" fill="url(#glow)"/>
+  <g fill="#f0a890" opacity="0.45">
+    <use href="#sparkle" transform="translate(1950 900) scale(0.75)"/>
+    <use href="#sparkle" transform="translate(820 1900) scale(0.55)"/>
+  </g>
+  <g fill="#f0c8b8" opacity="0.28">
+    <use href="#sparkle" transform="translate(2000 1850) scale(0.40)"/>
+    <use href="#sparkle" transform="translate(760 1000) scale(0.38)"/>
+  </g>
+  <!-- Hero arrow — salmon, turning up (same motif as the icon) -->
+  <g stroke="#f0a890" stroke-width="96" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <polyline points="1060,1780 1060,1360 1540,1360 1540,1150"/>
+  </g>
+  <polygon points="1540,1000 1420,1150 1660,1150" fill="#f0a890"/>
+</svg>
