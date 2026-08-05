@@ -151,7 +151,7 @@ function _devWarn(stage, err){
 
 // Single source of truth for the displayed app version. Bump alongside
 // CFBundleShortVersionString in ios/App/App.xcodeproj/project.pbxproj.
-const APP_VERSION='v2.0.0';
+const APP_VERSION='v2.0.1';
 // App Store deep link — used by the in-app "update available" nudge.
 const APP_STORE_URL='https://apps.apple.com/app/stray-arrows/id6763406927';
 const PI=Math.PI,TAU=PI*2,sin=Math.sin,cos=Math.cos,abs=Math.abs,floor=Math.floor,min=Math.min,max=Math.max,sqrt=Math.sqrt;
@@ -1901,17 +1901,31 @@ function isWeeklyDone(){return localStorage.getItem(weeklyDoneKey())==='1'}
 // ================================================================
 //  LEVEL GENERATION
 // ================================================================
+// Park-Miller. It is only a valid generator for a seed in [1, m-1], and
+// callers hand it whatever a 32-bit `|0` produced — the retry perturbation
+// `(baseSeed + 0x9E3779B1*(depth+1))|0` is negative about half the time.
+// JS's `%` keeps the sign of the dividend, so one negative seed made the
+// ENTIRE stream negative, and the generator quietly stopped generating:
+// every `rng() < p` read as true and every `floor(rng()*n)` index
+// collapsed to 0. Boards that needed a retry — which is most of them once
+// the quality gate is on — were built from a dead RNG. Normalise first.
 function seededRandom(seed){
-  let s=seed;
-  return function(){s=(s*16807)%2147483647;return(s-1)/2147483646};
+  const m=2147483647;
+  let s=seed%m;
+  if(s<0)s+=m;
+  if(s===0)s=1; // m is prime, so s can never reach 0 again after this
+  return function(){s=(s*16807)%m;return(s-1)/(m-1)};
 }
 
 // Generate a level using the REAL mechanic: arrows are multi-cell random-walk paths.
-// Solvability is guaranteed by placing arrows in REVERSE solve order:
-//   arrow[0] will be removed first, arrow[N-1] last. Place them backward:
-//   first place arrow[N-1] (unconstrained), then arrow[N-2] needs a clear escape
-//   past arrow[N-1], etc. At solve time, each arrow's escape path is clear of
-//   the arrows that haven't been removed yet.
+// Placement lays arrows down in REVERSE solve order — arrow[N-1] first and
+// unconstrained, then each earlier one needing a clear escape past the ones
+// already down. That alone never survived the packing passes: absorption and
+// re-merging rewrite bodies and heads, and measured at level 301 it left 167
+// boards in 168 unsolvable. So placement is now treated as a way to arrange
+// CELLS, and `_peelOrient` derives every direction afterwards from a solve it
+// actually simulates — which is what makes the board solvable, sets its
+// difficulty, and re-establishes the reverse-solve-order contract below.
 function generateLevel(lvl,customSeed){
   const rng=seededRandom(customSeed!=null?customSeed:(lvl*7919+31337));
   hintArrow=-1;hintTime=0;wrongTapsInLevel=0;
@@ -2090,7 +2104,16 @@ function generateLevel(lvl,customSeed){
   // Returns true iff (r,c) lies on the escape line of any arrow placed
   // after `currentIdx`. Those arrows solve before `currentIdx` in game,
   // so adding (r,c) to currentIdx's body would make them unreachable.
+  //
+  // …unless the peel runs. It re-derives every direction from scratch after
+  // the packing passes and repairs any deadlock by dropping arrows, so the
+  // placement order this gate protects stops being load-bearing — and the
+  // gate is by far the most expensive thing in generation: an O(N) scan
+  // sitting inside a fixpoint loop over every empty cell × 4 directions,
+  // ~2.4 s on a level-301 board. Tutorial boards skip the peel and keep it.
+  const _peelActive=!tut;
   const _wouldBlockOtherEscape=(r,c,currentIdx)=>{
+    if(_peelActive)return false;
     for(let j=currentIdx+1;j<placed.length;j++){
       const o=placed[j];
       const h=o.cells[o.cells.length-1];
@@ -2098,6 +2121,15 @@ function generateLevel(lvl,customSeed){
     }
     return false;
   };
+
+  // Absorption used to be bounded only as a SIDE EFFECT of the gate above:
+  // on a packed board most extensions failed the escape-line test, so
+  // arrows stopped growing on their own. Retiring the gate removed that
+  // brake, and the passes ran to completion — a 10×10 rush board came back
+  // as seven 13-to-20-cell serpents covering 97 of 100 cells. maxLen was
+  // always the intended ceiling; enforce it directly instead of relying on
+  // a gate that happened to say no.
+  const _absorbCap=max(6,maxLen);
 
   // 3a. TAIL extension into empties.
   let absorbed=1;
@@ -2112,6 +2144,7 @@ function generateLevel(lvl,customSeed){
           if(occ[nr][nc]===-1)continue;
           const arrowIdx=occ[nr][nc];
           const arrow=placed[arrowIdx];
+          if(arrow.cells.length>=_absorbCap)continue;
           const tail=arrow.cells[0];
           if(tail[0]!==nr||tail[1]!==nc)continue;
           const head=arrow.cells[arrow.cells.length-1];
@@ -2136,6 +2169,7 @@ function generateLevel(lvl,customSeed){
     for(let i=0;i<placed.length;i++){
       const a=placed[i];
       if(a.cells.length===1)continue; // 1-cell heads are absorbed via 3c
+      if(a.cells.length>=_absorbCap)continue;
       const head=a.cells[a.cells.length-1];
       const fr=head[0]+DY[a.dir],fc=head[1]+DX[a.dir];
       if(fr<0||fr>=rows||fc<0||fc>=cols)continue; // already at edge
@@ -2193,6 +2227,7 @@ function generateLevel(lvl,customSeed){
           if(occ[nr][nc]===-1)continue;
           const arrowIdx=occ[nr][nc];
           const arrow=placed[arrowIdx];
+          if(arrow.cells.length>=_absorbCap)continue;
           const tail=arrow.cells[0];
           if(tail[0]!==nr||tail[1]!==nc)continue;
           const head=arrow.cells[arrow.cells.length-1];
@@ -2212,6 +2247,7 @@ function generateLevel(lvl,customSeed){
     for(let i=0;i<placed.length;i++){
       const a=placed[i];
       if(a.cells.length===1)continue;
+      if(a.cells.length>=_absorbCap)continue;
       const head=a.cells[a.cells.length-1];
       const fr=head[0]+DY[a.dir],fc=head[1]+DX[a.dir];
       if(fr<0||fr>=rows||fc<0||fc>=cols)continue;
@@ -2244,6 +2280,7 @@ function generateLevel(lvl,customSeed){
     for(let i=0;i<placed.length;i++){
       const a=placed[i];
       if(a.cells.length<2)continue;
+      if(a.cells.length+2>_absorbCap)continue; // a detour costs two cells
       if(_detourBudget[i]<=0)continue;
       // BUG FIX: detour cannot touch the LAST segment (k = cells.length-2).
       // The last segment cells[N-2]→cells[N-1] must be in arrow.dir so the
@@ -2307,6 +2344,7 @@ function generateLevel(lvl,customSeed){
         if(otherIdx===i)continue;
         const other=placed[otherIdx];
         if(other.cells.length<2)continue;
+        if(other.cells.length>=_absorbCap)continue;
         const tail=other.cells[0];
         if(tail[0]!==nr||tail[1]!==nc)continue;
         const head=other.cells[other.cells.length-1];
@@ -2325,6 +2363,21 @@ function generateLevel(lvl,customSeed){
         break;
       }
     }
+  }
+
+  // v2.0.1: derive every direction from the solve order instead of keeping
+  // the ones growth happened to pick (see _peelOrient). Runs BEFORE the
+  // solvability check on purpose — a successful peel is a constructive
+  // certificate, so it turns most of the retry loop below into a no-op
+  // rather than adding work on top of it. On a dead end `placed` comes back
+  // untouched and the retry path handles the board exactly as before.
+  // Tutorial boards are excluded: levels 1-5 teach the tap, and a deliberate
+  // one-opener board reads as "nothing works" to someone still learning.
+  let _peelOk=false;
+  if(!tut){
+    const _openMax=lvl<15?max(3,Math.ceil(placed.length*0.15)):lvl<500?3:lvl<1200?4:5;
+    const _bias=lvl<50?0.6:lvl<500?0.75:0.85;
+    _peelOk=_peelOrient(placed,rows,cols,rng,_openMax,_bias);
   }
 
   // Solvability check: simulate "tap an arrow whose escape is clear" until
@@ -2355,7 +2408,12 @@ function generateLevel(lvl,customSeed){
   // deep (100+ arrows, dense chains), and each extra retry on them costs
   // real milliseconds at level entry.
   const _solvableHere=_isLevelSolvable(placed,rows,cols);
-  const _qualityHere=_solvableHere&&(lvl>400||_retryDepth>=10||_levelQualityOK(placed,rows,cols,lvl));
+  // A re-roll used to be the only lever on quality, so it was worth ten of
+  // them. Now the peel optimises the board it is handed — a re-roll is just
+  // another throw of the same dice at the same expected quality, and each
+  // throw is a few hundred ms of packing. Two, then take what we have.
+  const _qCap=_peelOk?2:10;
+  const _qualityHere=_solvableHere&&(lvl>400||_retryDepth>=_qCap||_levelQualityOK(placed,rows,cols,lvl));
   if((!_solvableHere||!_qualityHere)&&_retryDepth<MAX_RETRIES&&lvl>=1){
     const baseSeed=customSeed!=null?customSeed:(lvl*7919+31337);
     // 0x9E3779B1 ≈ 2^32 / phi — Knuth's golden-ratio multiplier, classic
@@ -2732,6 +2790,204 @@ function onEscapeLine(r,c,hr,hc,dir){
     cr+=DY[dir];cc+=DX[dir];
   }
   return false;
+}
+
+// ── Constructive orientation: the peel ──────────────────────────────
+// Measured on 16 procedural boards (lvl 301-319): 22 arrows, 6.3 of them
+// tappable on move 1 — 29%. Shape levels over the same metric sit at
+// 10-14%, and the whole difference is HOW the direction gets chosen:
+// tryBuildArrow commits to a direction while it grows the body, so the
+// dependency graph is a by-product of growth. gen-shape-levels.js instead
+// places bodies first and derives every direction by simulating the solve,
+// which lets it spend outward-facing orientations early and hoard the
+// inward-facing ones for deep waves. Same technique, now on every board.
+//
+// The free variable is orientation: reversing a snake's cell order moves
+// its head to the other end without moving a single cell, so no OTHER
+// arrow's escape ray changes. 2^N configurations, searched here with the
+// solve order as the guide.
+function _peelDir(cells,flip){
+  const n=cells.length;
+  const a=flip?cells[1]:cells[n-2];
+  const b=flip?cells[0]:cells[n-1];
+  const dr=b[0]-a[0],dc=b[1]-a[1];
+  return dc===1?0:dr===-1?1:dc===-1?2:3;
+}
+function _peelRay(occ,rows,cols,cells,flip,self,d){
+  const head=flip?cells[0]:cells[cells.length-1];
+  const set=new Set();
+  let cr=head[0]+DY[d],cc=head[1]+DX[d];
+  while(cr>=0&&cr<rows&&cc>=0&&cc<cols){
+    const j=occ[cr*cols+cc];
+    if(j>=0&&j!==self)set.add(j);
+    cr+=DY[d];cc+=DX[d];
+  }
+  return set;
+}
+// Wave decomposition over the precomputed dependency sets. Cheap enough to
+// call inside the repair loop because `deps` never has to be rebuilt —
+// flipping one arrow only swaps which of ITS two sets is in play.
+function _peelMetrics(deps,orientation,ids){
+  const rem=new Set(ids);
+  let waves=0,open=null;
+  while(rem.size){
+    const ready=[];
+    for(const i of rem){
+      let ok=true;
+      for(const b of deps[i][orientation[i]])if(rem.has(b)){ok=false;break}
+      if(ok)ready.push(i);
+    }
+    if(!ready.length)return null;
+    if(waves===0)open=ready;
+    waves++;
+    for(const i of ready)rem.delete(i);
+  }
+  return {waves,open,initialOpen:open.length};
+}
+// Rewrites `placed` — every arrow's `dir`, the cell order of the flipped
+// ones, the array order (reverse solve order), and possibly its length, if
+// breaking a deadlock cost arrows. Returns true when it did, and the board
+// is then solvable BY CONSTRUCTION — greedy-solvable too, since removal
+// only frees cells, so a clear arrow stays clear and _isLevelSolvable's
+// greedy walk cannot miss an order the peel found. Returns false only when
+// there is nothing to work with (fewer than two arrows survive), leaving
+// `placed` untouched for the caller's retry path.
+function _peelOrient(placed,rows,cols,rng,openMax,bias){
+  const N=placed.length;
+  if(N<2)return false;
+  const occ=new Int16Array(rows*cols).fill(-1);
+  for(let i=0;i<N;i++)for(const[r,c] of placed[i].cells)occ[r*cols+c]=i;
+  // One entry per (arrow, orientation). Single-cell arrows have no body to
+  // reverse — both slots reuse the direction tryBuildArrow gave them, so
+  // the peel simply sees them as having one choice made twice.
+  const dirs=[],deps=[];
+  for(let i=0;i<N;i++){
+    const cells=placed[i].cells;
+    const one=cells.length<2;
+    const d0=one?placed[i].dir:_peelDir(cells,0);
+    const d1=one?placed[i].dir:_peelDir(cells,1);
+    dirs.push([d0,d1]);
+    deps.push([_peelRay(occ,rows,cols,cells,0,i,d0),_peelRay(occ,rows,cols,cells,1,i,d1)]);
+  }
+  // unlock[i] = how many (arrow, orientation) rays arrow i sits on. High
+  // unlock = bottleneck: removing it converts many future picks from
+  // "open from the start" into "opened by an earlier move".
+  const unlock=new Array(N).fill(0);
+  for(let j=0;j<N;j++)for(let f=0;f<2;f++)for(const b of deps[j][f])unlock[b]++;
+  const alive=new Set();
+  for(let i=0;i<N;i++)alive.add(i);
+  const orientation=new Array(N).fill(-1);
+  const order=[];   // ids in peel order — a real, verified solve order
+  let dropped=0;
+  // A pick whose dependency set is EMPTY is open no matter what else is on
+  // the board — it costs +1 initialOpen permanently. A pick whose blockers
+  // were all peeled earlier is clear now but blocked at move 1, costing
+  // nothing. Never spend the former while one of the latter exists.
+  const freeChoices=()=>{
+    const out=[];
+    for(const i of alive){
+      for(let f=0;f<2;f++){
+        let blocked=false;
+        for(const b of deps[i][f])if(alive.has(b)){blocked=true;break}
+        if(blocked)continue;
+        let opp=0;
+        for(const b of deps[i][1-f])if(alive.has(b))opp++;
+        out.push({i,f,opp:opp+unlock[i]*2,opens:deps[i][f].size===0?1:0});
+      }
+    }
+    return out;
+  };
+  // No search, no backtracking, and none is possible to want. What blocks
+  // arrow i is other arrows' CELLS, and cells don't care which way an arrow
+  // points — so an arrow's orientation only ever affects its OWN
+  // removability, never anyone else's. Removal is monotone on top of that
+  // (it only frees cells), so "removable given what's gone" is a monotone
+  // closure: whatever order you peel in, you reach the same maximal set.
+  // A stall is therefore proof that NO orientation assignment and NO
+  // ordering can finish this board — measured on levels 301+, that is 96%
+  // of them, which is why the shipped retry loop was burning 160 attempts
+  // per level and still landing on the halved-difficulty fallback.
+  //
+  // So repair the board instead of re-rolling it: drop the survivor whose
+  // cells block the most other survivors. That strictly frees cells, which
+  // can only enable more picks, and each stall costs one arrow — bounded
+  // by N, so this always terminates, always solvable, in one pass.
+  while(alive.size){
+    const choices=freeChoices();
+    if(!choices.length){
+      const blockCount=new Map();
+      for(const j of alive)
+        for(let f=0;f<2;f++)
+          for(const b of deps[j][f])
+            if(alive.has(b))blockCount.set(b,(blockCount.get(b)||0)+1);
+      let victim=-1,most=-1;
+      for(const i of alive){
+        const bc=blockCount.get(i)||0;
+        if(bc>most){most=bc;victim=i}
+      }
+      if(victim<0)victim=alive.values().next().value;
+      alive.delete(victim);
+      dropped++;
+      continue;
+    }
+    const covered=choices.filter(c=>!c.opens);
+    const pool=covered.length?covered:choices;
+    let chosen;
+    if(rng()<bias){
+      let best=-1;
+      for(const c of pool)if(c.opp>best)best=c.opp;
+      const top=pool.filter(c=>c.opp===best);
+      chosen=top[(rng()*top.length)|0];
+    }else chosen=pool[(rng()*pool.length)|0];
+    orientation[chosen.i]=chosen.f;
+    alive.delete(chosen.i);
+    order.push(chosen.i);
+  }
+  if(order.length<2)return false;
+  const surv=order;
+  // Repair pass: flipping an arrow that is open at move 1 can only change
+  // its own ray, so trading it for a blocked orientation is always safe to
+  // TRY — _peelMetrics re-verifies solvability and the flip is reverted
+  // unless initialOpen actually dropped. Keep one opener or the board is
+  // unstartable. Dropped ids are absent from `surv`, so every `rem.has(b)`
+  // on them reads false — exactly the "already gone" they will be in play.
+  let m=_peelMetrics(deps,orientation,surv);
+  let guard=0;
+  while(m&&m.initialOpen>openMax&&guard++<24){
+    const openers=m.open.slice();
+    for(let i=openers.length-1;i>0;i--){
+      const j=(rng()*(i+1))|0;
+      const t=openers[i];openers[i]=openers[j];openers[j]=t;
+    }
+    let flipped=false;
+    for(const i of openers){
+      if(m.open.length<=1)break;
+      if(placed[i].cells.length<2)continue; // no second orientation
+      orientation[i]=1-orientation[i];
+      const m2=_peelMetrics(deps,orientation,surv);
+      if(m2&&m2.initialOpen<m.initialOpen){m=m2;flipped=true;break}
+      orientation[i]=1-orientation[i];
+    }
+    if(!flipped)break;
+  }
+  if(!m)return false; // peel invariant broken — leave the board untouched
+  for(const i of surv){
+    if(orientation[i]===1&&placed[i].cells.length>=2)placed[i].cells.reverse();
+    placed[i].dir=dirs[i][orientation[i]];
+  }
+  // Rewrite `placed` in REVERSE peel order (and without the dropped ones),
+  // which is what the caller's `placed.reverse()` turns back into the solve
+  // order it documents. The peel's order is a verified one, so that
+  // invariant now actually holds instead of being inherited from a
+  // placement pass whose merges could quietly break it.
+  const kept=[];
+  for(let k=order.length-1;k>=0;k--)kept.push(placed[order[k]]);
+  placed.length=0;
+  for(const a of kept)placed.push(a);
+  // Deadlock repair costs board density, so it is worth knowing when a
+  // packing pass starts producing boards that are mostly deadlock.
+  if(dropped>N*0.35&&typeof _devWarn==='function')_devWarn('peel.dropped',dropped+'/'+N+' arrows dropped to break deadlocks');
+  return true;
 }
 
 // Repeatedly find any arrow whose escape line has no alive blocker and
@@ -6077,6 +6333,12 @@ if('serviceWorker' in navigator && typeof Capacitor==='undefined'
 }
 window._ae={
   generateLevel,
+  // Rush is the one generation path that can't be reached through
+  // generateLevel alone — its grid comes from the module-level
+  // `_genOverride`, which is deliberately not a parameter (arguments[2] is
+  // taken by _retryDepth). Exposing the real function rather than
+  // re-deriving its parameters keeps the test honest as it changes.
+  rushBoard(){startRushBoard()},
   get arrows(){return arrows},
   get gridCols(){return gridCols},
   get gridRows(){return gridRows},

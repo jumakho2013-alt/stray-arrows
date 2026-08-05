@@ -5,6 +5,47 @@ All notable changes to Stray Arrows are documented here. Format follows
 / deprecated / removed / fixed / security. Versioning is
 [SemVer](https://semver.org).
 
+## [2.0.1] — unreleased
+
+### Fixed
+- **The procedural generator was running on a dead RNG.** `seededRandom` is
+  Park-Miller, valid only for a seed in `[1, m-1]`, but the retry
+  perturbation `(baseSeed + 0x9E3779B1*(depth+1))|0` is negative about half
+  the time — and JS's `%` keeps the dividend's sign, so one negative seed
+  turned the whole stream negative. Every `rng() < p` then read as true and
+  every `floor(rng()*n)` index collapsed to 0. Since a retry was the norm,
+  most procedural boards were built by a generator that had stopped making
+  choices. Seeds are normalised into range now.
+- **Levels 301+ were unsolvable ~99% of the time before the fallback.** With
+  the RNG repaired, the truth showed: placement builds a solvable board in
+  reverse solve order, then the absorption and re-merge passes rewrite heads
+  and bodies and break it. Measured at level 301: 167 of 168 attempts
+  unsolvable, so every board fell through 30 retries into the
+  halved-difficulty escape hatch. Fixed by `_peelOrient` below.
+- Rush boards could exceed their own `maxLen` — absorption was bounded only
+  as a side effect of the escape-line gate, so a 10×10 board came back as
+  seven 20-cell serpents. `maxLen` is enforced directly at every growth site.
+
+### Changed
+- **Constructive generation for every board** (`_peelOrient`), the technique
+  `tools/gen-shape-levels.js` already used for shape levels: place the cells
+  first, then derive each arrow's direction by simulating the solve. An
+  arrow's orientation only affects its own removability — flipping it moves
+  no cell — so direction is a free variable to spend on difficulty. Where a
+  board is genuinely deadlocked (no orientation assignment can finish it, a
+  monotone-closure property, so no search can help) the peel drops the arrow
+  blocking the most others rather than re-rolling the whole board.
+  - arrows tappable on move 1: **29% → 11-14%** (shape levels sit at 10-14%;
+    the competitor clone `goarrows` measures 32%)
+  - solve depth: 8.8 → 15-17 waves
+  - generation time: 660 ms avg / 2150 ms worst → **60 ms / 190 ms**
+  - unsolvable boards across a 222-board sweep (procedural, zen, daily,
+    weekly, rush, levels to 12000): **0**
+- Quality-gate retries drop from 10 to 2 once the peel has run — the peel
+  optimises the board it is given, so a re-roll is the same dice again.
+- `window._ae.rushBoard()` exposes the rush path for testing; its grid comes
+  from a module-level override that no argument can reach.
+
 ## [2.0.0] — 2026-07-12 — THE BIG UPDATE
 
 ### Added
