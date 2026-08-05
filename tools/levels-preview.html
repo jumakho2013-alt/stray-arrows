@@ -32,6 +32,9 @@ h1{margin:0 0 4px;font-size:23px;letter-spacing:-.02em}
 form{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px;
   padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px}
 label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--dim)}
+label.chk{cursor:pointer;user-select:none;padding-left:2px}
+label.chk input{width:auto;accent-color:var(--arrow)}
+.tag.fresh{color:var(--gold)}
 input{width:76px;padding:6px 8px;font:inherit;font-size:13px;color:var(--ink);
   background:var(--bg);border:1px solid var(--line);border-radius:7px}
 button{padding:7px 16px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;
@@ -72,9 +75,11 @@ iframe{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-eve
   <label>шаг <input id="step" type="number" value="1" min="1" max="500"></label>
   <label>сколько <input id="count" type="number" value="12" min="1" max="48"></label>
   <button type="submit">Показать</button>
+  <label class="chk"><input id="fresh" type="checkbox"> новым генератором</label>
   <button type="button" class="ghost" data-preset="21,40,100,150,205,260">Фигуры</button>
   <button type="button" class="ghost" data-preset="301,302,303,306,307,308">Процедурные</button>
   <button type="button" class="ghost" data-preset="50,100,500,1000,1500,2000">Юбилейные</button>
+  <button type="button" class="ghost" data-preset="1,2,3,4,5,6,7,8,9,10" data-fresh="1">Первые 10 — новым</button>
 </form>
 
 <p id="status">Загружаю игру…</p>
@@ -147,21 +152,27 @@ function svg(rows, cols, arrows, open, px) {
        + `stroke-linejoin="round">${body}</g></svg>`;
 }
 
-function tile(lvl, win) {
-  win._ae.generateLevel(lvl);
+function tile(lvl, win, fresh) {
+  // `?fresh=1` makes the game skip the handcrafted file and generate the
+  // level, seeding from lvl*7919+31337. Passing that same seed here means the
+  // preview shows the exact board the player gets, not a lookalike.
+  if (fresh) win._ae.generateLevel(lvl, lvl * 7919 + 31337);
+  else win._ae.generateLevel(lvl);
   const rows = win._ae.gridRows, cols = win._ae.gridCols;
   // Copy the cells out — the next generateLevel call reuses these arrays.
   const arrows = win._ae.arrows.map((a) => ({ cells: a.cells.map((p) => [p[0], p[1]]), dir: a.dir }));
   const m = analyse(rows, cols, arrows);
-  const hc = win.HANDCRAFTED_LEVELS && win.HANDCRAFTED_LEVELS[lvl];
+  const hc = !fresh && win.HANDCRAFTED_LEVELS && win.HANDCRAFTED_LEVELS[lvl];
   const pct = Math.round(m.open.size / arrows.length * 100);
   const el = document.createElement('a');
   el.className = 'tile';
-  el.href = '../index.html?level=' + lvl;
+  el.href = '../index.html?level=' + lvl + (fresh ? '&fresh=1' : '');
   el.innerHTML = `<div class="board">${svg(rows, cols, arrows, m.open, 300)}</div>
     <div class="meta">
-      <div class="row"><b>Уровень ${lvl}</b><span class="tag${hc ? ' shape' : ''}">${
-        hc ? 'фигура' + (hc.t ? ' · ' + hc.t : '') : 'проц'}</span></div>
+      <div class="row"><b>Уровень ${lvl}</b><span class="tag${
+        fresh ? ' fresh' : hc && hc.t ? ' shape' : ''}">${
+        fresh ? 'новый генератор' : hc && hc.t ? 'фигура · ' + hc.t
+              : hc ? 'старый, до 2.0' : 'проц'}</span></div>
       <div class="nums">
         <span><i>${arrows.length}</i> стрел</span>
         <span class="hi"><i>${m.open.size}</i> в старте · ${pct}%</span>
@@ -175,30 +186,35 @@ function tile(lvl, win) {
 
 let win = null;
 
-function render(levels) {
+function render(levels, fresh) {
   const grid = $('grid');
   grid.innerHTML = '';
   const t0 = performance.now();
   let pctSum = 0, bad = 0;
   for (const lvl of levels) {
-    const t = tile(lvl, win);
+    const t = tile(lvl, win, fresh);
     grid.appendChild(t.el);
     pctSum += t.pct;
     if (!t.solvable) bad++;
   }
   const ms = Math.round(performance.now() - t0);
-  $('status').innerHTML = `${levels.length} досок · в старте в среднем `
-    + `<b>${Math.round(pctSum / levels.length)}%</b> · сгенерировано за ${ms} мс`
+  $('status').innerHTML = `${levels.length} досок${fresh ? ' · <b>новым генератором</b>' : ''}`
+    + ` · в старте в среднем <b>${Math.round(pctSum / levels.length)}%</b>`
+    + ` · сгенерировано за ${ms} мс`
     + (bad ? ` · <span class="bad">${bad} НЕРАЗРЕШИМЫХ</span>` : '');
 }
 
 $('controls').addEventListener('submit', (e) => {
   e.preventDefault();
   const from = +$('from').value, step = +$('step').value, count = +$('count').value;
-  render(Array.from({ length: count }, (_, i) => from + i * step));
+  render(Array.from({ length: count }, (_, i) => from + i * step), $('fresh').checked);
 });
 document.querySelectorAll('[data-preset]').forEach((b) => {
-  b.addEventListener('click', () => render(b.dataset.preset.split(',').map(Number)));
+  b.addEventListener('click', () => {
+    const fresh = b.dataset.fresh === '1';
+    $('fresh').checked = fresh;
+    render(b.dataset.preset.split(',').map(Number), fresh);
+  });
 });
 
 gameReady().then((w) => {
