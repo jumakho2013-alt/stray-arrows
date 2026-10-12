@@ -18,7 +18,7 @@
 (function(){
   try{
     var dark=localStorage.getItem('ae_theme')==='dark';
-    var col=dark?'#3a2c2a':'#f9e9d8';
+    var col=dark?'#1e1914':'#f5eee3';
     var m=document.getElementById('themeColorMeta');if(m)m.content=col;
     document.documentElement.style.colorScheme=dark?'dark':'light';
   }catch(e){/* localStorage unavailable — default theme is fine */}
@@ -193,7 +193,7 @@ function applyTheme(){
   document.documentElement.style.colorScheme=darkMode?'dark':'light';
   _bgCacheDirty=true;
   // Match status bar / notch / nav bar to app theme
-  const col=darkMode?'#3a2c2a':'#f9e9d8';
+  const col=darkMode?'#1e1914':'#f5eee3';
   const m=document.getElementById('themeColorMeta');
   if(m)m.content=col;
   // Capacitor StatusBar — full edge-to-edge.
@@ -233,44 +233,35 @@ const TH={
   // Non-affected keys (success, warning, star, gridLine, cardBg, shadow
   // tokens) keep their normal-mode values — those are decoration, not
   // legibility-critical.
-  // ----- v2.5 "Sunset Macaron" palette -----
-  // Inspired by Monument Valley's macaron / pastille tones. Light mode
-  // is warm peach cream + dusty coral; dark mode is deep aubergine
-  // (warm brown-purple, not navy) + salmon. Accent stays gold-warm
-  // because golden coins/stars need a saturated push to read against
-  // these mid-toned bgs. Replaces the previous Bakery cream + cold
-  // navy combo per user feedback ("ты всё в синих делаешь").
-  get bg(){return highContrast?(darkMode?'#000000':'#ffffff'):(darkMode?'#3a2c2a':'#f9e9d8')},
-  get surface(){return highContrast?(darkMode?'#0a0a0a':'#ffffff'):(darkMode?'#4a3a37':'#fef4e6')},
-  get border(){return highContrast?(darkMode?'#ffffff':'#000000'):(darkMode?'rgba(255,255,255,.12)':'rgba(74,58,55,.12)')},
-  // Screen-level text — espresso-brown on light, warm cream on dark
-  get text(){return highContrast?(darkMode?'#ffffff':'#000000'):(darkMode?'#f5e8de':'#3a2c28')},
-  get textSec(){return highContrast?(darkMode?'#cccccc':'#333333'):(darkMode?'#c2a9a0':'#8a6f66')},
-  get textDim(){return highContrast?(darkMode?'#999999':'#666666'):(darkMode?'rgba(245,232,222,.40)':'rgba(58,44,40,.35)')},
-  // Button-local
-  get btnText(){return highContrast?(darkMode?'#ffffff':'#000000'):(darkMode?'#f5e8de':'#3a2c28')},
-  get btnTextSec(){return highContrast?(darkMode?'#cccccc':'#333333'):(darkMode?'#c2a9a0':'#8a6f66')},
-  // Accent — dusty coral on light, warm salmon on dark. Both sit
-  // happily on the warm bgs without the previous gold-on-navy
-  // "chocolate" muddiness.
-  get accent(){return highContrast?(darkMode?'#ffd700':'#0033cc'):(darkMode?'#f0a890':'#d68f7a')},
-  get accentDeep(){return darkMode?'#c47863':'#a86650'},
-  // Decoration colours — kept warm-family (no cold blues anywhere)
-  get success(){return darkMode?'#9ec79e':'#6e9c6e'},
-  get warning(){return darkMode?'#e8b585':'#c08660'},
-  get star(){return darkMode?'#f0c478':'#c89248'},
-  get arrow(){return highContrast?(darkMode?'#ffffff':'#000000'):(darkMode?'#e8d5c0':'#3a2c28')},
-  get arrowBlock(){return highContrast?'#ff0000':(darkMode?'#e88a78':'#bf5a44')},
-  get arrowShadow(){return highContrast?'rgba(0,0,0,0)':(darkMode?'rgba(0,0,0,.32)':'rgba(74,58,55,.10)')},
-  get arrowGlow(){return darkMode?'rgba(240,168,144,.22)':'rgba(214,143,122,.18)'},
-  get gridLine(){return darkMode?'rgba(245,232,222,.05)':'rgba(74,58,55,.05)'},
-  get cardBg(){return darkMode?'rgba(245,232,222,.05)':'rgba(74,58,55,.04)'},
-  // Buttons: lifted surface above bg. Bumped dark-mode opacity from .08 to
-  // .14 in v2 — the .08 sat right at WCAG AA borderline against the
-  // #15152a navy and read as "JS-ish flat" instead of solid card.
-  // High-contrast: solid surfaces, no transparency — required for AAA.
-  get btnBg(){return highContrast?(darkMode?'#1a1a1a':'#f0f0f0'):(darkMode?'rgba(255,255,255,.14)':'rgba(255,255,255,.7)')},
-  get btnHover(){return highContrast?(darkMode?'#2a2a2a':'#e0e0e0'):(darkMode?'rgba(255,255,255,.20)':'rgba(255,255,255,.95)')},
+  // ----- v3 "Paper & Ink" palette -----
+  // The Macaron palette (peach bg, dusty coral accent) read as washed-out
+  // and pinkish — "цвет мне не нравится". v3 goes cleaner: warm paper,
+  // brown-black ink for the arrows, one saturated orange for everything
+  // you can press. Fewer, stronger colours; the board carries the screen.
+  get bg(){return highContrast?(darkMode?'#000000':'#ffffff'):(darkMode?'#1e1914':'#f5eee3')},
+  get surface(){return highContrast?(darkMode?'#0a0a0a':'#ffffff'):(darkMode?'#2a231c':'#fffaf2')},
+  get border(){return highContrast?(darkMode?'#ffffff':'#000000'):(darkMode?'rgba(243,233,220,.10)':'rgba(61,43,31,.09)')},
+  get text(){return highContrast?(darkMode?'#ffffff':'#000000'):(darkMode?'#f3e9dc':'#3d2b1f')},
+  get textSec(){return highContrast?(darkMode?'#cccccc':'#333333'):(darkMode?'#b8a592':'#8c7462')},
+  get textDim(){return highContrast?(darkMode?'#999999':'#666666'):(darkMode?'rgba(243,233,220,.38)':'rgba(61,43,31,.34)')},
+  get btnText(){return highContrast?(darkMode?'#ffffff':'#000000'):(darkMode?'#f3e9dc':'#3d2b1f')},
+  get btnTextSec(){return highContrast?(darkMode?'#cccccc':'#333333'):(darkMode?'#b8a592':'#8c7462')},
+  // Accent: the colour of "press me" — primary buttons, level title.
+  get accent(){return highContrast?(darkMode?'#ffd700':'#0033cc'):(darkMode?'#f0954a':'#d9772f')},
+  get accentDeep(){return darkMode?'#c4732f':'#b05e1f'},
+  get success(){return darkMode?'#8cc79a':'#4f9a62'},
+  get warning(){return darkMode?'#f0b06a':'#d98c2f'},
+  get star(){return darkMode?'#f6c45a':'#f0b03a'},
+  get arrow(){return highContrast?(darkMode?'#ffffff':'#000000'):(darkMode?'#eadbc6':'#4a3324')},
+  get arrowBlock(){return highContrast?'#ff0000':(darkMode?'#f07a68':'#d2453a')},
+  get arrowShadow(){return highContrast?'rgba(0,0,0,0)':(darkMode?'rgba(0,0,0,.32)':'rgba(61,43,31,.10)')},
+  get arrowGlow(){return darkMode?'rgba(240,149,74,.22)':'rgba(217,119,47,.18)'},
+  get gridLine(){return darkMode?'rgba(243,233,220,.05)':'rgba(61,43,31,.05)'},
+  get cardBg(){return darkMode?'rgba(243,233,220,.05)':'rgba(61,43,31,.04)'},
+  // Secondary buttons: a solid, slightly darker paper — no hairline
+  // border, no translucency (those read as "web form", not "game").
+  get btnBg(){return highContrast?(darkMode?'#1a1a1a':'#f0f0f0'):(darkMode?'#332a22':'#ebe1d1')},
+  get btnHover(){return highContrast?(darkMode?'#2a2a2a':'#e0e0e0'):(darkMode?'#3d3329':'#e3d6c3')},
 
   // ----- v2 tokens (single source of truth) -----
   // Radii: small (badges, chips), medium (buttons), large (cards), pill.
@@ -421,8 +412,8 @@ const LANGS=[
   {code:'ja',name:'日本語'},
 ];
 const STR={
-  en:{title1:'STRAY',title2:'ARROWS',tagline:'puzzle game',play:'PLAY',levels:'LEVELS',daily:'DAILY',weekly:'WEEKLY',stats:'STATS',achievements:'ACHIEVEMENTS',settings:'SETTINGS',sound:'Sound',theme:'Theme',themeDark:'Dark',themeLight:'Light',language:'Language',watchAd:'Watch Ad',coins:'Coins',resetProgress:'Reset Progress',areYouSure:'Are you sure?',yesReset:'YES, RESET',cancel:'CANCEL',back:'BACK',hint:'HINT',skip:'SKIP',level:'LEVEL',stars:'STARS',streak:'STREAK',trophy:'TROPHY',on:'ON',off:'OFF',nextLevel:'NEXT LEVEL',replay:'REPLAY',home:'HOME',gameOver:'GAME OVER',outOfHearts:'You ran out of hearts',retry:'RETRY',continueBtn:'CONTINUE',adUnavailable:'Ad unavailable, try later',updateAvailable:'Update available',contrast:'Contrast',skins:'SKINS',equipped:'EQUIPPED',equip:'EQUIP',notEnough:'Not enough coins',removeAds:'Remove Ads',restorePurchases:'Restore Purchases',adsRemovedLabel:'Ads removed',adsRemovedMsg:'Ads removed — thank you!',iapUnavailable:'Purchase unavailable',zen:'ZEN',rush:'RUSH',score:'SCORE',best:'BEST',boards:'BOARDS',loginTitle:'Daily Reward',claim:'CLAIM',day:'Day',comeBack:'Come back tomorrow!',playStreak:'Play streak',boosters:'Boosters',shield:'Shield',zap:'Zap',reveal:'Reveal',tapAnyArrow:'Tap any arrow to remove it',shapeLevel:'Shape level',levelsAway:'levels away',nextShape:'NEXT SHAPE',timeBonus:'+5s',halfway:'Halfway there!',great:'Great!',amazing:'Amazing!',unstoppable:'Unstoppable!',locked:'Locked — find its key',winStreak:'Win streak',newMechanic:'NEW MECHANIC',lockTitle:'Lock & Key',lockBody:"An arrow with a lock can't fly until the arrow holding the key of the same colour is gone.",newBooster:'NEW BOOSTER',shieldBody:'Absorbs your next mistake — no heart lost.',revealBody:'Shows the next three safe moves.',zapBody:'Removes any arrow you tap, even a locked one.',gotIt:'GOT IT',takeGift:'TAKE +1 FREE',bombTitle:'Bomb',bombBody:'The number is how many moves you have to clear this arrow. Only remove what holds it — every extra move brings it closer to 0.',boom:'BOOM!',defused:'Defused!',bombWentOff:'The bomb went off',hardLevel:'HARD',},
-  ru:{title1:'STRAY',title2:'ARROWS',tagline:'головоломка',play:'ИГРАТЬ',levels:'УРОВНИ',daily:'ДЕНЬ',weekly:'НЕДЕЛЯ',stats:'СТАТЫ',achievements:'ДОСТИЖЕНИЯ',settings:'НАСТРОЙКИ',sound:'Звук',theme:'Тема',themeDark:'Тёмная',themeLight:'Светлая',language:'Язык',watchAd:'Смотреть рекламу',coins:'монет',resetProgress:'Сбросить прогресс',areYouSure:'Вы уверены?',yesReset:'ДА, СБРОСИТЬ',cancel:'ОТМЕНА',back:'НАЗАД',hint:'ПОДСКАЗКА',skip:'ПРОПУСК',level:'УРОВЕНЬ',stars:'ЗВЁЗДЫ',streak:'СЕРИЯ',trophy:'КУБОК',on:'ВКЛ',off:'ВЫКЛ',nextLevel:'СЛЕД. УРОВЕНЬ',replay:'ЗАНОВО',home:'ДОМОЙ',gameOver:'ИГРА ОКОНЧЕНА',outOfHearts:'Закончились жизни',retry:'ПОВТОР',continueBtn:'ПРОДОЛЖИТЬ',adUnavailable:'Реклама недоступна',updateAvailable:'Доступно обновление',contrast:'Контраст',skins:'СКИНЫ',equipped:'ВЫБРАН',equip:'ВЫБРАТЬ',notEnough:'Недостаточно монет',removeAds:'Убрать рекламу',restorePurchases:'Восстановить покупки',adsRemovedLabel:'Реклама убрана',adsRemovedMsg:'Реклама убрана — спасибо!',iapUnavailable:'Покупка недоступна',zen:'ДЗЕН',rush:'РЫВОК',score:'СЧЁТ',best:'РЕКОРД',boards:'ДОСКИ',loginTitle:'Ежедневная награда',claim:'ЗАБРАТЬ',day:'День',comeBack:'Возвращайся завтра!',playStreak:'Серия дней',boosters:'Бустеры',shield:'Щит',zap:'Удар',reveal:'Взгляд',tapAnyArrow:'Нажми любую стрелку',shapeLevel:'Фигурный уровень',levelsAway:'уровней до него',nextShape:'СЛЕД. ФИГУРА',timeBonus:'+5с',halfway:'Полпути!',great:'Отлично!',amazing:'Потрясающе!',unstoppable:'Неудержимо!',locked:'Заперто — найди ключ',winStreak:'Серия побед',newMechanic:'НОВАЯ МЕХАНИКА',lockTitle:'Замок и ключ',lockBody:'Стрела с замком не улетит, пока не уберёшь стрелу с ключом того же цвета.',newBooster:'НОВЫЙ БУСТЕР',shieldBody:'Спасает от следующей ошибки — сердце не теряется.',revealBody:'Показывает три следующих верных хода.',zapBody:'Убирает любую стрелу, на которую нажмёшь, даже запертую.',gotIt:'ПОНЯТНО',takeGift:'ЗАБРАТЬ +1',bombTitle:'Бомба',bombBody:'Число — сколько у тебя ходов, чтобы убрать эту стрелу. Убирай только то, что её держит: каждый лишний ход приближает ноль.',boom:'БАБАХ!',defused:'Обезврежено!',bombWentOff:'Бомба взорвалась',hardLevel:'СЛОЖНЫЙ',},
+  en:{title1:'STRAY',title2:'ARROWS',tagline:'puzzle game',play:'PLAY',levels:'LEVELS',daily:'DAILY',weekly:'WEEKLY',stats:'STATS',achievements:'ACHIEVEMENTS',settings:'SETTINGS',sound:'Sound',theme:'Theme',themeDark:'Dark',themeLight:'Light',language:'Language',watchAd:'Watch Ad',coins:'Coins',resetProgress:'Reset Progress',areYouSure:'Are you sure?',yesReset:'YES, RESET',cancel:'CANCEL',back:'BACK',hint:'HINT',skip:'SKIP',level:'LEVEL',stars:'STARS',streak:'STREAK',trophy:'TROPHY',on:'ON',off:'OFF',nextLevel:'NEXT LEVEL',replay:'REPLAY',home:'HOME',gameOver:'GAME OVER',outOfHearts:'You ran out of hearts',retry:'RETRY',continueBtn:'CONTINUE',adUnavailable:'Ad unavailable, try later',updateAvailable:'Update available',contrast:'Contrast',skins:'SKINS',equipped:'EQUIPPED',equip:'EQUIP',notEnough:'Not enough coins',removeAds:'Remove Ads',restorePurchases:'Restore Purchases',adsRemovedLabel:'Ads removed',adsRemovedMsg:'Ads removed — thank you!',iapUnavailable:'Purchase unavailable',zen:'ZEN',rush:'RUSH',score:'SCORE',best:'BEST',boards:'BOARDS',loginTitle:'Daily Reward',claim:'CLAIM',day:'Day',comeBack:'Come back tomorrow!',playStreak:'Play streak',boosters:'Boosters',shield:'Shield',zap:'Zap',reveal:'Reveal',tapAnyArrow:'Tap any arrow to remove it',shapeLevel:'Shape level',levelsAway:'levels away',nextShape:'NEXT SHAPE',timeBonus:'+5s',halfway:'Halfway there!',great:'Great!',amazing:'Amazing!',unstoppable:'Unstoppable!',locked:'Locked — find its key',winStreak:'Win streak',newMechanic:'NEW MECHANIC',lockTitle:'Lock & Key',lockBody:"An arrow with a lock can't fly until the arrow holding the key of the same colour is gone.",newBooster:'NEW BOOSTER',shieldBody:'Absorbs your next mistake — no heart lost.',revealBody:'Shows the next three safe moves.',zapBody:'Removes any arrow you tap, even a locked one.',gotIt:'GOT IT',takeGift:'TAKE +1 FREE',bombTitle:'Bomb',bombBody:'The number is how many moves you have to clear this arrow. Only remove what holds it — every extra move brings it closer to 0.',boom:'BOOM!',defused:'Defused!',bombWentOff:'The bomb went off',hardLevel:'HARD',levelWord:'Level',flawless:'Flawless!',cleared:'Cleared!',difficulty:'Difficulty',diffNormal:'Normal',diffHard:'Hard',time:'Time',mistakes:'Mistakes',claimedToday:'Already claimed today',backToMenu:'Back to menu',nextLevelBtn:'Next level',replayBtn:'Replay',homeBtn:'Home',tutTap:'Tap this arrow',tutWhy:'It has a clear path to the edge',achUnlocked:'ACHIEVEMENT UNLOCKED',prevPage:'PREV',nextPage:'NEXT',pageWord:'PAGE',unlockedWord:'unlocked',uHour:'h',uMin:'m',uSec:'s',uDays:'days',stCurLevel:'Current level',stLevelsDone:'Levels completed',stStars:'Total stars',stPerfect:'3-star clears',stShapes:'Shape levels',stZen:'Zen boards',stRushBest:'Rush best',stBoosters:'Boosters used',stPlayTime:'Play time',stFastest:'Fastest clear',stCoins:'Coins earned (total)',stDailies:'Daily challenges',stStreak:'Current streak',stNoHint:'Hint-free clears',stAch:'Achievements',secGeneral:'GENERAL',secShop:'SHOP',secPurchases:'PURCHASES',darkTheme:'Dark theme',skinsRow:'Arrow skins',},
+  ru:{title1:'STRAY',title2:'ARROWS',tagline:'головоломка',play:'ИГРАТЬ',levels:'УРОВНИ',daily:'ДЕНЬ',weekly:'НЕДЕЛЯ',stats:'СТАТЫ',achievements:'ДОСТИЖЕНИЯ',settings:'НАСТРОЙКИ',sound:'Звук',theme:'Тема',themeDark:'Тёмная',themeLight:'Светлая',language:'Язык',watchAd:'Смотреть рекламу',coins:'монет',resetProgress:'Сбросить прогресс',areYouSure:'Вы уверены?',yesReset:'ДА, СБРОСИТЬ',cancel:'ОТМЕНА',back:'НАЗАД',hint:'ПОДСКАЗКА',skip:'ПРОПУСК',level:'УРОВЕНЬ',stars:'ЗВЁЗДЫ',streak:'СЕРИЯ',trophy:'КУБОК',on:'ВКЛ',off:'ВЫКЛ',nextLevel:'СЛЕД. УРОВЕНЬ',replay:'ЗАНОВО',home:'ДОМОЙ',gameOver:'ИГРА ОКОНЧЕНА',outOfHearts:'Закончились жизни',retry:'ПОВТОР',continueBtn:'ПРОДОЛЖИТЬ',adUnavailable:'Реклама недоступна',updateAvailable:'Доступно обновление',contrast:'Контраст',skins:'СКИНЫ',equipped:'ВЫБРАН',equip:'ВЫБРАТЬ',notEnough:'Недостаточно монет',removeAds:'Убрать рекламу',restorePurchases:'Восстановить покупки',adsRemovedLabel:'Реклама убрана',adsRemovedMsg:'Реклама убрана — спасибо!',iapUnavailable:'Покупка недоступна',zen:'ДЗЕН',rush:'РЫВОК',score:'СЧЁТ',best:'РЕКОРД',boards:'ДОСКИ',loginTitle:'Ежедневная награда',claim:'ЗАБРАТЬ',day:'День',comeBack:'Возвращайся завтра!',playStreak:'Серия дней',boosters:'Бустеры',shield:'Щит',zap:'Удар',reveal:'Взгляд',tapAnyArrow:'Нажми любую стрелку',shapeLevel:'Фигурный уровень',levelsAway:'уровней до него',nextShape:'СЛЕД. ФИГУРА',timeBonus:'+5с',halfway:'Полпути!',great:'Отлично!',amazing:'Потрясающе!',unstoppable:'Неудержимо!',locked:'Заперто — найди ключ',winStreak:'Серия побед',newMechanic:'НОВАЯ МЕХАНИКА',lockTitle:'Замок и ключ',lockBody:'Стрела с замком не улетит, пока не уберёшь стрелу с ключом того же цвета.',newBooster:'НОВЫЙ БУСТЕР',shieldBody:'Спасает от следующей ошибки — сердце не теряется.',revealBody:'Показывает три следующих верных хода.',zapBody:'Убирает любую стрелу, на которую нажмёшь, даже запертую.',gotIt:'ПОНЯТНО',takeGift:'ЗАБРАТЬ +1',bombTitle:'Бомба',bombBody:'Число — сколько у тебя ходов, чтобы убрать эту стрелу. Убирай только то, что её держит: каждый лишний ход приближает ноль.',boom:'БАБАХ!',defused:'Обезврежено!',bombWentOff:'Бомба взорвалась',hardLevel:'СЛОЖНЫЙ',levelWord:'Уровень',flawless:'Безупречно!',cleared:'Пройдено!',difficulty:'Сложность',diffNormal:'Обычный',diffHard:'Сложный',time:'Время',mistakes:'Ошибки',claimedToday:'Награда за сегодня уже получена',backToMenu:'В меню',nextLevelBtn:'Следующий уровень',replayBtn:'Заново',homeBtn:'Домой',tutTap:'Нажми на эту стрелу',tutWhy:'Её путь к краю свободен',achUnlocked:'ДОСТИЖЕНИЕ ОТКРЫТО',prevPage:'НАЗАД',nextPage:'ДАЛЕЕ',pageWord:'СТР.',unlockedWord:'открыто',uHour:'ч',uMin:'м',uSec:'с',uDays:'дн.',stCurLevel:'Текущий уровень',stLevelsDone:'Пройдено уровней',stStars:'Всего звёзд',stPerfect:'На 3 звезды',stShapes:'Фигурных уровней',stZen:'Досок в дзене',stRushBest:'Рекорд рывка',stBoosters:'Бустеров использовано',stPlayTime:'Время в игре',stFastest:'Самый быстрый',stCoins:'Заработано монет',stDailies:'Ежедневных задач',stStreak:'Серия дней',stNoHint:'Без подсказок',stAch:'Достижения',secGeneral:'ОСНОВНЫЕ',secShop:'МАГАЗИН',secPurchases:'ПОКУПКИ',darkTheme:'Тёмная тема',skinsRow:'Скины стрел',},
 
 
   es:{title1:'STRAY',title2:'ARROWS',tagline:'juego de puzzle',play:'JUGAR',levels:'NIVELES',daily:'DIARIO',weekly:'SEMANAL',stats:'STATS',achievements:'LOGROS',settings:'AJUSTES',sound:'Sonido',theme:'Tema',themeDark:'Oscuro',themeLight:'Claro',language:'Idioma',watchAd:'Ver anuncio',coins:'monedas',resetProgress:'Reiniciar',areYouSure:'¿Estás seguro?',yesReset:'SÍ, REINICIAR',cancel:'CANCELAR',back:'ATRÁS',hint:'PISTA',skip:'SALTAR',level:'NIVEL',stars:'ESTR',streak:'RACHA',trophy:'COPA',on:'ON',off:'OFF',nextLevel:'SIGUIENTE',replay:'REPETIR',home:'INICIO',gameOver:'FIN',outOfHearts:'Sin vidas',retry:'REINTENTAR',continueBtn:'CONTINUAR',adUnavailable:'Anuncio no disponible',updateAvailable:'Actualización disponible',contrast:'Contraste',},
@@ -435,7 +426,16 @@ const STR={
 };
 let lang=localStorage.getItem('ae_lang')||(navigator.language||'en').slice(0,2);
 if(!STR[lang])lang='en';
-function t(k){return (STR[lang]&&STR[lang][k])||STR.en[k]||k}
+// v3 keys that replaced an older, already-translated one. A language that
+// has no v3 string falls back to its own old word ("SIGUIENTE"), not to
+// the English v3 one — es/de/fr/… players had these translated before.
+const T_ALIAS={nextLevelBtn:'nextLevel',replayBtn:'replay',homeBtn:'home',backToMenu:'home',
+  levelWord:'level',secGeneral:'settings',secShop:'coins',secPurchases:'removeAds',
+  darkTheme:'themeDark',skinsRow:'skins',stAch:'achievements',stStars:'stars',stStreak:'streak'};
+function t(k){
+  const L=STR[lang];
+  return (L&&L[k])||(L&&T_ALIAS[k]&&L[T_ALIAS[k]])||STR.en[k]||k;
+}
 let langPickerOpen=false; // controls the language-selection modal overlay
 
 // ── v2.0: Daily login rewards ──────────────────────────────────────
@@ -582,12 +582,8 @@ function loadSnd(name,src){
     else _pendingDecode.push({name,buf});
   }).catch(e=>_devWarn('loadSnd:'+name,e));
 }
-loadSnd('swoosh','sounds/whoosh-effect.mp3');
-// v2.0: UI taps are a soft piano C4 (Mini-Metro "note, not click" cue);
-// the win arpeggio replays it at 1/1.26/1.5 = C-E-G, zero extra assets.
-loadSnd('tap','sounds/piano-c4.wav');
-loadSnd('blocked','sounds/error.mp3');
-loadSnd('complete','sounds/new-level.mp3');
+// v3: tap, escape, blocked and win are synthesised (see _voice / sfx), so
+// only the remaining one-shot samples load.
 loadSnd('gameover','sounds/Game over.mp3');
 loadSnd('coin','sounds/coin reward.mp3');
 loadSnd('achievement','sounds/coin reward.mp3');
@@ -612,18 +608,48 @@ function playSnd(name,rate){
   else go();
 }
 
+// ── v3 synth voices ─────────────────────────────────────────────────
+// The game's core sounds are now synthesised (WebAudio), not samples:
+// tunable per event and free of the "stock asset" feel. Every voice runs
+// through masterGain, so the mute toggle and volume still apply.
+function _voice(freq,dur,type,vol,glideTo,delay){
+  if(!sndOn||!audioCtx||!masterGain)return;
+  const go=()=>{
+    try{
+      const t0=audioCtx.currentTime+(delay||0);
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.type=type;o.frequency.setValueAtTime(freq,t0);
+      if(glideTo)o.frequency.exponentialRampToValueAtTime(glideTo,t0+dur);
+      g.gain.setValueAtTime(0.0001,t0);
+      g.gain.exponentialRampToValueAtTime(vol,t0+.006);        // ~instant pluck attack
+      g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);     // natural decay
+      o.connect(g);g.connect(masterGain);
+      o.start(t0);o.stop(t0+dur+.02);
+    }catch(e){_devWarn('voice',e);}
+  };
+  if(audioCtx.state==='suspended')audioCtx.resume().then(go).catch(e=>_devWarn('audioCtx.resume(voice)',e));
+  else go();
+}
+// Major pentatonic from C5: any run of consecutive notes sounds musical,
+// so a combo of correct taps plays as a little rising melody.
+const _PENTA=[523.25,587.33,659.25,783.99,880,1046.5,1174.66,1318.51,1567.98,1760];
 const sfx={
-  // Longer arrows whoosh deeper — length rides the pitch (v2.0).
-  swoosh(dir,len){playSnd('swoosh',len?clp(1.22-len/40,.85,1.22):1)},
-  blocked(){playSnd('blocked')},
-  complete(){
-    playSnd('complete');
-    // C-E-G arpeggio on the piano note, 60ms apart
-    playSnd('tap',1);
-    setTimeout(()=>playSnd('tap',1.26),60);
-    setTimeout(()=>playSnd('tap',1.5),120);
+  // Correct removal: a plucked note — the combo counter walks it up the
+  // scale (resets with the combo), a soft octave-down body underneath.
+  swoosh(){
+    const n=_PENTA[min(max(0,_comboN-1),_PENTA.length-1)];
+    _voice(n,.32,'triangle',.22);
+    _voice(n/2,.20,'sine',.10);
   },
-  tap(){playSnd('tap')},
+  // Wrong tap: a muffled wooden "tok", falling — clear, never harsh.
+  blocked(){_voice(190,.16,'sine',.30,95);_voice(95,.12,'triangle',.10,70)},
+  complete(){
+    // C–E–G–C arpeggio, then a soft chord bloom
+    [523.25,659.25,783.99,1046.5].forEach((f,i)=>_voice(f,.5,'triangle',.18,null,i*.07));
+    _voice(261.63,.9,'sine',.10,null,.28);
+  },
+  tap(){_voice(880,.05,'sine',.12,660)},
+
   achievement(){playSnd('achievement')},
   gameover(){playSnd('gameover')},
   coin(){playSnd('coin')},
@@ -1430,6 +1456,38 @@ const ACHIEVEMENTS=[
   {id:'boost_15',name:'Toolbelt',desc:'Use 15 boosters',reward:50,
     check:c=>c.boostersUsed>=15},
 ];
+// Russian names/descriptions by id; other languages keep the English in
+// the table above (the same fallback t() uses for a missing key).
+const ACH_RU={
+  lvl_10:['Первые шаги','Дойди до 10 уровня'],
+  lvl_25:['Разминка','Дойди до 25 уровня'],
+  lvl_50:['Ветеран','Дойди до 50 уровня'],
+  lvl_100:['Центурион','Дойди до 100 уровня'],
+  lvl_200:['Легенда','Дойди до 200 уровня'],
+  stars_30:['Восходящая звезда','Собери 30 звёзд'],
+  stars_100:['Охотник за звёздами','Собери 100 звёзд'],
+  stars_250:['Созвездие','Собери 250 звёзд'],
+  stars_500:['Галактика','Собери 500 звёзд'],
+  perfect_10:['Безупречная десятка','Пройди 10 уровней на 3 звезды'],
+  perfect_50:['Перфекционист','Пройди 50 уровней на 3 звезды'],
+  daily_5:['Упорство','Выполни 5 ежедневных задач'],
+  daily_20:['Мастер дня','Выполни 20 ежедневных задач'],
+  streak_7:['Неделя подряд','Играй 7 дней подряд'],
+  streak_30:['Месяц подряд','Играй 30 дней подряд'],
+  no_hint_20:['Чистый навык','Пройди 20 уровней без подсказок'],
+  no_hint_100:['Без помощи','Пройди 100 уровней без подсказок'],
+  speedrun:['Молния','Пройди любой уровень быстрее 20 секунд'],
+  login_7:['Завсегдатай','Пройди 7-дневный цикл наград'],
+  login_30:['Преданность','Забери 30 ежедневных наград'],
+  zen_25:['Внутренний покой','Пройди 25 досок в дзене'],
+  rush_25:['Час пик','Набери 25 очков за один рывок'],
+  rush_50:['Сверхзвук','Набери 50 очков за один рывок'],
+  shape_10:['Вернисаж','Пройди 10 фигурных уровней'],
+  shape_40:['Куратор','Пройди 40 фигурных уровней'],
+  boost_15:['Набор инструментов','Используй 15 бустеров'],
+};
+function achName(a){return lang==='ru'&&ACH_RU[a.id]?ACH_RU[a.id][0]:a.name}
+function achDesc(a){return lang==='ru'&&ACH_RU[a.id]?ACH_RU[a.id][1]:a.desc}
 
 // Check all achievements against current state. Unlocks new ones, queues popups.
 function checkAchievements(ctx){
@@ -3776,7 +3834,7 @@ function _comboTick(){
   if(live){live.text=label;live.col=col;live.t=.2;}
   else floaters.push({x:W/2,y:H*.24,text:label,col,t:0,dur:1.4,combo:true});
 
-  playSnd('tap',clp(1+(_comboN-3)*.05,1,1.5));
+  // (the rising pitch is the pluck itself — sfx.swoosh walks the scale)
 }
 
 // Every successful removal ticks each live bomb down; a bomb at 0 ends the
@@ -4058,11 +4116,15 @@ function spawnConfetti(){
 const STAGE_PAD=0;
 function _stageC(){return max(STAGE_COLS,gridCols+STAGE_PAD*2)}
 function _stageR(){return max(STAGE_ROWS,gridRows+STAGE_PAD*2)}
-function getCellSize(){return min((W-32)/_stageC(),(H*.58)/_stageR())}
-function getStageX(){return(W-_stageC()*getCellSize())/2}
-function getStageY(){return H*.20}
-function getGridX(){return getStageX()+floor((_stageC()-gridCols)/2)*getCellSize()}
-function getGridY(){return getStageY()+floor((_stageR()-gridRows)/2)*getCellSize()}
+// v3 layout: the board owns the band from just under the two-row header to
+// near the bottom (the MOVES/TIME/coins strip is gone), and is centred in
+// it both ways — it used to hug the top of its stage and leave a dead gap
+// above the stats row.
+const BOARD_TOP=.19,BOARD_H=.72;
+function getCellSize(){return min((W-32)/_stageC(),(H*BOARD_H)/_stageR())}
+function getGridX(){return floor((W-gridCols*getCellSize())/2)}
+function getGridY(){return floor(H*BOARD_TOP+(H*BOARD_H-gridRows*getCellSize())/2)}
+
 
 // ================================================================
 //  DRAWING HELPERS
@@ -4162,10 +4224,12 @@ function drawArrowPolyline(pts,sz,col,alpha){
   // Per competitor reference screenshots (Arrow Jam Go, Arrows Escape):
   // arrows visually fill ~25-30% of cell width so adjacent snakes form
   // contiguous-looking maze walls. Bumped .14 → .28.
-  const thick=max(2.5,sz*.25);
-  // v2.0: bigger arrowhead (.40/.34 → .46/.38) — the tap target reads
-  // clearer and the head stops disappearing into dense weaves.
-  const headL=sz*.46,headW=sz*.38;
+  // v3: ink lines. A .25-cell stroke turned dense boards into a mass of
+  // brown; at .15 the gaps between snakes read as clearly as the snakes,
+  // so the eye can follow a single arrow through a weave. Heads stay big
+  // enough to tap and to read direction at a glance.
+  const thick=max(2.2,sz*.15);
+  const headL=sz*.40,headW=sz*.29;
 
   X.save();
   X.globalAlpha=alpha==null?1:alpha;
@@ -4194,7 +4258,7 @@ function drawArrowPolyline(pts,sz,col,alpha){
   // path is always built the same way (arcTo rounded corners → clean turns);
   // the style only changes how it's painted, so corners never break.
   const style=(typeof col==='function'&&col._style)||'solid';
-  const cornerR=sz*0.10;
+  const cornerR=sz*0.16;
   X.lineCap='round';
   X.lineJoin='round';
   const bodyPath=()=>{
@@ -4272,15 +4336,10 @@ function drawArrowPolyline(pts,sz,col,alpha){
     hp.lineTo(baseX+pxv*headW,baseY+pyv*headW);
     hp.lineTo(baseX-pxv*headW,baseY-pyv*headW);
     hp.closePath();
-    X.save();
-    X.globalAlpha=(alpha==null?1:alpha)*.35;
-    X.strokeStyle=TH.arrowShadow;
-    X.lineWidth=thick;
-    X.translate(1.5,1.5);
-    X.stroke(bp);
-    X.fillStyle=TH.arrowShadow;X.fill(hp);
-    X.restore();
+    // v3: flat — no offset shadow. On thin ink lines the shadow read as a
+    // blur, and it was a second stroke per arrow per frame.
     X.strokeStyle=paint;X.lineWidth=thick;X.stroke(bp);
+
     X.fillStyle=paint;X.fill(hp);
   }
 
@@ -4399,48 +4458,22 @@ function btnPressScale(x,y,w,h){
   return 1-dip*.05;
 }
 
-// Background with soft gradient + colored light blobs. Cached to an offscreen
-// canvas so we don't recreate 4 gradient objects per frame (was the main lag
-// source — gradient allocation on iOS WebKit is expensive).
+// Background, cached to an offscreen canvas so gradients aren't rebuilt per
+// frame (gradient allocation on iOS WebKit was a measured lag source).
 let _bgCache=null,_bgCacheDark=null;
-// Two background variants:
-//   • atmospheric — gradient + 3 colored blobs. Used on the MENU only,
-//     gives the title a hero feel.
-//   • plain — pure vertical gradient, no blobs. Used everywhere else
-//     (Settings, Play, Levels, Complete, GameOver). Without this, the
-//     blob glows pushed past card edges and made surfaces look "leaky"
-//     — user explicitly flagged this on Settings.
-let _bgCachePlain=null;
-function _renderBg(dark, withBlobs){
+function _renderBg(dark){
   const cv=document.createElement('canvas');
   cv.width=W;cv.height=H;
   const x=cv.getContext('2d');
   if(!x)return null;
+  // v3 paper: near-flat, a whisper of warmth top→bottom for depth. The
+  // Macaron peach/coral blobs are gone — they were most of the "pink" the
+  // palette was criticised for — and so is any glow: a light patch behind
+  // the title turned the corners grey.
   const bg=x.createLinearGradient(0,0,0,H);
-  // Sunset Macaron gradient stops — peach cream → warm sand for light;
-  // deep aubergine → richer aubergine for dark. Both stay warm-family
-  // (no cold blue anywhere) so the in-game atmosphere reads as cosy
-  // sunset rather than midnight cyber.
-  if(dark){bg.addColorStop(0,'#4a3a37');bg.addColorStop(1,'#3a2c2a');}
-  else{bg.addColorStop(0,'#fef4e6');bg.addColorStop(1,'#f0dec5');}
+  if(dark){bg.addColorStop(0,'#231d17');bg.addColorStop(1,'#1b1611');}
+  else{bg.addColorStop(0,'#f8f2e8');bg.addColorStop(1,'#f1e8da');}
   x.fillStyle=bg;x.fillRect(0,0,W,H);
-  if(withBlobs){
-    x.save();
-    x.globalAlpha=dark?.35:.22;
-    // Atmospheric blobs — all warm family. Coral, dusty amber, soft
-    // pink. Dropped the previous cold-blue '#5a7aaa' which clashed
-    // with the new Macaron palette.
-    const b1=x.createRadialGradient(W*.85,H*.12,0,W*.85,H*.12,W*.7);
-    b1.addColorStop(0, dark?'#e0a080':'#e8b896');b1.addColorStop(1,'rgba(0,0,0,0)');
-    x.fillStyle=b1;x.fillRect(0,0,W,H);
-    const b2=x.createRadialGradient(W*.1,H*.85,0,W*.1,H*.85,W*.8);
-    b2.addColorStop(0, dark?'#c47863':'#e8a890');b2.addColorStop(1,'rgba(0,0,0,0)');
-    x.fillStyle=b2;x.fillRect(0,0,W,H);
-    const b3=x.createRadialGradient(W*.7,H*.55,0,W*.7,H*.55,W*.55);
-    b3.addColorStop(0, dark?'#a66875':'#f0c8b8');b3.addColorStop(1,'rgba(0,0,0,0)');
-    x.fillStyle=b3;x.fillRect(0,0,W,H);
-    x.restore();
-  }
   return cv;
 }
 // v2.0 film grain (Puffies/ADA reference): a cached 128×128 noise tile
@@ -4469,16 +4502,17 @@ function _grain(){
   X.restore();
 }
 
-function drawBg(plain){
+// `plain` used to pick a variant without the Macaron blobs; v3 has one
+// background for every screen, so it is accepted and ignored by callers'
+// convenience (drawBg(true) on play/complete, drawBg() on menus).
+function drawBg(){
   if(_bgCacheDirty||_bgCacheDark!==darkMode){
-    _bgCache=_renderBg(darkMode,true);
-    _bgCachePlain=_renderBg(darkMode,false);
+    _bgCache=_renderBg(darkMode);
     _bgCacheDark=darkMode;
     _bgCacheDirty=false;
   }
-  const cache=plain?_bgCachePlain:_bgCache;
-  if(cache){X.drawImage(cache,0,0,W,H);}
-  else{X.fillStyle=darkMode?'#3a2c2a':'#f9e9d8';X.fillRect(0,0,W,H);}
+  if(_bgCache){X.drawImage(_bgCache,0,0,W,H);}
+  else{X.fillStyle=TH.bg;X.fillRect(0,0,W,H);}
 }
 
 // True when a modal/overlay is on top — buttons under must NOT consume the
@@ -4492,53 +4526,69 @@ function _inputBlocked(){return langPickerOpen||loginRewardOpen||(!!_introCard&&
 // hairline neutral border, and the accent colour only appears as the
 // label text on coloured-button variants. Reads as iOS "filled" or
 // "tinted" button instead of a contrasty rectangle.
-function _drawPillBtn(label,x,y,w,h,color,fontFrac){
+// v3 buttons — game buttons, not web-form pills. A solid face over a darker
+// "lip" a few px below it; pressing sinks the face onto the lip, so a tap
+// feels like pressing something physical. PRIMARY (drawBigBtn): solid
+// accent face, white heavy label. SECONDARY (drawBtn): paper face, label
+// in the given colour (or ink). The old translucent fill + hairline border
+// read as a settings form — "кнопки мне не нравятся".
+function _shade(hex,k){ // darken a #rrggbb by factor k (0..1)
+  const n=parseInt(hex.slice(1),16);
+  const r=floor(((n>>16)&255)*k),g=floor(((n>>8)&255)*k),b=floor((n&255)*k);
+  return '#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1);
+}
+// `tail` (optional) puts a price on the right end of the face, sinking with
+// it: {coin:n} = coin + amount, {ad:1} = a "watch a video" glyph. The label
+// shifts left to make room instead of a coin painted over its last letters.
+function _drawPillBtn(label,x,y,w,h,color,fontFrac,primary,tail){
   const blocked=_inputBlocked();
   const hv=!blocked&&abs(mx-x)<w/2&&abs(my-y)<h/2;
-  const sc=btnPressScale(x,y,w,h);
-  const dw=w*sc,dh=h*sc;
-  const r=dh/2;
+  const pressed=btnPressScale(x,y,w,h)<.999;
+  const lip=max(3,floor(h*.09));
+  const r=min(16,h*.38);
+  const face=primary?(color||TH.accent):(hv?TH.btnHover:TH.btnBg);
+  const faceIsHex=typeof face==='string'&&face[0]==='#'&&face.length===7;
+  const lipCol=faceIsHex?_shade(face,primary?.78:.9):TH.border;
+  const top=y-h/2-lip/2;                       // face top when resting
+  const sink=pressed?lip*.7:0;
+  X.fillStyle=lipCol;
+  X.beginPath();X.roundRect(x-w/2,top+lip,w,h,r);X.fill();
+  X.fillStyle=face;
+  X.beginPath();X.roundRect(x-w/2,top+sink,w,h,r);X.fill();
+  if(primary&&hv&&!pressed){                   // hover: a faint lift highlight
+    X.fillStyle='rgba(255,255,255,.08)';
+    X.beginPath();X.roundRect(x-w/2,top,w,h,r);X.fill();
+  }
   const c=color||TH.accent;
-  // Solid neutral fill — same on every button, regardless of `color`.
-  X.fillStyle=hv?TH.btnHover:TH.btnBg;
-  X.beginPath();X.roundRect(x-dw/2,y-dh/2,dw,dh,r);X.fill();
-  // Hairline neutral border for definition. No coloured stroke.
-  X.strokeStyle=TH.border;X.lineWidth=1;
-  X.beginPath();X.roundRect(x-dw/2,y-dh/2,dw,dh,r);X.stroke();
-  // Tap ripple — subtle expanding ring from the click point during the
-  // first 280 ms after a tap. Uses lastClick (set in the touch/mouse
-  // handlers). Cost is one stroked ellipse per pressed button per
-  // frame; only paints during the brief animation window.
-  if(lastClick&&!reducedMotion){
-    const dt2=gt-lastClick.t;
-    if(dt2<.28&&abs(lastClick.x-x)<w/2&&abs(lastClick.y-y)<h/2){
-      const p=dt2/.28;
-      X.save();
-      X.beginPath();X.roundRect(x-dw/2,y-dh/2,dw,dh,r);X.clip();
-      X.strokeStyle=c;
-      X.globalAlpha=(1-p)*.55;
-      X.lineWidth=2;
-      X.beginPath();
-      X.arc(lastClick.x,lastClick.y,p*max(w,h)*.9,0,TAU);
-      X.stroke();
-      X.restore();
+  const labelCol=primary?'#ffffff':((c===TH.accent)?TH.text:c);
+  const cy=top+sink+h/2;
+  let lx=x;
+  if(tail){
+    const tx=x+w/2-h*.42;                      // right anchor of the tail
+    if(tail.coin!=null){
+      const n=tail.coin+'',fs=floor(h*.34);
+      X.font='800 '+fs+'px Nunito,sans-serif';
+      const tw=X.measureText(n).width;
+      drawCoin(tx-tw-h*.2,cy,h*.15);
+      txt(n,tx,cy,fs,labelCol,'right','800');
+      lx=x-(tw+h*.42)/2;
+    }else if(tail.ad){
+      const s=h*.2;                            // rounded screen + play mark
+      X.strokeStyle=labelCol;X.lineWidth=max(1.5,h*.045);
+      X.beginPath();X.roundRect(tx-s*2.4,cy-s*.8,s*2.4,s*1.6,s*.35);X.stroke();
+      drawPlayIcon(tx-s*1.15,cy,s*.75,labelCol);
+      lx=x-s*1.4;
     }
   }
-  // Label takes the button colour. Default colour (TH.accent) renders
-  // as the text token on neutral buttons, so PLAY/etc. stay readable.
-  const labelCol = (c === TH.accent) ? TH.text : c;
-  // v2.0.1: no per-button letterSpacing — toggling the ctx property twice
-  // per button per frame forced font re-shaping ~40×/frame. Tracking is
-  // reserved for display text (txtD), where it's actually visible.
-  txt(label,x,y,floor(h*fontFrac),labelCol);
+  txt(label,lx,cy,floor(h*fontFrac),labelCol,'center',primary?'800':'700');
   if(!blocked&&tapped&&abs(tapX-x)<w/2&&abs(tapY-y)<h/2){sfx.tap();tapped=false;return true}
   return false;
 }
-function drawBtn(label,x,y,w,h,color){
-  return _drawPillBtn(label,x,y,w,h,color,0.38);
+function drawBtn(label,x,y,w,h,color,tail){
+  return _drawPillBtn(label,x,y,w,h,color,0.38,false,tail);
 }
 function drawBigBtn(label,x,y,w,h,color){
-  const r=_drawPillBtn(label,x,y,w,h,color,0.40);
+  const r=_drawPillBtn(label,x,y,w,h,color,0.40,true);
   if(r)haptic(5);
   return r;
 }
@@ -4744,6 +4794,39 @@ function drawLightbulb(x, y, sz, col){
 // ================================================================
 
 // --- MENU ---
+// v3 menu icons — one stroke family (2px-at-24, round caps) so the mode
+// tiles and bottom bar read as one set. `s` ≈ icon height.
+function _menuIcon(kind,x,y,s,col){
+  const k=s/24;
+  X.save();X.translate(x,y);X.scale(k,k);
+  X.strokeStyle=col;X.fillStyle=col;X.lineWidth=2.2;X.lineCap='round';X.lineJoin='round';
+  X.beginPath();
+  if(kind==='calendar'){
+    X.roundRect(-10,-8,20,18,3);X.moveTo(-10,-2);X.lineTo(10,-2);
+    X.moveTo(-5,-11);X.lineTo(-5,-6);X.moveTo(5,-11);X.lineTo(5,-6);X.stroke();
+    X.beginPath();X.arc(0,4,2.2,0,TAU);X.fill();
+  }else if(kind==='trophy'){
+    X.moveTo(-7,-10);X.lineTo(7,-10);X.lineTo(6,0);X.quadraticCurveTo(0,6,-6,0);X.closePath();
+    X.moveTo(-7,-7);X.quadraticCurveTo(-12,-6,-9,-1);X.moveTo(7,-7);X.quadraticCurveTo(12,-6,9,-1);
+    X.moveTo(0,3);X.lineTo(0,8);X.moveTo(-5,10);X.lineTo(5,10);X.stroke();
+  }else if(kind==='leaf'){
+    X.moveTo(-9,9);X.quadraticCurveTo(-10,-9,10,-10);X.quadraticCurveTo(9,8,-9,9);X.closePath();
+    X.moveTo(-9,9);X.lineTo(4,-4);X.stroke();
+  }else if(kind==='clock'){
+    X.arc(0,2,9,0,TAU);X.moveTo(0,2);X.lineTo(0,-3);X.moveTo(0,2);X.lineTo(4,4);
+    X.moveTo(-3,-10);X.lineTo(3,-10);X.moveTo(0,-10);X.lineTo(0,-7);X.stroke();
+  }else if(kind==='grid'){
+    for(const[ox,oy] of [[-9,-9],[1,-9],[-9,1],[1,1]])X.roundRect(ox,oy,8,8,2);
+    X.stroke();
+  }else if(kind==='bars'){
+    X.moveTo(-8,10);X.lineTo(-8,1);X.moveTo(0,10);X.lineTo(0,-8);X.moveTo(8,10);X.lineTo(8,-3);X.stroke();
+  }else if(kind==='medal'){
+    X.moveTo(-5,-11);X.lineTo(-1,-3);X.moveTo(5,-11);X.lineTo(1,-3);X.stroke();
+    X.beginPath();X.arc(0,3,7,0,TAU);X.stroke();
+    X.beginPath();X.arc(0,3,2.5,0,TAU);X.fill();
+  }
+  X.restore();
+}
 function drawMenu(){
   drawBg();
 
@@ -4774,9 +4857,12 @@ function drawMenu(){
     X.globalAlpha=1;
     // Reset when lifecycle ends or goes off screen
     if(a.life>=1||a.x<-60||a.x>W+60||a.y<-60||a.y>H+60){
+      // Same ranges as the spawn above — this used to respawn them at the
+      // pre-v2 brightness and speed, undoing the "barely there" pass after
+      // one cycle.
       a.x=rnd(40,W-40);a.y=rnd(40,H-40);
-      a.dir=rndI(0,3);a.sz=rnd(25,55);a.spd=rnd(12,35);
-      a.life=0;a.dur=rnd(4,8);a.alpha=rnd(.08,.18);
+      a.dir=rndI(0,3);a.sz=rnd(28,52);a.spd=rnd(6,18);
+      a.life=0;a.dur=rnd(8,14);a.alpha=rnd(.03,.07);
     }
   }
   } // end !reducedMotion bg arrows
@@ -4802,21 +4888,8 @@ function drawMenu(){
   }
   txt(t('tagline'),W/2,H*.265,12,TH.textSec);
 
-  // Stats panel
-  const spY=H*.33,spW=300,spH=66;
-  X.fillStyle=TH.cardBg;
-  X.beginPath();X.roundRect(W/2-spW/2,spY-spH/2,spW,spH,14);X.fill();
-  X.strokeStyle=TH.border;X.lineWidth=1;
-  X.beginPath();X.roundRect(W/2-spW/2,spY-spH/2,spW,spH,14);X.stroke();
-  const col1=W/2-spW/2+spW*.125,col2=W/2-spW/2+spW*.375,col3=W/2-spW/2+spW*.625,col4=W/2-spW/2+spW*.875;
-  txtP(t('level'),col1,spY-13,8,TH.textSec);
-  txtP(maxLevel+'',col1,spY+9,17,TH.text);
-  txtP(t('stars'),col2,spY-13,8,TH.textSec);
-  txtP(totalStars+'',col2,spY+9,17,TH.star);
-  txtP(t('streak'),col3,spY-13,8,TH.textSec);
-  txtP(streakDays+'d',col3,spY+9,17,TH.warning);
-  txtP(t('trophy'),col4,spY-13,8,TH.textSec);
-  txtP(achUnlockedCount()+'/'+ACHIEVEMENTS.length,col4,spY+9,13,TH.accent);
+  // v3: the four-figure stats panel is gone from the menu — level lives on
+  // the PLAY button, the rest on the Stats screen.
 
   // v2.0 showcase card: teases the NEXT shape milestone as a dotted
   // silhouette (no name — the mystery IS the pull). Tap → level select
@@ -4837,12 +4910,12 @@ function drawMenu(){
     const nextL=_showcaseNextL;
     const hcL=nextL?window.HANDCRAFTED_LEVELS[nextL]:null;
     if(hcL&&hcL.t){
-      const scY=H*.455,scW=300,scH=84;
+      const scY=H*.355,scW=W-56,scH=84;
       const hv=abs(mx-W/2)<scW/2&&abs(my-scY)<scH/2;
-      X.fillStyle=hv?TH.btnHover:TH.btnBg;
-      X.beginPath();X.roundRect(W/2-scW/2,scY-scH/2,scW,scH,14);X.fill();
-      X.strokeStyle=TH.border;X.lineWidth=1;
-      X.beginPath();X.roundRect(W/2-scW/2,scY-scH/2,scW,scH,14);X.stroke();
+      X.fillStyle=darkMode?'rgba(0,0,0,.30)':'rgba(61,43,31,.08)';
+      X.beginPath();X.roundRect(W/2-scW/2,scY-scH/2+4,scW,scH,18);X.fill();
+      X.fillStyle=hv?TH.btnHover:TH.surface;
+      X.beginPath();X.roundRect(W/2-scW/2,scY-scH/2,scW,scH,18);X.fill();
       // Silhouette thumb (cached): arrow cells of the level as dots.
       // Cache key includes the theme so a dark/light toggle re-tints.
       const _sck=nextL+(darkMode?'d':'l');
@@ -4870,7 +4943,7 @@ function drawMenu(){
       X.drawImage(_showcaseCache,W/2-scW/2+14,scY-28,76,56);
       // Copy
       txtP(t('nextShape'),W/2+22,scY-16,9,TH.textSec);
-      txtP('LEVEL '+nextL,W/2+22,scY+2,16,TH.text);
+      txtP(t('levelWord')+' '+nextL,W/2+22,scY+2,16,TH.text);
       const away=nextL-maxLevel;
       txt(away>0?(away+' '+t('levelsAway')):'▶',W/2+22,scY+22,10,TH.accent);
       if(!_inputBlocked()&&tapped&&abs(tapX-W/2)<scW/2&&abs(tapY-scY)<scH/2){
@@ -4880,72 +4953,81 @@ function drawMenu(){
     }
   }
 
-  // PLAY hero button — bigger than the secondary grid below, gold-tinted
-  // fill (only place the accent colour appears as a SURFACE in the app),
-  // with the play-triangle glyph and a subtle breathing pulse so it
-  // visually invites the tap. Other buttons stay neutral; this is the
-  // first thing the player sees and the primary action.
+  // ── v3 PLAY hero: the one big primary button, carrying the level number
+  // so the menu needs no separate stats panel. Lipped like every v3 button,
+  // with a slow breathing scale (skipped under reduced motion).
   {
-    const bx=W/2, by=H*.58, bw=240, bh=64;
+    const bx=W/2,by=H*.49,bw=W-72,bh=84,lip=6;
     const blocked=_inputBlocked();
     const hv=!blocked&&abs(mx-bx)<bw/2&&abs(my-by)<bh/2;
-    const sc=btnPressScale(bx,by,bw,bh);
-    const dw=bw*sc, dh=bh*sc;
-    const r=dh/2;
-    // Soft breathing tint — alpha drifts 0.92↔1.0 every 2.4 s. Skipped
-    // when reducedMotion is on.
-    const pulse = reducedMotion ? 1 : (.96 + .04 * sin(gt * 2.6));
-    X.save();
-    X.globalAlpha = pulse;
-    // Gold-tinted fill that survives in dark mode (raised alpha so it
-    // reads as "primary action" instead of muddy chocolate).
-    X.fillStyle = hv ? TH.accent + 'E5' : TH.accent + 'CC';
-    X.beginPath(); X.roundRect(bx-dw/2, by-dh/2, dw, dh, r); X.fill();
-    // Hairline darker rim for definition
-    X.strokeStyle = darkMode ? 'rgba(0,0,0,.30)' : 'rgba(0,0,0,.22)';
-    X.lineWidth = 1.5;
-    X.beginPath(); X.roundRect(bx-dw/2, by-dh/2, dw, dh, r); X.stroke();
-    // Label — high-contrast text reads against the gold fill in both themes
-    const labelCol = darkMode ? '#1a1a1a' : '#1a1a1a';
-    txtP(t('play'), bx - 14, by, 26, labelCol);
-    // Play-triangle glyph just to the right of the label
-    drawPlayIcon(bx + bw*.30, by, 12, labelCol);
+    const pressed=btnPressScale(bx,by,bw,bh)<.999;
+    const breathe=reducedMotion?1:1+.012*sin(gt*2.4);
+    X.save();X.translate(bx,by);X.scale(breathe,breathe);X.translate(-bx,-by);
+    const top=by-bh/2-lip/2,sink=pressed?lip*.7:0;
+    X.fillStyle=_shade(TH.accent,.78);
+    X.beginPath();X.roundRect(bx-bw/2,top+lip,bw,bh,24);X.fill();
+    X.fillStyle=TH.accent;
+    X.beginPath();X.roundRect(bx-bw/2,top+sink,bw,bh,24);X.fill();
+    if(hv&&!pressed){X.fillStyle='rgba(255,255,255,.08)';X.beginPath();X.roundRect(bx-bw/2,top,bw,bh,24);X.fill();}
+    const cy=top+sink+bh/2;
+    txt(t('play'),bx-10,cy-10,28,'#ffffff','center','900');
+    drawPlayIcon(bx+bw*.30,cy-10,13,'#ffffff');
+    txt(t('levelWord')+' '+maxLevel+(isHardLevel(maxLevel)?' · '+t('diffHard'):''),bx,cy+20,13,'rgba(255,255,255,.85)','center','700');
     X.restore();
-    if (!blocked && tapped && abs(tapX-bx)<bw/2 && abs(tapY-by)<bh/2) {
-      sfx.tap(); haptic(8); tapped = false;
+    if(!blocked&&tapped&&abs(tapX-bx)<bw/2&&abs(tapY-by)<bh/2){
+      sfx.tap();haptic(8);tapped=false;
       goto('play',()=>{isDaily=false;isWeekly=false;level=maxLevel;generateLevel(level)});
     }
   }
 
-  // 3×2 grid of secondary buttons + achievements row (v2.0: +ZEN +RUSH).
-  // Height/gaps trimmed vs the old 2×2 so three rows + achievements still
-  // clear the bottom safe area.
-  const bW=138,bH=38,bGapX=16,bGapY=10;
-  const gX=W/2,gY1=H*.675,gY2=gY1+bH+bGapY,gY3=gY2+bH+bGapY;
-  // Row 1
-  if(drawBtn(t('levels'),gX-bW/2-bGapX/2,gY1,bW,bH)){
-    goto('levels',()=>{levelsPage=floor((level-1)/25)});
+  // ── Mode tiles: four square, iconed, in one row. The 3×2 grid of
+  // identical text pills read as a form; tiles with a picture read as
+  // places to go. A done daily/weekly gets a check badge.
+  {
+    const modes=[
+      {k:'daily',icon:'calendar',col:TH.accent,done:isDailyDone(),go:()=>goto('play',startDailyBoard)},
+      {k:'weekly',icon:'trophy',col:TH.warning,done:isWeeklyDone(),go:()=>goto('play',startWeeklyBoard)},
+      {k:'zen',icon:'leaf',col:TH.success,done:false,go:()=>goto('play',startZen)},
+      {k:'rush',icon:'clock',col:HARD_COLOR,done:false,go:()=>goto('play',startRush)},
+    ];
+    const gap=10,tw=(W-48-gap*3)/4,th=tw,ty=H*.635,lip=4;
+    const blocked=_inputBlocked();
+    for(let i=0;i<4;i++){
+      const m=modes[i],x=24+tw/2+i*(tw+gap);
+      const hv=!blocked&&abs(mx-x)<tw/2&&abs(my-ty)<th/2;
+      const pressed=btnPressScale(x,ty,tw,th)<.999;
+      const top=ty-th/2-lip/2,sink=pressed?lip*.7:0;
+      X.fillStyle=_shade(TH.btnBg,.9);
+      X.beginPath();X.roundRect(x-tw/2,top+lip,tw,th,16);X.fill();
+      X.fillStyle=hv?TH.btnHover:TH.btnBg;
+      X.beginPath();X.roundRect(x-tw/2,top+sink,tw,th,16);X.fill();
+      _menuIcon(m.icon,x,top+sink+th*.40,th*.32,m.col);
+      txt(t(m.k),x,top+sink+th*.78,11,TH.text,'center','800');
+      if(m.done){
+        X.fillStyle=TH.success;X.beginPath();X.arc(x+tw/2-12,top+sink+12,7,0,TAU);X.fill();
+        X.strokeStyle='#fff';X.lineWidth=1.8;X.lineCap='round';X.lineJoin='round';
+        X.beginPath();X.moveTo(x+tw/2-15,top+sink+12);X.lineTo(x+tw/2-12.5,top+sink+14.5);X.lineTo(x+tw/2-8.5,top+sink+9.5);X.stroke();
+      }
+      if(!blocked&&tapped&&abs(tapX-x)<tw/2&&abs(tapY-ty)<th/2){sfx.tap();tapped=false;m.go();}
+    }
   }
-  const dailyDone=isDailyDone();
-  if(drawBtn(dailyDone?t('daily')+' ★':t('daily'),gX+bW/2+bGapX/2,gY1,bW,bH)){
-    goto('play',startDailyBoard);
-  }
-  // Row 2
-  const weeklyDone=isWeeklyDone();
-  if(drawBtn(weeklyDone?t('weekly')+' ★':t('weekly'),gX-bW/2-bGapX/2,gY2,bW,bH,TH.warning)){
-    goto('play',startWeeklyBoard);
-  }
-  if(drawBtn(t('zen'),gX+bW/2+bGapX/2,gY2,bW,bH,TH.success)){
-    goto('play',startZen);
-  }
-  // Row 3
-  if(drawBtn(t('rush'),gX-bW/2-bGapX/2,gY3,bW,bH,TH.accent)){
-    goto('play',startRush);
-  }
-  if(drawBtn(t('stats'),gX+bW/2+bGapX/2,gY3,bW,bH)){goto('stats')}
-  // Wide achievements button
-  if(drawBtn(t('achievements')+' ('+achUnlockedCount()+'/'+ACHIEVEMENTS.length+')',W/2,gY3+bH+bGapY+6,bW*2+bGapX,bH)){
-    goto('achievements',()=>{achPage=0});
+
+  // ── Bottom bar: levels · stats · achievements as icons with captions.
+  {
+    const items=[
+      {k:'levels',icon:'grid',go:()=>goto('levels',()=>{levelsPage=floor((level-1)/25)})},
+      {k:'stats',icon:'bars',go:()=>goto('stats')},
+      {k:'achievements',icon:'medal',go:()=>goto('achievements',()=>{achPage=0}),badge:achUnlockedCount()+'/'+ACHIEVEMENTS.length},
+    ];
+    const by=H*.80,slot=(W-48)/3;
+    const blocked=_inputBlocked();
+    for(let i=0;i<3;i++){
+      const it=items[i],x=24+slot/2+i*slot;
+      const hv=!blocked&&abs(mx-x)<slot/2&&abs(my-by)<28;
+      _menuIcon(it.icon,x,by-8,22,hv?TH.text:TH.textSec);
+      txt(t(it.k)+(it.badge?' '+it.badge:''),x,by+20,10,hv?TH.text:TH.textSec,'center','700');
+      if(!blocked&&tapped&&abs(tapX-x)<slot/2&&abs(tapY-by)<30){sfx.tap();tapped=false;it.go();}
+    }
   }
 
   // Settings gear top-right — y is safe-area-aware so it adapts to any
@@ -5045,29 +5127,33 @@ function drawPlay(){
   // Floor at 65 so non-notched devices still get reasonable padding.
   const TOP_Y=Math.max(65,safeTop+25);
 
-  // Pause/menu button (top-left). Same 44×36 pill but icon is now
-  // canvas-drawn so it stays consistent across iOS / Android font
-  // fallback differences (the previous unicode "≡" rendered at
-  // different weights on different Androids).
-  const phv=abs(mx-32)<24&&abs(my-TOP_Y)<24;
-  X.fillStyle=phv?TH.btnHover:TH.btnBg;
-  X.beginPath();X.roundRect(32-22,TOP_Y-18,44,36,18);X.fill();
-  X.strokeStyle=TH.border;X.lineWidth=1;
-  X.beginPath();X.roundRect(32-22,TOP_Y-18,44,36,18);X.stroke();
-  drawHamburger(32,TOP_Y,9,phv?TH.text:TH.textSec);
-  if(tapped&&abs(tapX-32)<24&&abs(tapY-TOP_Y)<24){sfx.tap();tapped=false;goto('menu',()=>{isDaily=false;isWeekly=false});return}
+  // ── v3 header ────────────────────────────────────────────────────
+  // Row 1: back · "Level N" · hint.  A hairline.  Row 2: lives · boosters.
+  // Replaces the pill menu button, the star preview under the title and
+  // the MOVES/TIME/coins strip at the bottom — three things competing with
+  // the board for attention that the player never needed mid-solve.
+  const ROW2=TOP_Y+48;
 
-  // Title row branches by mode: classic shows LEVEL + star preview +
-  // hearts; zen shows a calm badge + lifetime boards; rush shows the
-  // countdown + live score (no hearts in either mode).
+  // Back — a bare chevron with a full 44px hit area; no pill around it.
+  {
+    const hv=abs(mx-26)<22&&abs(my-TOP_Y)<22;
+    X.save();
+    X.strokeStyle=hv?TH.text:TH.textSec;X.lineWidth=2.6;X.lineCap='round';X.lineJoin='round';
+    X.beginPath();X.moveTo(31,TOP_Y-9);X.lineTo(22,TOP_Y);X.lineTo(31,TOP_Y+9);X.stroke();
+    X.restore();
+    if(tapped&&abs(tapX-26)<22&&abs(tapY-TOP_Y)<22){sfx.tap();tapped=false;goto('menu',()=>{isDaily=false;isWeekly=false});return}
+  }
+
+  // Title row branches by mode: classic shows the level (+ HARD label),
+  // zen a calm badge + lifetime boards, rush the countdown + live score.
   if(gameMode==='zen'){
-    txtP(t('zen'),W/2,TOP_Y,20,TH.success);
-    txt(t('boards')+': '+zenTotal,W/2,TOP_Y+22,11,TH.textSec);
+    txtP(t('zen'),W/2,TOP_Y,19,TH.success);
+    txt(t('boards')+': '+zenTotal,W/2,TOP_Y+18,11,TH.textSec);
   }else if(gameMode==='rush'){
     const rem=max(0,rushEndAt-gt);
     const warn=rem<10;
-    txtD(floor(rem)+'s',W/2,TOP_Y,26,warn?TH.warning:TH.text);
-    txt(t('score')+': '+rushScore,W/2,TOP_Y+22,11,TH.textSec);
+    txtD(floor(rem)+'s',W/2,TOP_Y,24,warn?TH.arrowBlock:TH.text);
+    txt(t('score')+': '+rushScore,W/2,TOP_Y+18,11,TH.textSec);
     // Tick haptic each second under 10s — urgency you can feel.
     if(warn&&floor(rem)!==_lastRushTick){_lastRushTick=floor(rem);if(rem>0)haptic(5);}
     // Expiry → results screen. Guarded so the transition fires once.
@@ -5086,57 +5172,41 @@ function drawPlay(){
       },400);
     }
   }else{
-    // Level title — bigger weight + slight letter-spacing for "Level N"
-    // pill feel. Stars below preview the current run's star outcome.
-    txtD('LEVEL '+level,W/2,TOP_Y,20,currentHard?HARD_COLOR:TH.text);
+    const title=isDaily?t('daily'):isWeekly?t('weekly'):t('levelWord')+' '+level;
+    txtD(title,W/2,TOP_Y,19,currentHard?HARD_COLOR:TH.accent);
     // Hard levels say so, the way the genre does — the label turns a
     // difficulty spike from "this game got unfair" into "this one is the boss".
-    if(currentHard)txt(t('hardLevel'),W/2,TOP_Y+17,10,HARD_COLOR,'center','800');
-    const starY=TOP_Y+(currentHard?33:24),starR=currentHard?8:9;
-    for(let i=0;i<3;i++){
-      drawStar(W/2-26+i*26,starY,starR,moves<=minMoves+i*1&&i<(moves<=minMoves?3:moves<=minMoves+2?2:1));
-    }
-    // Hearts = lives (top-right, vertically centered with menu button)
-    for(let i=0;i<3;i++){
-      drawHeart(W-26-i*24,TOP_Y,14,i<undosLeft,false);
-    }
+    if(currentHard)txt(t('hardLevel'),W/2,TOP_Y+18,10,HARD_COLOR,'center','800');
   }
 
-  // Hint glyph — same visual weight as a heart (no pill, no border),
-  // sitting on the row beneath the hearts. Reads as part of the same
-  // icon family rather than a competing button. Tap area is invisible
-  // but the same 44×32 rect for finger comfort. Disabled state just
-  // dims to textDim. Hidden in rush — buying hints against a ticking
-  // clock reads as a coin trap, not help.
+  // Hint — bulb at the right of row 1, price underneath. Hidden in rush:
+  // buying hints against a ticking clock reads as a coin trap, not help.
   if(gameMode!=='rush'){
-    const hbX = W - 50, hbY = TOP_Y + 30;
-    const canHint = coins >= HINT_COST && hintTime <= 0;
-    const hv = abs(mx - hbX) < 36 && abs(my - hbY) < 18;
-    const sc = btnPressScale(hbX, hbY, 60, 32);
-    X.save();
-    X.translate(hbX, hbY);
-    X.scale(sc, sc);
-    X.translate(-hbX, -hbY);
-    const col = canHint ? (hv ? TH.text : TH.star) : TH.textDim;
-    drawLightbulb(hbX - 22, hbY, 14, col);
-    drawCoin(hbX - 2, hbY, 6);
-    txtP(HINT_COST + '', hbX + 8, hbY, 12, canHint ? TH.star : TH.textDim, 'left');
-    X.restore();
-    if (tapped && abs(tapX - hbX) < 36 && abs(tapY - hbY) < 18) {
-      if (canHint) useHint();
-      tapped = false;
+    const hbX=W-28,hbY=TOP_Y;
+    const canHint=coins>=HINT_COST&&hintTime<=0;
+    const hv=abs(mx-hbX)<22&&abs(my-hbY)<22;
+    drawLightbulb(hbX,hbY-2,13,canHint?(hv?TH.text:TH.accent):TH.textDim);
+    txt(HINT_COST+'',hbX,hbY+17,9,canHint?TH.textSec:TH.textDim,'center','700');
+    if(tapped&&abs(tapX-hbX)<22&&abs(tapY-hbY)<22){
+      if(canHint)useHint();
+      tapped=false;
     }
   }
 
-  // ── v2.0 boosters — bolt chip on the LEFT edge (mirror of the hint),
-  // expanding into a horizontal flyout of 4 chips. Hidden during the
-  // tutorial (nothing to teach yet, and Skip would let a player skip the
-  // teaching levels).
-  // Bolt chip only once something behind it is unlocked for this mode.
+  // Hairline under the header row.
+  X.fillStyle=TH.border;
+  X.fillRect(16,TOP_Y+30,W-32,1);
+
+  // Lives — row 2, left. Classic only (zen/rush have no hearts).
+  if(gameMode==='classic'){
+    for(let i=0;i<3;i++)drawHeart(26+i*24,ROW2,12,i<undosLeft,false);
+  }
+
+  // Boosters — bolt at row 2, right, once something behind it is unlocked
+  // for this mode. Accent while a shield/zap is armed.
   if(!isTutorial()&&_boostItems().length){
-    const bcX=50,bcY=TOP_Y+30;
-    const bhv=abs(mx-bcX)<26&&abs(my-bcY)<18;
-    // Bolt glyph — accent when armed states are live
+    const bcX=W-28,bcY=ROW2;
+    const bhv=abs(mx-bcX)<22&&abs(my-bcY)<18;
     const armed=shieldArmed||zapArmed;
     X.save();
     X.strokeStyle=armed?TH.accent:(bhv?TH.text:TH.textSec);
@@ -5145,13 +5215,9 @@ function drawPlay(){
     X.moveTo(bcX+3,bcY-9);X.lineTo(bcX-4,bcY+2);X.lineTo(bcX,bcY+2);
     X.lineTo(bcX-3,bcY+9);X.lineTo(bcX+4,bcY-2);X.lineTo(bcX,bcY-2);
     X.closePath();X.stroke();
-    // Shield-armed pip so the player sees the protection is live
-    if(shieldArmed){
-      X.fillStyle=TH.success;
-      X.beginPath();X.arc(bcX+12,bcY-8,3.2,0,TAU);X.fill();
-    }
+    if(shieldArmed){X.fillStyle=TH.success;X.beginPath();X.arc(bcX+12,bcY-8,3.2,0,TAU);X.fill();}
     X.restore();
-    if(tapped&&abs(tapX-bcX)<26&&abs(tapY-bcY)<18){
+    if(tapped&&abs(tapX-bcX)<22&&abs(tapY-bcY)<18){
       sfx.tap();boosterMenuOpen=!boosterMenuOpen;tapped=false;
     }
   }
@@ -5181,20 +5247,9 @@ function drawPlay(){
   X.scale(zoomLevel,zoomLevel);
   X.translate(-_zoomC.x,-_zoomC.y);
 
-  // v2.0 board "stage": a soft rounded backdrop under the whole grid —
-  // the puzzle sits ON something instead of floating in the void. Two
-  // fills fake the drop shadow (no shadowBlur, per house perf doctrine).
-  {
-    const pad=cs*.6;
-    const bx=gx-pad,by=gy-pad,bw=gridCols*cs+pad*2,bh=gridRows*cs+pad*2;
-    const r=TH.radiusLg;
-    X.fillStyle=darkMode?'rgba(0,0,0,.20)':'rgba(58,44,40,.08)';
-    X.beginPath();X.roundRect(bx,by+3,bw,bh,r);X.fill();
-    X.fillStyle=darkMode?'rgba(255,255,255,.045)':'rgba(255,255,255,.42)';
-    X.beginPath();X.roundRect(bx,by,bw,bh,r);X.fill();
-    X.strokeStyle=TH.border;X.lineWidth=1;
-    X.beginPath();X.roundRect(bx,by,bw,bh,r);X.stroke();
-  }
+  // v3: no backdrop under the board. The rounded "stage" card read as a
+  // frame around the game ("рамка… некрасиво смотрится") — the arrows now
+  // sit straight on the paper, the way the genre's best-looking boards do.
 
   // v2.0 shape-level silhouette reveal: for the first ~0.8s every cell of
   // the picture glows gold, so the player SEES the heart/cat/rocket before
@@ -5227,7 +5282,10 @@ function drawPlay(){
   // and concave bezier-smoothed valleys between them. The polar shape
   // r(θ) = inner + (outer - inner) * cos(2θ)^4 gives the right
   // "pinched waist between fat petals" look, like a stylised twinkle.
-  const _dotR=max(2.4,cs*.10);
+  // v3 grid: plain round dots, small and quiet — graph paper, not
+  // decoration. The sparkle silhouette stays for the win wave only.
+  const _dotR=max(1.6,cs*.07);
+  const _dot=(cx,cy,R)=>{X.beginPath();X.arc(cx,cy,R,0,TAU);X.fill()};
   function _drawSparkle(cx,cy,R){
     const inner=R*0.30;
     // 64 segments = smooth enough at any size, still cheap (one path
@@ -5258,13 +5316,13 @@ function drawPlay(){
   }
   // Sparkles on EVERY cell. Empty cells get a fainter fill, occupied
   // get the full alpha (occupied loop below reuses the same helper).
-  X.fillStyle=darkMode?'rgba(255,255,255,.10)':'rgba(0,0,0,.09)';
+  X.fillStyle=darkMode?'rgba(243,233,220,.09)':'rgba(61,43,31,.08)';
   for(let r=0;r<gridRows;r++){
     for(let c=0;c<gridCols;c++){
-      _drawSparkle(gx+c*cs+cs/2,gy+r*cs+cs/2,_dotR*0.65);
+      _dot(gx+c*cs+cs/2,gy+r*cs+cs/2,_dotR*0.8);
     }
   }
-  X.fillStyle=darkMode?'rgba(255,255,255,.20)':'rgba(0,0,0,.18)';
+  X.fillStyle=darkMode?'rgba(243,233,220,.18)':'rgba(61,43,31,.16)';
   // Occupied-cell dots (slightly stronger than empty cells). On level
   // completion the win wave passes through and turns each dot into a
   // tiny golden DIAMOND for the moment the wave front is on it — feels
@@ -5297,8 +5355,9 @@ function drawPlay(){
       _drawSparkle(cx,cy,sz);
       X.restore();
     } else {
-      _drawSparkle(cx,cy,_dotR);
+      _dot(cx,cy,_dotR);
     }
+
   }
 
   // Draw all alive arrows as continuous paths through their cells
@@ -5482,8 +5541,8 @@ function drawPlay(){
 
       // Text — only at start of level so it doesn't keep nagging.
       if(moves===0){
-        txt('Tap this arrow',W/2,TOP_Y+44,14,TH.star,'center','700');
-        txt('It has a clear path to the edge',W/2,TOP_Y+62,11,darkMode?'#aaa':'#666');
+        txt(t('tutTap'),W/2,TOP_Y+44,14,TH.star,'center','700');
+        txt(t('tutWhy'),W/2,TOP_Y+62,11,TH.textSec);
       }
     }
   }
@@ -5591,7 +5650,7 @@ function drawPlay(){
 
       const chipW=82,chipH=40,gap=8;
       const rowW=items.length*chipW+(items.length-1)*gap;
-      const x0=W/2-rowW/2,fy=TOP_Y+64;
+      const x0=W/2-rowW/2,fy=TOP_Y+86;   // below header row 2
       let consumed=false;
       for(let i=0;i<items.length;i++){
         const kind=items[i];
@@ -5627,35 +5686,14 @@ function drawPlay(){
     if(zapArmed){
       const pulse=.7+.3*sin(gt*5);
       X.save();X.globalAlpha=pulse;
-      txtP(t('tapAnyArrow'),W/2,TOP_Y+58,13,TH.warning);
+      txtP(t('tapAnyArrow'),W/2,TOP_Y+82,13,TH.warning);
       X.restore();
     }
   }
 
-  // Bottom stats row. v2: bumped font 11 -> 13, switched key numbers
-  // (moves count, time) to bold so they're scannable at a glance, and
-  // added small label-on-top format (LABEL above number) so the row
-  // stops reading like a debug printf and starts reading like a stat
-  // strip. Layout: [MOVES] [TIME] [COIN+N] across thirds of the width.
-  const sy1=H*.87;
-  const tm=floor(timer),mm=floor(tm/60),ss=tm%60;
-  const _stat=(x,label,value,valColor)=>{
-    txt(label,x,sy1-7,9,TH.textDim);
-    txtP(value,x,sy1+7,14,valColor||TH.text);
-  };
-  _stat(W*.22,'MOVES',moves+'/'+minMoves,moves>minMoves?TH.warning:TH.text);
-  _stat(W*.50,'TIME',mm+':'+(ss<10?'0':'')+ss);
-  // Coin badge — coin icon + count, both vertically centred inside a tiny pill
-  {
-    const cx=W*.78,cy=sy1;
-    drawCoin(cx-12,cy,7);
-    txtP(coins+'',cx+2,cy,14,TH.star,'left');
-  }
-
-  // Bottom action row removed in v2 — Hint moved up to the top-left
-  // pill, Skip dropped entirely. Bottom of the play area is now
-  // completely empty so the player's thumb has unobstructed room to
-  // pan/zoom and tap arrows along the lower rows of the grid.
+  // v3: no bottom stats strip — moves, time and coins mid-solve were noise
+  // next to the board. Time still runs (best-time, complete screen); coins
+  // show on the menu and wherever they're spent.
 
   // Update timers — the level clock stops while an intro card is up
   if(!_introCard)timer+=dt;
@@ -5666,12 +5704,28 @@ function drawPlay(){
 
 // --- COMPLETE ---
 function drawComplete(){
-  drawBg(true);
+  // v3 win screen. The moment worth making feel good: warm sunburst, three
+  // big stars over a result card, one obvious "next" button. Replaces the
+  // flat bg + check-circle + stats strip, which read like a form receipt.
+  const tNow=completeEnterT>0?max(0,gt-completeEnterT):99;
 
-  // Confetti — every particle is now a 4-pointed sparkle (the same r(θ)
-  // shape used by grid markers and the win wave). Particles still have
-  // life/velocity/gravity tuned at 60fps; the path data is procedurally
-  // sampled into a single fill so it stays cheap to render.
+  // Sky: accent-orange top fading into paper, rays turning slowly.
+  const sky=X.createLinearGradient(0,0,0,H);
+  if(darkMode){sky.addColorStop(0,'#7a3f1c');sky.addColorStop(.55,'#3a2a1e');sky.addColorStop(1,'#1e1914');}
+  else{sky.addColorStop(0,'#e5823a');sky.addColorStop(.5,'#f5c79a');sky.addColorStop(1,'#f5eee3');}
+  X.fillStyle=sky;X.fillRect(0,0,W,H);
+  {
+    const cx=W/2,cy=H*.2,R=max(W,H),n=14;
+    const rot=reducedMotion?0:gt*.12;
+    X.save();X.globalAlpha=darkMode?.07:.16;X.fillStyle='#ffffff';
+    for(let i=0;i<n;i++){
+      const a0=rot+i*TAU/n,a1=a0+TAU/n*.5;
+      X.beginPath();X.moveTo(cx,cy);X.lineTo(cx+cos(a0)*R,cy+sin(a0)*R);X.lineTo(cx+cos(a1)*R,cy+sin(a1)*R);X.closePath();X.fill();
+    }
+    X.restore();
+  }
+
+  // Confetti — sparkle particles (spawned by spawnConfetti on the win).
   const _frameScale=dt*60;
   for(let i=confetti.length-1;i>=0;i--){
     const p=confetti[i];
@@ -5680,179 +5734,130 @@ function drawComplete(){
     X.globalAlpha=clp(p.life,0,1);
     X.fillStyle=p.col;
     X.save();X.translate(p.x,p.y);X.rotate(p.rot);
-    // 4-pointed sparkle silhouette (8 sample points — cheap; full 32-pt
-    // version is reserved for the static grid where it doesn't redraw
-    // per frame). Inner radius 30% gives that pinched-waist look.
     const R=p.sz/2,inner=R*.30;
     X.beginPath();
     for(let k=0;k<8;k++){
-      const θ=k*PI/4-PI/2;
-      const t=Math.cos(2*θ);
-      const r=inner+(R-inner)*(t*t*t*t);
-      const px=Math.cos(θ)*r,py=Math.sin(θ)*r;
-      if(k===0)X.moveTo(px,py);
-      else X.lineTo(px,py);
+      const θ=k*PI/4-PI/2,tt=Math.cos(2*θ),r=inner+(R-inner)*(tt*tt*tt*tt);
+      if(k===0)X.moveTo(Math.cos(θ)*r,Math.sin(θ)*r);else X.lineTo(Math.cos(θ)*r,Math.sin(θ)*r);
     }
-    X.closePath();X.fill();
-    X.restore();
+    X.closePath();X.fill();X.restore();
     X.globalAlpha=1;
   }
 
-  // Elapsed since the screen appeared — drives the staggered animations.
-  // Falls back to "fully past" if completeEnterT was never set (very old
-  // saves, dev hot-reload).
-  const tNow = completeEnterT > 0 ? max(0, gt - completeEnterT) : 99;
+  // Result rows first — the card is sized to them, not the other way.
+  const tm=floor(timer),mm=floor(tm/60),ss=tm%60;
+  const rows=[];
+  if(!isDaily&&!isWeekly)rows.push([t('difficulty'),currentHard?t('diffHard'):t('diffNormal'),currentHard?HARD_COLOR:TH.text]);
+  rows.push([t('time'),mm+':'+(ss<10?'0':'')+ss,TH.text]);
+  rows.push([t('mistakes'),String(3-max(0,undosLeft)),undosLeft>=3?TH.success:TH.text]);
+  if(!isDaily&&!isWeekly&&winStreak>=2)rows.push([t('winStreak'),'×'+winStreak+(_streakBonus?'  +'+_streakBonus:''),TH.accent]);
+  const rh=32;
 
-  // Hero check-circle. Pops in with a small bounce: scale 0 → 1.1 → 1
-  // over the first 380 ms.
-  const checkP = clp(tNow / 0.38, 0, 1);
-  const checkScale = checkP < 0.7
-    ? lrp(0, 1.1, checkP / 0.7)
-    : lrp(1.1, 1.0, (checkP - 0.7) / 0.3);
-  X.save();
-  X.translate(W/2, H*.18);
-  X.scale(checkScale, checkScale);
-  X.strokeStyle = TH.success; X.lineWidth = 3; X.lineCap = 'round';
-  X.beginPath(); X.arc(0, 0, 28, 0, TAU); X.stroke();
-  X.beginPath();
-  X.moveTo(-12, 0); X.lineTo(-3, 10); X.lineTo(14, -8);
-  X.stroke();
-  X.restore();
+  // Card
+  const cardX=24,cardW=W-48,cardY=H*.24,cardH=92+rows.length*rh+58,lip=5;
+  X.fillStyle=darkMode?'rgba(0,0,0,.35)':'rgba(176,94,31,.22)';
+  X.beginPath();X.roundRect(cardX,cardY+lip,cardW,cardH,22);X.fill();
+  X.fillStyle=TH.surface;
+  X.beginPath();X.roundRect(cardX,cardY,cardW,cardH,22);X.fill();
 
-  const title = isWeekly ? 'WEEKLY DONE' : (isDaily ? 'DAILY COMPLETE' : 'LEVEL ' + level);
-  // Title fades in slightly delayed
-  X.save();
-  X.globalAlpha = clp((tNow - 0.2) / 0.4, 0, 1);
-  txtD(title, W/2, H*.27, 24, TH.text);
-  X.restore();
-
-  // Stars — staggered fly-in. Each star gets a 350 ms window starting
-  // 0.45 s after entry, separated by 180 ms. Inside the window, the
-  // star scales from 0 → 1.4 → 1 with a fade. Skipped for daily/weekly
-  // (those are unconditionally 3-star).
-  const s = (isDaily || isWeekly) ? 3 : (stars[level] || 1);
-  if (!isDaily && !isWeekly) {
-    for (let i = 0; i < 3; i++) {
-      const stagger = 0.45 + i * 0.18;
-      const dur = 0.35;
-      const p = clp((tNow - stagger) / dur, 0, 1);
-      if (p <= 0) continue;
-      const sc = p < 0.6 ? lrp(0, 1.4, p / 0.6) : lrp(1.4, 1.0, (p - 0.6) / 0.4);
-      X.save();
-      X.translate(W/2 - 36 + i * 36, H*.34);
-      X.scale(sc, sc);
-      X.globalAlpha = clp(p * 1.5, 0, 1);
-      drawStar(0, 0, 14, i < s);
-      X.restore();
-    }
-  }
-
-  // Stats card — grouped row in the same visual language as Settings.
-  // 3 stats live on one card, big bold values, small label above.
-  {
-    const cy = H * 0.46;
-    const cardX = 28, cardW = W - 56, cardH = 70;
-    X.fillStyle = TH.surface;
-    X.beginPath(); X.roundRect(cardX, cy - cardH/2, cardW, cardH, 14); X.fill();
-    X.strokeStyle = TH.border; X.lineWidth = 1;
-    X.beginPath(); X.roundRect(cardX, cy - cardH/2, cardW, cardH, 14); X.stroke();
-    const tm = floor(timer), mm = floor(tm/60), ss = tm % 60;
-    const stat = (x, label, value, valColor) => {
-      txt(label, x, cy - 12, 9, TH.textSec, 'center', '700');
-      txtP(value, x, cy + 12, 18, valColor || TH.text);
-    };
-    stat(cardX + cardW * 0.20, 'ARROWS', minMoves + '');
-    stat(cardX + cardW * 0.50, 'HEARTS', undosLeft + '/3', undosLeft === 3 ? TH.success : TH.text);
-    stat(cardX + cardW * 0.80, 'TIME', mm + ':' + (ss < 10 ? '0' : '') + ss);
-  }
-  if (!isDaily && !isWeekly && bestTime > 0) {
-    txt('Best: ' + floor(bestTime) + 's', W/2, H*.515, 11, TH.textDim);
-  }
-  // Win streak — the bonus is already inside the reward pill below; this
-  // line says where it came from.
-  if (!isDaily && !isWeekly && winStreak >= 2) {
-    txtP(t('winStreak') + ' ×' + winStreak + (_streakBonus ? '  +' + _streakBonus : ''), W/2, H*.545, 13, TH.star);
-  }
-
-  // Reward — prominent gold pill that scales in like a celebration prize.
-  if ((isDaily || isWeekly) && lastGained === 0) {
-    txt('Already claimed today', W/2, H*.60, 12, TH.textDim);
-  } else {
-    const rp = clp((tNow - 1.0) / 0.45, 0, 1);
-    const rScale = rp < 0.7 ? lrp(0, 1.15, rp / 0.7) : lrp(1.15, 1.0, (rp - 0.7) / 0.3);
-    X.save();
-    X.translate(W/2, H*.60);
-    X.scale(rScale, rScale);
-    X.globalAlpha = clp(rp * 2, 0, 1);
-    const rw = 130, rh = 36;
-    X.fillStyle = TH.star + 'CC';
-    X.beginPath(); X.roundRect(-rw/2, -rh/2, rw, rh, rh/2); X.fill();
-    drawCoin(-rw/2 + 22, 0, 9);
-    txtP('+' + lastGained, 8, 0, 18, '#1a1a1a');
+  // Stars over the card's top edge, centre one higher and bigger. Each
+  // pops in turn: 0 → 1.35 → 1 over 350 ms, 180 ms apart.
+  const s=(isDaily||isWeekly)?3:(stars[level]||1);
+  const starPos=[[W/2-74,cardY+2,28],[W/2,cardY-18,38],[W/2+74,cardY+2,28]];
+  for(let i=0;i<3;i++){
+    const p=clp((tNow-.25-i*.18)/.35,0,1);
+    if(p<=0)continue;
+    const sc=p<.6?lrp(0,1.35,p/.6):lrp(1.35,1,(p-.6)/.4);
+    const[sx,sy,sz]=starPos[i];
+    X.save();X.translate(sx,sy);X.scale(sc,sc);X.globalAlpha=clp(p*1.5,0,1);
+    drawStar(0,0,sz,i<s);
     X.restore();
   }
 
-  // Buttons — daily/weekly return to menu; normal level goes to next
+  // Verdict
+  const verdict=undosLeft>=3?t('flawless'):undosLeft===2?t('great'):t('cleared');
+  txtD(verdict,W/2,cardY+52,24,TH.text);
+
+  // Result rows — label left, value right, hairlines between.
+  const rx0=cardX+24,rx1=cardX+cardW-24,ry0=cardY+92;
+  for(let i=0;i<rows.length;i++){
+    const y=ry0+i*rh;
+    txt(rows[i][0],rx0,y,14,TH.textSec,'left','600');
+    txt(rows[i][1],rx1,y,15,rows[i][2],'right','800');
+    if(i<rows.length-1){X.fillStyle=TH.border;X.fillRect(rx0,y+rh/2,rx1-rx0,1);}
+  }
+
+  // Reward pill at the card's foot.
+  const pillY=cardY+cardH-30;
+  if((isDaily||isWeekly)&&lastGained===0){
+    txt(t('claimedToday'),W/2,pillY,12,TH.textDim);
+  }else{
+    const rp=clp((tNow-1)/.45,0,1);
+    const rs=rp<.7?lrp(0,1.15,rp/.7):lrp(1.15,1,(rp-.7)/.3);
+    X.save();X.translate(W/2,pillY);X.scale(rs,rs);X.globalAlpha=clp(rp*2,0,1);
+    const rw=124,rh2=34;
+    X.fillStyle=darkMode?'rgba(246,196,90,.18)':'rgba(240,176,58,.20)';
+    X.beginPath();X.roundRect(-rw/2,-rh2/2,rw,rh2,rh2/2);X.fill();
+    drawCoin(-rw/2+22,0,9);
+    txt('+'+lastGained,10,0,18,TH.text,'center','800');
+    X.restore();
+  }
+
+  // Buttons — one primary, two quiet secondaries side by side.
+  const by=cardY+cardH+lip+56;
   if(isDaily||isWeekly){
-    if(drawBigBtn('BACK TO MENU',W/2,H*.67,220,50,TH.accent)){
+    if(drawBigBtn(t('backToMenu'),W/2,by,W-64,56)){
       goto('menu',()=>{isDaily=false;isWeekly=false});
     }
   }else{
-    if(drawBigBtn(t('nextLevel'),W/2,H*.67,200,50,TH.accent)){
+    if(drawBigBtn(t('nextLevelBtn'),W/2,by,W-64,56,currentHard?HARD_COLOR:null)){
       showInterstitialAd(); // timed interstitial every 5 min
       goto('play',()=>{level++;save();generateLevel(level)});
     }
-    if(drawBtn(t('replay'),W/2,H*.74,140,36)){
+    const bw=(W-64-12)/2;
+    if(drawBtn(t('replayBtn'),W/2-bw/2-6,by+72,bw,44)){
       goto('play',()=>{generateLevel(level)});
     }
-    if(drawBtn(t('home'),W/2,H*.80,140,36)){goto('menu')}
+    if(drawBtn(t('homeBtn'),W/2+bw/2+6,by+72,bw,44)){goto('menu')}
   }
-
-  _grain();
 }
 
 // --- STATS ---
 function drawStats(){
   drawBg(true);
-  txtP(t('stats'),W/2,62,22,TH.text);
-
-  // Coins top-right
-  drawCoin(W-50,64,7);
-  txt(coins+'',W-40,64,13,TH.star,'left');
+  const top=_screenHeader(t('stats'),null,()=>goto('menu'));
 
   // Compute stats
   const totalLevelsDone=Object.keys(stars).length;
   const totalMinutes=floor(totalPlayTime/60);
   const totalHours=floor(totalMinutes/60);
-  const playtimeStr=totalHours>0?(totalHours+'h '+(totalMinutes%60)+'m'):(totalMinutes+'m');
-  const fastestStr=fastestLevel<99999?(fastestLevel+'s'):'—';
+  const playtimeStr=totalHours>0?(totalHours+t('uHour')+' '+(totalMinutes%60)+t('uMin')):(totalMinutes+t('uMin'));
+  const fastestStr=fastestLevel<99999?(fastestLevel+t('uSec')):'—';
 
-  // List of {label, value} rows (labels stay English — same convention
-  // as achievement names)
   const rows=[
-    ['Current level',level+''],
-    ['Levels completed',totalLevelsDone+''],
-    ['Total stars',totalStars+''],
-    ['3-star clears',totalPerfect+''],
-    ['Shape levels',shapeTotal+''],
-    ['Zen boards',zenTotal+''],
-    ['Rush best',rushBest+''],
-    ['Boosters used',boostersUsed+''],
-    ['Play time',playtimeStr],
-    ['Fastest clear',fastestStr],
-    ['Coins earned (total)',totalCoinsEarned+''],
-    ['Daily challenges',totalDailies+''],
-    ['Current streak',streakDays+' days'],
-    ['Hint-free clears',noHintCount+''],
-    ['Achievements',achUnlockedCount()+'/'+ACHIEVEMENTS.length],
+    [t('stCurLevel'),level+''],
+    [t('stLevelsDone'),totalLevelsDone+''],
+    [t('stStars'),totalStars+''],
+    [t('stPerfect'),totalPerfect+''],
+    [t('stShapes'),shapeTotal+''],
+    [t('stZen'),zenTotal+''],
+    [t('stRushBest'),rushBest+''],
+    [t('stBoosters'),boostersUsed+''],
+    [t('stPlayTime'),playtimeStr],
+    [t('stFastest'),fastestStr],
+    [t('stCoins'),totalCoinsEarned+''],
+    [t('stDailies'),totalDailies+''],
+    [t('stStreak'),streakDays+' '+t('uDays')],
+    [t('stNoHint'),noHintCount+''],
+    [t('stAch'),achUnlockedCount()+'/'+ACHIEVEMENTS.length],
   ];
 
   // v2 redesign: rows now live inside a single grouped card with
   // hairline dividers — same visual language as Settings. Big bold
   // value on the right, label left, divider lines between rows.
-  const startY = 100, rowH = 36;
+  const startY = top, rowH = 36;
   const cardX = 20, cardW = W - 40;
-  const visibleRows = Math.min(rows.length, Math.floor((H - 100 - 90) / rowH));
+  const visibleRows = Math.min(rows.length, Math.floor((H - startY - 24 - safeBottom) / rowH));
   const cardH = visibleRows * rowH;
   // Surface
   X.fillStyle = TH.surface;
@@ -5876,8 +5881,6 @@ function drawStats(){
     }
   }
   X.restore();
-
-  if(drawBtn(t('back'),W/2,H-50,140,38)){goto('menu')}
 }
 
 // Per-achievement icon renderer. Categories share a vector glyph so the user
@@ -6005,12 +6008,7 @@ function drawAchIcon(id,cx,cy,sz,col){
 const ACH_PER_PAGE=9;
 function drawAchievements(){
   drawBg(true);
-  txtP('ACHIEVEMENTS',W/2,62,22,TH.text);
-  txt(achUnlockedCount()+' / '+ACHIEVEMENTS.length+' unlocked',W/2,86,12,TH.textSec);
-
-  // Coins top-right
-  drawCoin(W-50,64,7);
-  txt(coins+'',W-40,64,13,TH.star,'left');
+  const top=_screenHeader(t('achievements'),achUnlockedCount()+' / '+ACHIEVEMENTS.length+' '+t('unlockedWord'),()=>goto('menu'));
 
   // Page bounds
   const pageCount=max(1,Math.ceil(ACHIEVEMENTS.length/ACH_PER_PAGE));
@@ -6024,7 +6022,7 @@ function drawAchievements(){
   // color (gold) and the icon tint, not by a background tint that
   // muddies on dark mode. Locked rows get a desaturated body so the
   // ladder of progress is still readable at a glance.
-  const startY=110,cardH=56,cardGap=8,cardW=W-40,cardX=20;
+  const startY=top+10,cardH=56,cardGap=8,cardW=W-40,cardX=20;
   for(let i=fromIdx;i<toIdx;i++){
     const a=ACHIEVEMENTS[i];
     const y=startY+(i-fromIdx)*(cardH+cardGap);
@@ -6038,8 +6036,8 @@ function drawAchievements(){
     // Icon
     drawAchIcon(a.id,cardX+28,y+cardH/2,15,done?TH.star:TH.textDim);
     // Name + desc
-    txt(a.name,cardX+58,y+19,12,done?TH.text:TH.textSec,'left','700');
-    txt(a.desc,cardX+58,y+38,10,done?TH.textSec:TH.textDim,'left');
+    txt(achName(a),cardX+58,y+19,12,done?TH.text:TH.textSec,'left','700');
+    txt(achDesc(a),cardX+58,y+38,10,done?TH.textSec:TH.textDim,'left');
     // Reward — right-anchored
     const rewardStr='+'+a.reward;
     const rightEdge=cardX+cardW-14;
@@ -6050,7 +6048,7 @@ function drawAchievements(){
 
   // Pagination — chevron pills, matches drawLevels.
   if(pageCount>1){
-    const pagY=H-95;
+    const pagY=H-56-safeBottom;
     if(achPage>0){
       const px=W/2-90, pw=40, ph=34;
       const hv=abs(mx-px)<pw/2&&abs(my-pagY)<ph/2;
@@ -6074,7 +6072,6 @@ function drawAchievements(){
     }
   }
 
-  if(drawBtn(t('back'),W/2,H-50,140,38)){goto('menu')}
 }
 
 // Achievement unlock popup — animates at top of screen
@@ -6107,8 +6104,8 @@ function drawAchPopup(){
   // Star icon
   drawStar(px+28,py+ph/2,14,true);
   // Text
-  txt('ACHIEVEMENT UNLOCKED',px+50,py+17,8,TH.star,'left','700');
-  txtP(a.name,px+50,py+36,12,TH.text,'left');
+  txt(t('achUnlocked'),px+50,py+17,8,TH.star,'left','700');
+  txtP(achName(a),px+50,py+36,12,TH.text,'left');
   // Reward — inside the box
   drawCoin(px+pw-40,py+ph/2,7);
   txt('+'+a.reward,px+pw-28,py+ph/2,10,TH.star,'left');
@@ -6135,50 +6132,42 @@ function drawGameOver(){
   txt(gameoverReason==='bomb'?t('bombWentOff'):t('outOfHearts'),W/2,H*.40,13,TH.textSec);
 
 
-  // Action stack — strict y-rhythm: header → 60px → btn → 60px → btn …
+  // v3: one column, one width. Retry is the primary; both continues say
+  // their price on the button itself (coin + amount / video glyph) instead
+  // of "(Ad)" text and a coin painted over the label.
+  const BW=min(280,W-64);
   let by = H*.50;
 
-  // 1. Retry (primary, neutral fill, label in TH.text)
-  if(drawBigBtn(t('retry'),W/2,by,220,52)){
+  if(drawBigBtn(t('retry'),W/2,by,BW,56)){
     showInterstitialAd();
     goto('play',replayCurrentBoard);
   }
-  by += 64;
+  by += 68;
 
-  // 2. Continue for coins
   const canContinue=coins>=CONTINUE_COST;
-  const continueLabel=t('continueBtn')+'  '+CONTINUE_COST;
-  if(drawBtn(continueLabel,W/2,by,220,44,canContinue?TH.star:null)){
+  if(drawBtn(t('continueBtn'),W/2,by,BW,48,canContinue?TH.text:TH.textSec,{coin:CONTINUE_COST})){
     if(canContinue) continueFromGameover();
   }
-  // Coin badge sits visually inside the right edge of the pill;
-  // drawing it AFTER drawBtn means it's painted over the button
-  // surface for correct layering.
-  drawCoin(W/2+88,by,7);
-  by += 56;
+  by += 60;
 
-  // 3. Free continue via rewarded ad
-  if(drawBtn(t('continueBtn')+' (Ad)',W/2,by,220,44,TH.success)){
+  if(drawBtn(t('continueBtn'),W/2,by,BW,48,TH.success,{ad:1})){
     showRewardedAd(()=>{undosLeft=3;_restoreStreak();_bombGrace();S='play'});
-
   }
-  by += 56;
+  by += 60;
 
-  // 4. Watch ad for coins — only when player can't afford option 2
+  // Watch ad for coins — only when the coin continue is out of reach
   if(coins<CONTINUE_COST){
-    const adLabel='+'+AD_COIN_REWARD+' '+t('coins').toUpperCase();
-    if(drawBtn(adLabel,W/2,by,220,40,TH.star)){
+    if(drawBtn('+'+AD_COIN_REWARD+' '+t('coins').toUpperCase(),W/2,by,BW,48,TH.star,{ad:1})){
       const cy=by;
       showRewardedAd(()=>{
         coins+=AD_COIN_REWARD;totalCoinsEarned+=AD_COIN_REWARD;save();
         spawnFloater(W/2,cy,'+'+AD_COIN_REWARD);
       });
     }
-    by += 50;
+    by += 60;
   }
 
-  // 5. Home — small neutral pill at the bottom
-  if(drawBtn(t('home'),W/2,by+8,140,36)){goto('menu')}
+  if(drawBtn(t('home'),W/2,by+6,BW,44)){goto('menu')}
 }
 
 // --- RUSH RESULTS (v2.0) ---
@@ -6213,14 +6202,16 @@ function drawRushEnd(){
     txt('+'+lastGained,W/2-10,H*.585,14,TH.star,'left');
   }
 
+  // Same column as the game-over screen: one width, primary then secondary.
+  const BW=min(280,W-64);
   let by=H*.68;
-  if(drawBigBtn(t('retry'),W/2,by,220,52)){
+  if(drawBigBtn(t('retry'),W/2,by,BW,56)){
     // startRush runs inside the goto action so the 75s clock starts when
     // the play screen actually appears, not during the fade.
     goto('play',startRush);
   }
-  by+=64;
-  if(drawBtn(t('home'),W/2,by,140,36)){goto('menu')}
+  by+=68;
+  if(drawBtn(t('home'),W/2,by,BW,44)){goto('menu')}
 }
 
 // --- SETTINGS ---
@@ -6409,16 +6400,35 @@ function _drawSettingsIcon(name, x, y, sz, col){
   X.restore();
 }
 
+// v3 sub-screen header: the same bare back chevron as the in-game HUD,
+// title centred, coin balance right. Stats, achievements and levels had a
+// BACK pill at the bottom, settings and skins a "‹ BACK" label top-left —
+// three back controls for one action. Returns the y where content may
+// start (below the header, clear of a notch).
+function _screenHeader(title,sub,onBack){
+  const hy=max(62,safeTop+20);
+  const blocked=_inputBlocked();
+  const hv=!blocked&&abs(mx-26)<22&&abs(my-hy)<22;
+  X.save();
+  X.strokeStyle=hv?TH.text:TH.textSec;X.lineWidth=2.6;X.lineCap='round';X.lineJoin='round';
+  X.beginPath();X.moveTo(31,hy-9);X.lineTo(22,hy);X.lineTo(31,hy+9);X.stroke();
+  X.restore();
+  txtP(title,W/2,hy,22,TH.text);
+  if(sub)txt(sub,W/2,hy+24,12,TH.textSec);
+  drawCoin(W-50,hy,7);
+  txt(coins+'',W-40,hy,13,TH.star,'left');
+  if(!blocked&&tapped&&abs(tapX-26)<24&&abs(tapY-hy)<24){sfx.tap();tapped=false;onBack()}
+  return max(100,hy+38);
+}
+
 function drawSettings(){
   drawBg(true);
+  const top = _screenHeader(t('settings'), null, () => { resetConfirm = false; goto('menu'); });
 
-  // Header
-  txtP(t('settings'), W / 2, 64, 24, TH.text);
-
-  let yCursor = 110;
+  let yCursor = top + 10;
 
   // ----- General -----
-  _drawSectionHeader(t('settings'), yCursor);  // re-use settings token; could be a new "GENERAL" token if added later
+  _drawSectionHeader(t('secGeneral'), yCursor);
   yCursor += 14;
 
   const curLang = LANGS.find(l => l.code === lang) || LANGS[0];
@@ -6447,7 +6457,7 @@ function drawSettings(){
     (rx, ry, rw, rh) => {
       if (_settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
         _drawSettingsIcon('moon', rx + 28, ry + rh / 2, 10, TH.textSec);
-        txt(t('themeDark'), rx + 56, ry + rh / 2, 14, TH.text, 'left');
+        txt(t('darkTheme'), rx + 56, ry + rh / 2, 14, TH.text, 'left');
         _drawToggle(rx + rw - 32, ry + rh / 2, darkMode);
       })) {
         darkMode = !darkMode; _safeSet('ae_theme', darkMode ? 'dark' : 'light');
@@ -6470,7 +6480,7 @@ function drawSettings(){
   yCursor += 28;
 
   // ----- Coins -----
-  _drawSectionHeader(t('coins'), yCursor);
+  _drawSectionHeader(t('secShop'), yCursor);
   yCursor += 14;
 
   yCursor = _drawSettingsCard(yCursor, [
@@ -6492,7 +6502,7 @@ function drawSettings(){
       if (_settingsRow(rx, ry, rw, rh, (rx, ry, rw, rh) => {
         const _sk = _activeSkinDef();
         drawArrow(rx + 28, ry + rh / 2, 0, 26, _skinPaint(_sk, 1), 1);
-        txt(t('skins'), rx + 56, ry + rh / 2, 14, TH.text, 'left');
+        txt(t('skinsRow'), rx + 56, ry + rh / 2, 14, TH.text, 'left');
         txt(_sk.name, rx + rw - 36, ry + rh / 2, 13, TH.textSec, 'right');
         _drawChevron(rx + rw - 18, ry + rh / 2, 8);
       })) goto('skins');
@@ -6502,7 +6512,7 @@ function drawSettings(){
   yCursor += 28;
 
   // ----- Remove Ads (IAP) -----
-  _drawSectionHeader(t('removeAds'), yCursor);
+  _drawSectionHeader(t('secPurchases'), yCursor);
   yCursor += 14;
   yCursor = _drawSettingsCard(yCursor, [
     // Buy row — or an "ads removed ✓" status once owned.
@@ -6581,13 +6591,6 @@ function drawSettings(){
       txt(t('cancel'), rx + rw / 2, ry + rh / 2, 13, TH.textSec);
     }, false)) resetConfirm = false;
   }
-
-  // Back arrow — left-pointing chevron in the top-left, paired with
-  // the localized "BACK" label.
-  if (_settingsRow(12, 36, 90, 44, (rx, ry, rw, rh) => {
-    _drawChevron(rx + 16, ry + rh / 2, 7, TH.text, 'left');
-    txt(t('back'), rx + 30, ry + rh / 2, 13, TH.text, 'left');
-  }, false)) { resetConfirm = false; goto('menu'); }
 }
 
 // --- LANGUAGE PICKER MODAL ---
@@ -6737,8 +6740,12 @@ function drawLoginReward(){
     // Checkmark on claimed cards
     if(claimed){
       X.globalAlpha=1;
-      X.strokeStyle=TH.success;X.lineWidth=2.4;X.lineCap='round';X.lineJoin='round';
-      X.beginPath();X.moveTo(rx+cw-20,ry+12);X.lineTo(rx+cw-15,ry+17);X.lineTo(rx+cw-8,ry+7);X.stroke();
+      // A badge on the corner, not a tick inside the card: inside, it sat
+      // on the day number ("День ✓").
+      const cx=rx+cw-5,cy=ry+5;
+      X.fillStyle=TH.success;X.beginPath();X.arc(cx,cy,8,0,TAU);X.fill();
+      X.strokeStyle='#ffffff';X.lineWidth=2;X.lineCap='round';X.lineJoin='round';
+      X.beginPath();X.moveTo(cx-3.5,cy);X.lineTo(cx-1,cy+2.6);X.lineTo(cx+3.6,cy-2.6);X.stroke();
     }
     X.restore();
   }
@@ -6835,23 +6842,17 @@ const LEVELS_PER_PAGE=25;
 function drawLevels(){
   drawBg(true);
 
-  // Header
-  txtP(t('levels'),W/2,62,22,TH.text);
-
   const fromLv=levelsPage*LEVELS_PER_PAGE+1;
   const toLv=fromLv+LEVELS_PER_PAGE-1;
-  txt(fromLv+' – '+toLv,W/2,72,12,TH.textSec);
+  const gridTop=_screenHeader(t('levels'),fromLv+' – '+toLv,()=>goto('menu'));
 
-  // Coins display top-right
-  drawCoin(W-50,64,7);
-  txt(coins+'',W-40,64,13,TH.star,'left');
-
-  // Grid of 25 level cards (5×5)
+  // Grid of 25 level cards (5×5), sized to the screen width — fixed 52px
+  // tiles left a third of the screen empty under the grid.
   const cols=5,rows=5;
-  const cellW=62,cellH=66;
-  const gridW=cols*cellW,gridH=rows*cellH;
+  const cellW=min(78,floor((W-30)/cols)),cellH=cellW+4;
+  const gridW=cols*cellW;
   const startX=(W-gridW)/2;
-  const startY=100;
+  const startY=gridTop+4;
 
   for(let i=0;i<cols*rows;i++){
     const lv=fromLv+i;
@@ -6863,38 +6864,33 @@ function drawLevels(){
     const current=lv===level;
     const done=stars[lv]>0;
     const s=stars[lv]||0;
-    const hv=abs(mx-x)<26&&abs(my-y)<30;
+    const cardW=cellW-10,cardH=cellH-12,lip=4;
+    const hv=abs(mx-x)<cardW/2&&abs(my-y)<cardH/2;
 
-    // Card background — neutral solid for ALL states; differentiation
-    // comes from a subtle 2-px border accent on `current` and a star
-    // tint on `done`. No more tinted rgba fills (that read as muddy
-    // gold on dark mode). Locked cards use a desaturated surface so
-    // they read as "not yet" without colour-noise.
-    const cardW=52,cardH=56;
+    // v3 tiles share the button language: a solid face on a darker lip.
+    // Current level = accent face; HARD levels show a purple number (and
+    // lip) so the sawtooth is visible from the map, the way the genre
+    // flags its boss levels ahead of time; locked = flat and faded.
+    const hard=isHardLevel(lv)&&!(window.HANDCRAFTED_LEVELS&&window.HANDCRAFTED_LEVELS[lv]);
+    const top=y-cardH/2-lip/2;
     if(unlocked){
-      X.fillStyle = hv ? TH.btnHover : TH.btnBg;
-    } else {
-      X.fillStyle = darkMode ? 'rgba(255,255,255,.04)' : 'rgba(0,0,0,.03)';
+      const face=current?TH.accent:(hv?TH.btnHover:TH.btnBg);
+      const lipCol=current?_shade(TH.accent,.78):hard?_shade(HARD_COLOR,.85):_shade(TH.btnBg,.9);
+      X.fillStyle=lipCol;X.beginPath();X.roundRect(x-cardW/2,top+lip,cardW,cardH,12);X.fill();
+      X.fillStyle=face;X.beginPath();X.roundRect(x-cardW/2,top,cardW,cardH,12);X.fill();
+    }else{
+      X.fillStyle=darkMode?'rgba(255,255,255,.04)':'rgba(61,43,31,.04)';
+      X.beginPath();X.roundRect(x-cardW/2,top+lip/2,cardW,cardH,12);X.fill();
     }
-    X.beginPath();X.roundRect(x-cardW/2,y-cardH/2,cardW,cardH,10);X.fill();
-    // Border — accent only when this is the current level
-    if (current) {
-      X.strokeStyle = TH.accent; X.lineWidth = 2;
-    } else {
-      X.strokeStyle = TH.border; X.lineWidth = 1;
-    }
-    X.beginPath();X.roundRect(x-cardW/2,y-cardH/2,cardW,cardH,10);X.stroke();
-    // Level number
-    txtP(lv+'',x,y-8, unlocked?15:13, unlocked?TH.text:TH.textDim);
-    // Stars (canvas-drawn glyphs, scaled small)
+    const numCol=!unlocked?TH.textDim:current?'#ffffff':hard?HARD_COLOR:TH.text;
+    txt(lv+'',x,top+cardH*.40,unlocked?19:15,numCol,'center','800');
     for(let j=0;j<3;j++){
-      const sx=x-10+j*10,sy=y+14;
-      drawStar(sx,sy,4, done && j<s);
+      drawStar(x-12+j*12,top+cardH*.75,4.6,done&&j<s);
     }
     // Locked indicator — small horizontal dash under the level number
     if(!unlocked){
       X.strokeStyle=TH.textDim;X.lineWidth=1.2;X.lineCap='round';
-      X.beginPath();X.moveTo(x-7,y+4);X.lineTo(x+7,y+4);X.stroke();
+      X.beginPath();X.moveTo(x-7,top+cardH*.58);X.lineTo(x+7,top+cardH*.58);X.stroke();
     }
     // Tap
     if(tapped&&abs(tapX-x)<cardW/2&&abs(tapY-y)<cardH/2&&unlocked){
@@ -6905,7 +6901,7 @@ function drawLevels(){
   }
 
   // Pagination — chevron icons rather than ASCII arrows.
-  const pagY=H-110;
+  const pagY=min(H-60-safeBottom,startY+rows*cellH+44);
   const hasPrev=levelsPage>0;
   if(hasPrev){
     const px=W*.28, pw=88, ph=36;
@@ -6915,10 +6911,10 @@ function drawLevels(){
     X.strokeStyle=TH.border;X.lineWidth=1;
     X.beginPath();X.roundRect(px-pw/2,pagY-ph/2,pw,ph,ph/2);X.stroke();
     _drawChevron(px-18,pagY,7,TH.text,'left');
-    txt('PREV',px+8,pagY,12,TH.text);
+    txt(t('prevPage'),px+8,pagY,12,TH.text);
     if(tapped&&abs(tapX-px)<pw/2&&abs(tapY-pagY)<ph/2){sfx.tap();tapped=false;levelsPage--}
   }
-  txt('PAGE '+(levelsPage+1),W/2,pagY,11,TH.textSec,'center','700');
+  txt(t('pageWord')+' '+(levelsPage+1),W/2,pagY,11,TH.textSec,'center','700');
   {
     const px=W*.72, pw=88, ph=36;
     const hv=abs(mx-px)<pw/2&&abs(my-pagY)<ph/2;
@@ -6926,13 +6922,11 @@ function drawLevels(){
     X.beginPath();X.roundRect(px-pw/2,pagY-ph/2,pw,ph,ph/2);X.fill();
     X.strokeStyle=TH.border;X.lineWidth=1;
     X.beginPath();X.roundRect(px-pw/2,pagY-ph/2,pw,ph,ph/2);X.stroke();
-    txt('NEXT',px-10,pagY,12,TH.text);
+    txt(t('nextPage'),px-10,pagY,12,TH.text);
     _drawChevron(px+18,pagY,7,TH.text,'right');
     if(tapped&&abs(tapX-px)<pw/2&&abs(tapY-pagY)<ph/2){sfx.tap();tapped=false;levelsPage++}
   }
 
-  // Back
-  if(drawBtn(t('back'),W/2,H-55,140,36)){goto('menu')}
 }
 
 // ================================================================
@@ -6947,10 +6941,7 @@ let _lastT=0;
 // rewarded ads — NOT real money (that's the separate Remove Ads IAP).
 function drawSkins(){
   drawBg(true);
-  txtP(t('skins'),W/2,64,24,TH.text);
-  // Coin balance, top-right — mirrors the play/complete/gameover screens.
-  drawCoin(W-52,64,8);
-  txt(coins+'',W-40,64,13,TH.star,'left');
+  const hdrBottom=_screenHeader(t('skins'),null,()=>goto('menu'));
 
   // 2 columns → big, easy-to-read cards. Card HEIGHT is derived from the
   // available vertical space so all rows always fit (never clips the bottom
@@ -6958,14 +6949,13 @@ function drawSkins(){
   // screens instead of stretching into letterboxes.
   const cols=3, n=SKINS.length;
   const rows=Math.ceil(n/cols);
-  const margin=16, gap=11, topY=104, bottomPad=20;
+  const margin=16, gap=11, topY=hdrBottom+4, bottomPad=20+safeBottom;
   const cardW=(W-margin*2-gap*(cols-1))/cols;
   const availH=H-topY-bottomPad;
   const cardH=Math.min((availH-gap*(rows-1))/rows, cardW*0.82);
-  // Centre the grid in the leftover vertical space (cards are capped square, so
-  // they don't fill the whole height) — balanced instead of top-heavy.
-  const gridH=rows*cardH+(rows-1)*gap;
-  const startY=topY+Math.max(0,(availH-gridH)*0.42);
+  // Top-aligned under the header like every other v3 sub-screen; centring
+  // left a band of empty paper between the title and the first row.
+  const startY=topY+8;
   const lastRowCount=n-(rows-1)*cols; // cards on the final row
 
   for(let idx=0;idx<n;idx++){
@@ -7036,12 +7026,6 @@ function drawSkins(){
       }
     }
   }
-
-  // Back chevron — identical pattern to Settings.
-  if(_settingsRow(12,36,90,44,(rx,ry,rw,rh)=>{
-    _drawChevron(rx+16,ry+rh/2,7,TH.text,'left');
-    txt(t('back'),rx+30,ry+rh/2,13,TH.text,'left');
-  },false)){goto('menu');}
 }
 
 // ── v2.0 screen transitions ─────────────────────────────────────────
@@ -7164,6 +7148,8 @@ function loop(t){
     const k=_transSnap.width/W;
     const sx=_transSnap.getContext('2d');
     sx.scale(k,k);
+    // Matches the NATIVE splash (resources/splash*, still the pre-v3
+    // colours) so the hand-off is seamless; the menu then fades in over it.
     sx.fillStyle=darkMode?'#3a2c2a':'#f9e9d8';
     sx.fillRect(0,0,W,H);
     sx.strokeStyle=darkMode?'#f0a890':'#d68f7a';

@@ -37,6 +37,29 @@ reaction to nearly every action. This release takes the cheapest of those.
 - `window._ae.tap/hearts/state/combo/winStreak` QA hooks.
 
 ### Changed
+- **v3 "Paper & Ink" redesign** — the whole look, rebuilt around the board.
+  - Board frame removed; arrows thinner with sharper heads on a flat warm
+    paper background (dark: walnut). New palette in both themes.
+  - Game HUD: back chevron · "Level N" (purple + HARD on hard levels) ·
+    hint, a hairline, then lives and boosters. The star preview and the
+    MOVES/TIME/coins strip are gone.
+  - Buttons are physical: a solid face on a darker lip that sinks on press.
+    Primary = accent face, white label. Prices live on the button (coin +
+    amount, or a video glyph for rewarded ads).
+  - Menu: one PLAY hero carrying the level number, four icon tiles
+    (daily/weekly/zen/rush), a bottom bar (levels/stats/achievements).
+  - Win screen: sunburst, verdict (Flawless/Great/Cleared), difficulty,
+    time, mistakes, streak, reward pill, then Next / Replay / Home.
+  - Game over and rush end: one column of equal-width buttons.
+  - Every sub-screen (levels, stats, achievements, settings, skins) shares
+    one header: the in-game back chevron, title, coin balance — replacing
+    three different back controls. Level tiles scale to the screen width.
+  - Sounds synthesised (WebAudio): each arrow plucks the next note of a
+    pentatonic scale as a combo climbs; blocked = a falling "tok";
+    win = an arpeggio. Five MP3/WAV files removed.
+  - Stats rows, achievement names and settings sections localised (ru);
+    other languages fall back to their existing translated word where a
+    v3 string replaced one, not to English.
 - **Level flow: a picture every 5th level, the generator everywhere else.**
   Levels 1–20 (pre-2.0 boards: level 10 was 42×30 with a third of its
   arrows tappable blind) and the dense 21–300 picture block (3× smaller
@@ -67,6 +90,9 @@ reaction to nearly every action. This release takes the cheapest of those.
   own cells as blockers, the chained generator rejects such candidates, the
   affected picture levels were re-oriented or regenerated with their shapes
   kept, and `npm run validate` fails on any arrow whose ray re-enters itself.
+- Menu background arrows respawned at the pre-v2 brightness and speed
+  after their first cycle, undoing the "barely there" pass.
+- Daily reward: the claimed tick sat on the day number.
 - Rush boards could exceed their own `maxLen` — absorption was bounded only
 
   as a side effect of the escape-line gate, so a 10×10 board came back as

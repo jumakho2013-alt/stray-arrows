@@ -42,7 +42,7 @@ levels and re-generates procedurally (QA only).
 | `handcrafted-levels.js` | 441 picture levels, one every 5th level 25..2225 — every other level is generated at runtime |
 | `sw.js` | Service Worker — versioned cache |
 | `manifest.json` | PWA manifest |
-| `sounds/` | tap, swoosh, complete, gameover MP3s |
+| `sounds/` | game-over, coin and fanfare samples (tap, swoosh, blocked and win are synthesised in WebAudio) |
 | `www/` | **build output** — Capacitor's `webDir` points here |
 | `ios/` | Xcode project |
 | `android/` | Gradle project |
