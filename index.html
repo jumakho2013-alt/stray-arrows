@@ -3262,7 +3262,154 @@ function _buildChained(R,C,rng,cfg){
   // leave free (pockets too small to cover) into blocked orientations. It
   // returns `P` in reverse solve order, same as the construction does.
   if(cfg.peel)_peelOrient(P,R,C,rng,1,.85);
-  return P.reverse(); // solve order: arrows[0] leaves first
+  P.reverse(); // solve order: arrows[0] leaves first
+  return cfg.fill===false?P:_fillHoles(P,R,C,rng,cfg.maxLen+3);
+}
+
+// ── Hole fill ────────────────────────────────────────────────────────
+// Construction stops once no new arrow can satisfy the covering rule, and
+// the tail-growth pass above only reaches holes that touch a tail with the
+// right ray history. What was left — 15-30% of every board, 16 of 108 cells
+// on level 10 — reads to a player as an empty level; Arrows GO! boards
+// have no holes at all. Each hole gets the best of three moves:
+//   · grow a neighbour's tail into it (that arrow's ray is untouched),
+//   · advance a neighbour's head into it (the head turns to face the step),
+//   · lay a new short arrow through it and the holes next to it,
+//   · or, for a lone hole walled in by the middles of arrows, cut one of
+//     them beside it so the hole becomes an end of one of the halves.
+// A move is kept only if every arrow can still leave (removal is monotone,
+// so that is just "the blocking graph has no cycle") and no arrow's ray
+// re-enters its own body. Among valid moves the one leaving the fewest
+// tappable arrows per step wins, so a filled hole costs the least
+// difficulty it can. Returns the arrows in a solve order.
+function _fillHoles(P,R,C,rng,capLen){
+  const N=R*C,inB=(r,c)=>r>=0&&r<R&&c>=0&&c<C;
+  const occ=new Int16Array(N).fill(-1);
+  P.forEach((a,i)=>{for(const[r,c] of a.cells)occ[r*C+c]=i});
+  // Tappable arrows per step over a FIFO solve; Infinity = unsolvable or an
+  // arrow that would fly through itself.
+  const evalBoard=()=>{
+    const n=P.length,cnt=new Int16Array(n),rev=Array.from({length:n},()=>[]);
+    for(let i=0;i<n;i++){
+      const a=P[i],h=a.cells[a.cells.length-1];
+      let r=h[0]+DY[a.dir],c=h[1]+DX[a.dir],last=-1;
+      while(inB(r,c)){
+        const j=occ[r*C+c];
+        if(j===i)return Infinity;
+        if(j>=0&&j!==last&&!rev[j].includes(i)){rev[j].push(i);cnt[i]++}
+        last=j;r+=DY[a.dir];c+=DX[a.dir];
+      }
+    }
+    const q=[];for(let i=0;i<n;i++)if(!cnt[i])q.push(i);
+    let sum=0;
+    for(let k=0;k<n;k++){
+      if(k>=q.length)return Infinity;
+      sum+=q.length-k;
+      for(const i of rev[q[k]])if(--cnt[i]===0)q.push(i);
+    }
+    return sum/max(1,n);
+  };
+  const stepDir=(a,b)=>_chainDir(a,b);
+  // Random self-avoiding path through holes from k, length ≤ L.
+  const holePath=(k,L)=>{
+    const path=[[(k/C)|0,k%C]],used=new Set([k]);
+    while(path.length<L){
+      const [r,c]=path[path.length-1],opts=[];
+      for(let d=0;d<4;d++){const nr=r+DY[d],nc=c+DX[d],nk=nr*C+nc;if(inB(nr,nc)&&occ[nk]<0&&!used.has(nk))opts.push(nk)}
+      if(!opts.length)break;
+      const nk=opts[(rng()*opts.length)|0];used.add(nk);path.push([(nk/C)|0,nk%C]);
+    }
+    return path;
+  };
+  for(let pass=0;pass<4;pass++){
+    const holes=[];for(let k=0;k<N;k++)if(occ[k]<0)holes.push(k);
+    if(!holes.length)break;
+    for(let i=holes.length-1;i>0;i--){const j=(rng()*(i+1))|0;const t=holes[i];holes[i]=holes[j];holes[j]=t}
+    let changed=false;
+    for(const k of holes){
+      if(occ[k]>=0)continue;            // filled by a new arrow earlier this pass
+      const r=(k/C)|0,c=k%C;
+      let best=null;
+      const consider=(score,apply)=>{if(score<Infinity&&(!best||score<best.score))best={score,apply}};
+      for(let d=0;d<4;d++){
+        const nr=r+DY[d],nc=c+DX[d];
+        if(!inB(nr,nc))continue;
+        const id=occ[nr*C+nc];
+        if(id<0)continue;
+        const a=P[id],n=a.cells.length;
+        if(n>=capLen)continue;
+        const t0=a.cells[0],h=a.cells[n-1];
+        if(t0[0]===nr&&t0[1]===nc){
+          a.cells.unshift([r,c]);occ[k]=id;
+          consider(evalBoard(),()=>{a.cells.unshift([r,c]);occ[k]=id});
+          a.cells.shift();occ[k]=-1;
+        }
+        if(h[0]===nr&&h[1]===nc){
+          const od=a.dir;
+          a.cells.push([r,c]);a.dir=(d+2)%4;occ[k]=id;
+          const nd=a.dir;
+          consider(evalBoard(),()=>{a.cells.push([r,c]);a.dir=nd;occ[k]=id});
+          a.cells.pop();a.dir=od;occ[k]=-1;
+        }
+      }
+      // Cut: the neighbour cell is cells[m] of arrow `id`, mid-body. Either
+      // the hole becomes the TAIL of the back half [k, m..n-1] (front half
+      // 0..m-1 gets a head at m-1), or the HEAD of the front half [0..m, k]
+      // (back half m+1..n-1 keeps the old head). Both halves need ≥2 cells,
+      // and a half that keeps the old head must keep the step into it too —
+      // cut at the head itself and [k, head] would face the old direction
+      // while its body points another way.
+      for(let d=0;d<4&&!best;d++){
+        const nr=r+DY[d],nc=c+DX[d];
+        if(!inB(nr,nc))continue;
+        const id=occ[nr*C+nc];
+        if(id<0)continue;
+        const a=P[id],orig=a.cells,od=a.dir,n=orig.length;
+        const m=orig.findIndex(q=>q[0]===nr&&q[1]===nc);
+        const cuts=[];
+        if(m>=2&&m<=n-2)cuts.push([orig.slice(0,m),stepDir(orig[m-2],orig[m-1]),[[r,c],...orig.slice(m)],od]);
+        if(m<=n-3)cuts.push([[...orig.slice(0,m+1),[r,c]],(d+2)%4,orig.slice(m+1),od]);
+        for(const [f,fd,b,bd] of cuts){
+          const set=()=>{
+            a.cells=f;a.dir=fd;const nid=P.length;P.push({cells:b,dir:bd});
+            for(const[pr,pc] of f)occ[pr*C+pc]=id;
+            for(const[pr,pc] of b)occ[pr*C+pc]=nid;
+          };
+          set();
+          consider(evalBoard()+.05,set);
+          P.pop();a.cells=orig;a.dir=od;
+          for(const[pr,pc] of orig)occ[pr*C+pc]=id;
+          occ[k]=-1;
+        }
+      }
+      // New arrow: a few random paths through this pocket, both ways round.
+      for(let tr=0;tr<10;tr++){
+        const path=holePath(k,2+((rng()*(capLen-4))|0));
+        if(path.length<2)break;
+        for(const cells of [path,path.slice().reverse()]){
+          const dir=stepDir(cells[cells.length-2],cells[cells.length-1]),id=P.length;
+          P.push({cells,dir});for(const[pr,pc] of cells)occ[pr*C+pc]=id;
+          // Slight preference for growing what is there over a new stub.
+          const sc=evalBoard()+(cells.length<3?.08:.03);
+          consider(sc,()=>{P.push({cells,dir});for(const[pr,pc] of cells)occ[pr*C+pc]=P.length-1});
+          P.pop();for(const[pr,pc] of cells)occ[pr*C+pc]=-1;
+        }
+      }
+      if(best){best.apply();changed=true}
+    }
+    if(!changed)break;
+  }
+  // Solve order (Kahn), the order every caller of the chained path expects.
+  const n=P.length,cnt=new Int16Array(n),rev=Array.from({length:n},()=>[]);
+  for(let i=0;i<n;i++){
+    const a=P[i],h=a.cells[a.cells.length-1];
+    let r=h[0]+DY[a.dir],c=h[1]+DX[a.dir];
+    while(inB(r,c)){const j=occ[r*C+c];if(j>=0&&j!==i&&!rev[j].includes(i)){rev[j].push(i);cnt[i]++}r+=DY[a.dir];c+=DX[a.dir]}
+  }
+  const q=[];for(let i=0;i<n;i++)if(!cnt[i])q.push(i);
+  for(let k=0;k<q.length;k++)for(const i of rev[q[k]])if(--cnt[i]===0)q.push(i);
+  if(q.length!==n){_devWarn('fillHoles',new Error('unsolvable after fill'));return P}
+  return q.map(i=>P[i]);
 }
 
 

@@ -18,8 +18,18 @@ reaction to nearly every action. This release takes the cheapest of those.
   wrong order, so that count *is* the difficulty. Boards are now built in
   reverse solve order, each new arrow laid across every currently free ray
   (head first, body guided through the rays, hugging placed arrows), then
-  re-oriented by the peel. Levels 1–400: ~2.5 tappable per step on normal
-  boards, ~3.1 on hard ones, 0 unsolvable, ≤48 ms.
+  re-oriented by the peel. Levels 1–400: ~2.1 tappable per step on normal
+  boards, ~2.3 on hard ones, 0 unsolvable, ≤70 ms.
+- **No empty cells.** Construction stops when no new arrow can cover the
+  free rays, leaving 15–30% of the board as holes (16 of 108 cells on
+  level 10) — "empty levels" to a player; Arrows GO! boards have none. A
+  fill pass now closes each hole with the cheapest valid move: grow a
+  neighbour's tail, advance a neighbour's head, lay a short arrow through
+  the pocket, or cut a walled-in neighbour so the hole becomes an end. A
+  move is kept only if the board stays solvable and no arrow flies through
+  itself. Fill 81% → 100% (307 of 320 boards in 5–400 have no hole at all,
+  the worst 99%); tappable per step 2.9 → 2.2, so the boards also got
+  harder. Zen and Rush still use the older generator.
 - **HARD levels** — every 3rd level from 5, labelled in the HUD in purple,
   ~1.3× the board and longer arrows: the genre's sawtooth curve. Tutorial
   shortened to levels 1–4 so level 5 can be the first hard one.
