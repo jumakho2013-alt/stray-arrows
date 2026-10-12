@@ -390,6 +390,9 @@ function arrowColor(a,i){
   if(sk.solid){try{return sk.paint();}catch(e){return TH.arrow;}}
   return _skinPaint(sk,i||0);
 }
+// Picture levels: arrows inside the silhouette are drawn in the accent so the
+// picture reads against the ground arrows, whatever skin is equipped.
+function boardArrowColor(a,i){return a.pic?TH.accent:arrowColor(a,i)}
 // Resolve a `col` (string OR paint-function) to a concrete fillStyle/strokeStyle.
 // Semantic overrides (TH.star hint, TH.arrowBlock shake) stay plain strings;
 // skins arrive as functions and get the arrow geometry to build their gradient.
@@ -1283,6 +1286,7 @@ let zenCount=+localStorage.getItem('ae_zen_count')||0; // total zen boards (driv
 // reveal moment and the per-win shape counter.
 let currentShape=null;
 let currentHard=false;   // v2.2 HARD level — HUD label, set per board
+let _shapeTint=false; // picture drawn as a tint under a full board (v3), not as the arrows alone
 let _shapeCells=null; // v2.0.1: [[r,c],…] precomputed for the reveal (no per-frame string splits)
 let boosterMenuOpen=false;
 let shieldArmed=false;
@@ -2128,10 +2132,53 @@ function generateLevel(lvl,customSeed){
     currentHard=false;   // pictures are the breathers between hard levels
 
     _shapeRevealT=currentShape?0:1;
-    gridCols=hc.cols;gridRows=hc.rows;
-    arrows=hc.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d,alive:true}));
-    _recordCells();
-    _shapeCells=currentShape?[..._levelCells].map(k=>{const p=k.split(',');return[+p[0],+p[1]]}):null;
+    // v3: the file supplies the SILHOUETTE; the board is filled edge to edge
+    // by the chained generator + hole fill like every other level, and the
+    // picture shows as COLOUR — its arrows never cross the outline. Drawn
+    // with only its own cells, the picture was the weakest level on the
+    // track: level 50 was 105 cells of two-wide digits, 22 short arrows,
+    // ~2.6 tappable per step against 2.1 on the generated level before it;
+    // late pictures reached 4.8. The file's own arrows stay as the fallback.
+    let r0=hc.rows,r1=-1,c0=hc.cols,c1=-1;
+    for(const a of hc.arrows)for(const p of a.c){r0=min(r0,p[0]);r1=max(r1,p[0]);c0=min(c0,p[1]);c1=max(c1,p[1])}
+    r0=max(0,r0-1);c0=max(0,c0-1);r1=min(hc.rows-1,r1+1);c1=min(hc.cols-1,c1+1);
+    const R=r1-r0+1,Cn=c1-c0+1,region=new Uint8Array(R*Cn);
+    for(const a of hc.arrows)for(const p of a.c)region[(p[0]-r0)*Cn+(p[1]-c0)]=1;
+    // A cell walled in by the other region can never hold an arrow (two
+    // cells minimum, one region each) — give it to its neighbours. Level 425
+    // had ten of these and fell back to the bare picture.
+    for(let k=0;k<R*Cn;k++){
+      const r=(k/Cn)|0,c=k%Cn;let lone=true;
+      for(let d=0;d<4&&lone;d++){const nr=r+DY[d],nc=c+DX[d];if(nr>=0&&nr<R&&nc>=0&&nc<Cn&&region[nr*Cn+nc]===region[k])lone=false}
+      if(lone)region[k]^=1;
+    }
+    const sp=_chainSpec(lvl);
+    // Narrow strips of ground (pizza: one cell wide down both sides) can
+    // leave a few cells no valid move reaches; the next build of the same
+    // stream usually closes them. Keep the fullest of up to three; a stray
+    // hole or two is not worth tripling the build time of a big picture.
+    let P=null,placed=-1;
+    for(let att=0;att<3&&placed<R*Cn*.98;att++){
+      const Q=_buildChained(R,Cn,rng,{...sp.cfg,maxLen:sp.cfg.maxLen-(sp.hard?3:0),region});
+      const q=Q.reduce((n,a)=>n+a.cells.length,0);
+      if(q>placed){P=Q;placed=q}
+    }
+    if(placed>=R*Cn*.9){
+      gridCols=Cn;gridRows=R;
+      arrows=P.map(a=>({cells:a.cells,dir:a.dir,alive:true,pic:region[a.cells[0][0]*Cn+a.cells[0][1]]===1}));
+      _recordCells();
+      _shapeCells=[];
+      for(let k=0;k<R*Cn;k++)if(region[k])_shapeCells.push([(k/Cn)|0,k%Cn]);
+      _shapeTint=true;
+    }else{
+      _devWarn('shapeGen',new Error('lvl '+lvl+': '+placed+'/'+(R*Cn)+' cells'));
+      gridCols=hc.cols;gridRows=hc.rows;
+      arrows=hc.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d,alive:true,pic:true}));
+      _recordCells();
+      _shapeCells=[..._levelCells].map(k=>{const p=k.split(',');return[+p[0],+p[1]]});
+      _shapeTint=false;
+    }
+    if(!currentShape)_shapeCells=null;
     minMoves=arrows.length;
     moves=0;timer=0;undosLeft=3;
     _resetBoosterState();
@@ -3112,19 +3159,23 @@ function _chainGuided(occ,R,C,start,rayOf,F,maxLen,rng){
 // sawtooth's peaks; the normal ones between them are the breathers.
 const HARD_COLOR='#8a4fc7';
 function isHardLevel(lvl){return lvl>=5&&lvl%3===2}
+// What the player is told: a picture level on a hard slot (50, 65, 80…) is
+// served from the file, never from the hard spec, so it is not hard.
+function isHardBoard(lvl){return isHardLevel(lvl)&&!(window.HANDCRAFTED_LEVELS&&window.HANDCRAFTED_LEVELS[lvl])}
 function _chainSpec(lvl){
   const hard=isHardLevel(lvl);
   // The board grows, the arrows mostly don't: more arrows is more to read.
   // Long-arrow boards (14+ cells) came out as a handful of snakes — eleven
   // taps on level 301 — which reads as easy however tangled it looks.
-  let cols=clp(Math.round(6+Math.sqrt(lvl)*.85),6,12);
-
-  // Normal boards cap at 12 wide, hard at 16: past that, distant regions
-  // of the board each keep a free arrow of their own and the one-way-in feel
-  // dissolves (measured: ~2.2 tappable per step at 16×12, ~3.5-4 at 26×20).
-  if(hard)cols=min(16,Math.round(cols*1.3));
-
-  const rows=Math.round(cols*1.3);
+  // Tutorial (1-4) stays small. After it the board keeps growing to ~level
+  // 200 instead of stopping at 12 wide by level 45 — "our levels are small"
+  // — and is shaped 1.6:1 like the play area (it was 1.3:1, leaving a band
+  // of empty paper above and below every board). Hard boards cap at 16
+  // wide, ~22 px a cell on a 390-wide screen; pinch-zoom covers the rest.
+  const tut=lvl<=TUTORIAL_LEVELS;
+  let cols=tut?clp(Math.round(6+Math.sqrt(lvl)*.85),6,12):clp(Math.round(6.5+Math.sqrt(lvl)*.6),8,15);
+  if(hard)cols=min(16,Math.round(cols*1.25));
+  const rows=Math.round(cols*(tut?1.3:1.6));
   const maxLen=clp(5+Math.floor(lvl/25),5,9)+(hard?3:0);
   return {hard,cols,rows,cfg:{minLen:3,maxLen,branch:1,turn:.45,tries:100,maxStuck:60,peel:true}};
 
@@ -3139,10 +3190,22 @@ function _cropBoard(arr,R,C){
   for(const a of arr)for(const p of a.cells){p[0]-=r0;p[1]-=c0}
   return {rows:r1-r0+1,cols:c1-c0+1};
 }
+// cfg.region (optional, Uint8Array 0/1 per cell): picture levels. Every
+// arrow stays inside one region — the picture or the ground around it — so
+// the picture can be drawn in its own colour; rays cross regions freely, so
+// picture and ground arrows still block each other.
 function _buildChained(R,C,rng,cfg){
   const occ=new Int16Array(R*C).fill(-1);
   const P=[];
   const inB=(r,c)=>r>=0&&r<R&&c>=0&&c<C;
+  const reg=cfg.region||null,same=(a,b)=>!reg||reg[a]===reg[b];
+  // occ as each region's path walker sees it: the other region counts as
+  // taken, so a body never crosses the outline — and hugs it.
+  const occW=(reg?[0,1]:[0]).map(L=>{
+    const w=new Int16Array(R*C).fill(-1);
+    if(reg)for(let k=0;k<R*C;k++)if(reg[k]!==L)w[k]=32000;
+    return w;
+  });
   const rayClear=(r,c,d)=>{r+=DY[d];c+=DX[d];while(inB(r,c)){if(occ[r*C+c]>=0)return false;r+=DY[d];c+=DX[d]}return true};
   let stuck=0,forced=0;
   while(stuck<cfg.maxStuck){
@@ -3176,7 +3239,7 @@ function _buildChained(R,C,rng,cfg){
       // so it stays free for good; 8 of 13 placements leaked that way.
       const ds=[0,1,2,3].filter(d=>{
         const br=hr-DY[d],bc=hc-DX[d];
-        return inB(br,bc)&&occ[br*C+bc]<0&&inB(hr+DY[d],hc+DX[d])&&rayClear(hr,hc,d);
+        return inB(br,bc)&&occ[br*C+bc]<0&&same(br*C+bc,hk)&&inB(hr+DY[d],hc+DX[d])&&rayClear(hr,hc,d);
       });
 
       if(!ds.length)continue;
@@ -3184,15 +3247,21 @@ function _buildChained(R,C,rng,cfg){
       const L=cfg.minLen+((rng()*(cfg.maxLen-cfg.minLen+1))|0);
       // Body grows backwards from the cell behind the head: guided across
       // the free rays it must cover, then topped up by a random walk.
-      const tmp=new Int16Array(occ);tmp[hk]=32000;
+      // Mark the head (and, for the top-up walk, the body) in the walkers'
+      // grid and unmark after — copying the whole grid per try was ~90% of
+      // the build time on a 32×22 picture board.
+      const W=occW[reg?reg[hk]:0];
+      W[hk]=32000;
       const nk=(hr-DY[d])*C+(hc-DX[d]);
-      const body=F.length&&t%2===0?_chainGuided(tmp,R,C,nk,rayOf,F,cfg.maxLen+3,rng):[[(nk/C)|0,nk%C]];
+      const body=F.length&&t%2===0?_chainGuided(W,R,C,nk,rayOf,F,cfg.maxLen+3,rng):[[(nk/C)|0,nk%C]];
       if(body.length<L-1){
-        for(const[r,c] of body)tmp[r*C+c]=32000;
+        for(const[r,c] of body)W[r*C+c]=32000;
         const last=body[body.length-1];
-        const ext=_chainWalk(tmp,R,C,last[0]*C+last[1],L-body.length,rng,cfg.turn);
+        const ext=_chainWalk(W,R,C,last[0]*C+last[1],L-body.length,rng,cfg.turn);
+        for(const[r,c] of body)W[r*C+c]=-1;
         for(let i=1;i<ext.length;i++)body.push(ext[i]);
       }
+      W[hk]=-1;
       const cells=body.reverse();cells.push([hr,hc]);   // tail → head
       if(cells.length<cfg.minLen)continue;
       // The body was grown after the head was picked, so it can wander back
@@ -3222,7 +3291,7 @@ function _buildChained(R,C,rng,cfg){
     const id=P.length;
 
 
-    for(const[r,c] of best.cells)occ[r*C+c]=id;
+    for(const[r,c] of best.cells){const k=r*C+c;occ[k]=id;for(const w of occW)w[k]=id}
     P.push({cells:best.cells,dir:best.dir});
   }
   // Holes: grow a neighbour's TAIL into them. Safe only if the cell sits on
@@ -3245,7 +3314,7 @@ function _buildChained(R,C,rng,cfg){
       const r=(k/C)|0,c=k%C;
       for(let d=0;d<4;d++){
         const nr=r+DY[d],nc=c+DX[d];
-        if(!inB(nr,nc))continue;
+        if(!inB(nr,nc)||!same(k,nr*C+nc))continue;
         const id=occ[nr*C+nc];
         if(id<0)continue;
         const a=P[id],tail=a.cells[0];
@@ -3263,7 +3332,7 @@ function _buildChained(R,C,rng,cfg){
   // returns `P` in reverse solve order, same as the construction does.
   if(cfg.peel)_peelOrient(P,R,C,rng,1,.85);
   P.reverse(); // solve order: arrows[0] leaves first
-  return cfg.fill===false?P:_fillHoles(P,R,C,rng,cfg.maxLen+3);
+  return cfg.fill===false?P:_fillHoles(P,R,C,rng,cfg.maxLen+3,reg);
 }
 
 // ── Hole fill ────────────────────────────────────────────────────────
@@ -3282,8 +3351,8 @@ function _buildChained(R,C,rng,cfg){
 // re-enters its own body. Among valid moves the one leaving the fewest
 // tappable arrows per step wins, so a filled hole costs the least
 // difficulty it can. Returns the arrows in a solve order.
-function _fillHoles(P,R,C,rng,capLen){
-  const N=R*C,inB=(r,c)=>r>=0&&r<R&&c>=0&&c<C;
+function _fillHoles(P,R,C,rng,capLen,reg){
+  const N=R*C,inB=(r,c)=>r>=0&&r<R&&c>=0&&c<C,same=(a,b)=>!reg||reg[a]===reg[b];
   const occ=new Int16Array(N).fill(-1);
   P.forEach((a,i)=>{for(const[r,c] of a.cells)occ[r*C+c]=i});
   // Tappable arrows per step over a FIFO solve; Infinity = unsolvable or an
@@ -3315,7 +3384,7 @@ function _fillHoles(P,R,C,rng,capLen){
     const path=[[(k/C)|0,k%C]],used=new Set([k]);
     while(path.length<L){
       const [r,c]=path[path.length-1],opts=[];
-      for(let d=0;d<4;d++){const nr=r+DY[d],nc=c+DX[d],nk=nr*C+nc;if(inB(nr,nc)&&occ[nk]<0&&!used.has(nk))opts.push(nk)}
+      for(let d=0;d<4;d++){const nr=r+DY[d],nc=c+DX[d],nk=nr*C+nc;if(inB(nr,nc)&&occ[nk]<0&&same(nk,k)&&!used.has(nk))opts.push(nk)}
       if(!opts.length)break;
       const nk=opts[(rng()*opts.length)|0];used.add(nk);path.push([(nk/C)|0,nk%C]);
     }
@@ -3333,7 +3402,7 @@ function _fillHoles(P,R,C,rng,capLen){
       const consider=(score,apply)=>{if(score<Infinity&&(!best||score<best.score))best={score,apply}};
       for(let d=0;d<4;d++){
         const nr=r+DY[d],nc=c+DX[d];
-        if(!inB(nr,nc))continue;
+        if(!inB(nr,nc)||!same(k,nr*C+nc))continue;
         const id=occ[nr*C+nc];
         if(id<0)continue;
         const a=P[id],n=a.cells.length;
@@ -3361,7 +3430,7 @@ function _fillHoles(P,R,C,rng,capLen){
       // while its body points another way.
       for(let d=0;d<4&&!best;d++){
         const nr=r+DY[d],nc=c+DX[d];
-        if(!inB(nr,nc))continue;
+        if(!inB(nr,nc)||!same(k,nr*C+nc))continue;
         const id=occ[nr*C+nc];
         if(id<0)continue;
         const a=P[id],orig=a.cells,od=a.dir,n=orig.length;
@@ -4045,7 +4114,7 @@ function _flyOutArrow(a,idx){
       // Snappier exit (was 1.2s — felt sluggish vs competitor arrowsgo where
       // arrows shoot off in ~0.5s, giving the game its "kinetic" feel).
       t:0,dur:.55,
-      col:arrowColor(a,idx),cs,gx,gy,
+      col:boardArrowColor(a,idx),cs,gx,gy,
       bodyLen,totalDist:bodyLen+extLen,
       path,
     });
@@ -5119,7 +5188,7 @@ function drawMenu(){
     const cy=top+sink+bh/2;
     txt(t('play'),bx-10,cy-10,28,'#ffffff','center','900');
     drawPlayIcon(bx+bw*.30,cy-10,13,'#ffffff');
-    txt(t('levelWord')+' '+maxLevel+(isHardLevel(maxLevel)?' · '+t('diffHard'):''),bx,cy+20,13,'rgba(255,255,255,.85)','center','700');
+    txt(t('levelWord')+' '+maxLevel+(isHardBoard(maxLevel)?' · '+t('diffHard'):''),bx,cy+20,13,'rgba(255,255,255,.85)','center','700');
     X.restore();
     if(!blocked&&tapped&&abs(tapX-bx)<bw/2&&abs(tapY-by)<bh/2){
       sfx.tap();haptic(8);tapped=false;
@@ -5401,6 +5470,16 @@ function drawPlay(){
   // v2.0 shape-level silhouette reveal: for the first ~0.8s every cell of
   // the picture glows gold, so the player SEES the heart/cat/rocket before
   // the arrows materialise over it. Layered alpha, no shadowBlur.
+  // v3 picture levels: the board is full, so the picture is a faint accent
+  // ground under its cells — readable at a glance, clearer as arrows leave.
+  if(currentShape&&_shapeCells&&_shapeTint){
+    X.save();
+    X.fillStyle=TH.accent;X.globalAlpha=darkMode?.13:.10;
+    X.beginPath();
+    for(const rc of _shapeCells)X.rect(gx+rc[1]*cs,gy+rc[0]*cs,cs,cs);
+    X.fill();
+    X.restore();
+  }
   if(currentShape&&_shapeCells&&_shapeRevealT<1){
     _shapeRevealT=min(1,_shapeRevealT+dt/.8);
     const a=reducedMotion?(_shapeRevealT<.4?.12:0):(1-_shapeRevealT)*.22;
@@ -5562,7 +5641,7 @@ function drawPlay(){
       X.restore();
     }
 
-    const col=isShaking?TH.arrowBlock:(isHinted?TH.star:arrowColor(a,i));
+    const col=isShaking?TH.arrowBlock:(isHinted?TH.star:boardArrowColor(a,i));
     drawArrowStatic(a,cs,gx,gy,col,revealA,shakeOff);
     if(a.lock!=null||a.keyFor!=null)_drawLockBadges(a,cs,gx,gy,revealA,shakeOff);
     if(a.cd!=null)_drawBombBadge(a,cs,gx,gy,revealA,shakeOff);
@@ -5957,7 +6036,11 @@ function drawComplete(){
       goto('menu',()=>{isDaily=false;isWeekly=false});
     }
   }else{
-    if(drawBigBtn(t('nextLevelBtn'),W/2,by,W-64,56,currentHard?HARD_COLOR:null)){
+    // Purple warns about the level AHEAD — the genre flags a hard level
+    // before you enter it; colouring by the one just beaten was backwards.
+    const nextHard=isHardBoard(level+1);
+    if(nextHard)txt(t('hardLevel'),W/2,by-42,11,HARD_COLOR,'center','800');
+    if(drawBigBtn(t('nextLevelBtn'),W/2,by,W-64,56,nextHard?HARD_COLOR:null)){
       showInterstitialAd(); // timed interstitial every 5 min
       goto('play',()=>{level++;save();generateLevel(level)});
     }
@@ -7018,7 +7101,7 @@ function drawLevels(){
     // Current level = accent face; HARD levels show a purple number (and
     // lip) so the sawtooth is visible from the map, the way the genre
     // flags its boss levels ahead of time; locked = flat and faded.
-    const hard=isHardLevel(lv)&&!(window.HANDCRAFTED_LEVELS&&window.HANDCRAFTED_LEVELS[lv]);
+    const hard=isHardBoard(lv);
     const top=y-cardH/2-lip/2;
     if(unlocked){
       const face=current?TH.accent:(hv?TH.btnHover:TH.btnBg);

@@ -18,8 +18,12 @@ reaction to nearly every action. This release takes the cheapest of those.
   wrong order, so that count *is* the difficulty. Boards are now built in
   reverse solve order, each new arrow laid across every currently free ray
   (head first, body guided through the rays, hugging placed arrows), then
-  re-oriented by the peel. Levels 1–400: ~2.1 tappable per step on normal
-  boards, ~2.3 on hard ones, 0 unsolvable, ≤70 ms.
+  re-oriented by the peel. Levels 1–3000: ~2.4 tappable per step on normal
+  boards, ~2.5 on hard ones, 0 unsolvable, 20–65 ms a board.
+- **Bigger boards that keep growing.** Boards stopped growing at 12×16 by
+  level 45 and were shaped 1.3:1, leaving empty paper above and below.
+  Now (after the tutorial) 8×13 at level 6 → 11×18 at 50 → 15×24 by ~200,
+  hard boards 1.25× up to 16×26, shaped 1.6:1 like the play area.
 - **No empty cells.** Construction stops when no new arrow can cover the
   free rays, leaving 15–30% of the board as holes (16 of 108 cells on
   level 10) — "empty levels" to a player; Arrows GO! boards have none. A
@@ -30,8 +34,15 @@ reaction to nearly every action. This release takes the cheapest of those.
   itself. Fill 81% → 100% (307 of 320 boards in 5–400 have no hole at all,
   the worst 99%); tappable per step 2.9 → 2.2, so the boards also got
   harder. Zen and Rush still use the older generator.
+- **Picture levels are full boards.** The file now supplies only the
+  silhouette: the whole board is generated, arrows never cross the
+  outline, and the picture shows as accent-coloured arrows on a faint tint.
+  Drawn with only its own cells, a picture was the weakest level around it
+  (level 50: 105 cells of two-wide digits, 22 short arrows). Now 43–112
+  arrows per picture, tappable per step 3.0–4.8 → 2.2–3.0, all 441 at
+  ≥98% fill with none falling back to the old arrows.
 - **HARD levels** — every 3rd level from 5, labelled in the HUD in purple,
-  ~1.3× the board and longer arrows: the genre's sawtooth curve. Tutorial
+  ~1.25× the board and longer arrows: the genre's sawtooth curve. Tutorial
   shortened to levels 1–4 so level 5 can be the first hard one.
 - **Lock & key** — from level 31, most boards lock an arrow that is open
 
@@ -103,6 +114,9 @@ reaction to nearly every action. This release takes the cheapest of those.
 - Menu background arrows respawned at the pre-v2 brightness and speed
   after their first cycle, undoing the "barely there" pass.
 - Daily reward: the claimed tick sat on the day number.
+- The menu labelled picture levels on a hard slot (50, 65, 80…) HARD, and
+  the win screen coloured "Next level" by the level just beaten; it now
+  warns about the level ahead.
 - Rush boards could exceed their own `maxLen` — absorption was bounded only
 
   as a side effect of the escape-line gate, so a 10×10 board came back as
