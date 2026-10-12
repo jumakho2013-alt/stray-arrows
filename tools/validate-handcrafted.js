@@ -5,7 +5,8 @@
 //  • level is solvable (topological unwinding succeeds)
 //  • shape keys (≥25): arrow len ≥ 2, d matches the last cell segment,
 //    known `t` shape id, initial openness within the tier's hard cap
-//  • key coverage is exactly {1..20} ∪ {25,30,…,2225}
+//  • key coverage is exactly {25,30,…,2225} — every other level is built
+//    at runtime by generateLevel()
 //  • file stays under 4.5 MB
 
 const path = require('path');
@@ -113,10 +114,10 @@ function initialOpenness(level) {
 }
 
 // ── Key coverage ─────────────────────────────────────────────────────
-// v2.0.1: dense shape block 21..300, then every 5th to 2225.
+// v2.1: a picture every 5th level, 25..2225, and nothing else.
 const expected = new Set();
-for (let i = 1; i <= 300; i++) expected.add(i);
-for (let l = 305; l <= 2225; l += 5) expected.add(l);
+for (let l = 25; l <= 2225; l += 5) expected.add(l);
+
 const actual = new Set(Object.keys(HANDCRAFTED).map(Number));
 let ok = true;
 for (const k of expected) if (!actual.has(k)) { console.log(`✗ missing key ${k}`); ok = false; }

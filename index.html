@@ -75,7 +75,7 @@ body.letterboxed canvas{
      inline IIFE below instead of blocking initial render. By the time the
      player taps "play", DOMContentLoaded has fired and HANDCRAFTED_LEVELS
      is populated — generateLevel() never sees it undefined in practice. -->
-<script src="handcrafted-levels.js?v=27" defer></script>
+<script src="handcrafted-levels.js?v=28" defer></script>
 
 <script>
 // Surface any uncaught error visibly — without this a JS error gives a blank
@@ -151,7 +151,7 @@ function _devWarn(stage, err){
 
 // Single source of truth for the displayed app version. Bump alongside
 // CFBundleShortVersionString in ios/App/App.xcodeproj/project.pbxproj.
-const APP_VERSION='v2.0.1';
+const APP_VERSION='v2.1.0';
 // App Store deep link — used by the in-app "update available" nudge.
 const APP_STORE_URL='https://apps.apple.com/app/stray-arrows/id6763406927';
 const PI=Math.PI,TAU=PI*2,sin=Math.sin,cos=Math.cos,abs=Math.abs,floor=Math.floor,min=Math.min,max=Math.max,sqrt=Math.sqrt;
@@ -420,8 +420,10 @@ const LANGS=[
   {code:'ja',name:'日本語'},
 ];
 const STR={
-  en:{title1:'STRAY',title2:'ARROWS',tagline:'puzzle game',play:'PLAY',levels:'LEVELS',daily:'DAILY',weekly:'WEEKLY',stats:'STATS',achievements:'ACHIEVEMENTS',settings:'SETTINGS',sound:'Sound',theme:'Theme',themeDark:'Dark',themeLight:'Light',language:'Language',watchAd:'Watch Ad',coins:'Coins',resetProgress:'Reset Progress',areYouSure:'Are you sure?',yesReset:'YES, RESET',cancel:'CANCEL',back:'BACK',hint:'HINT',skip:'SKIP',level:'LEVEL',stars:'STARS',streak:'STREAK',trophy:'TROPHY',on:'ON',off:'OFF',nextLevel:'NEXT LEVEL',replay:'REPLAY',home:'HOME',gameOver:'GAME OVER',outOfHearts:'You ran out of hearts',retry:'RETRY',continueBtn:'CONTINUE',adUnavailable:'Ad unavailable, try later',updateAvailable:'Update available',contrast:'Contrast',skins:'SKINS',equipped:'EQUIPPED',equip:'EQUIP',notEnough:'Not enough coins',removeAds:'Remove Ads',restorePurchases:'Restore Purchases',adsRemovedLabel:'Ads removed',adsRemovedMsg:'Ads removed — thank you!',iapUnavailable:'Purchase unavailable',zen:'ZEN',rush:'RUSH',score:'SCORE',best:'BEST',boards:'BOARDS',loginTitle:'Daily Reward',claim:'CLAIM',day:'Day',comeBack:'Come back tomorrow!',playStreak:'Play streak',boosters:'Boosters',shield:'Shield',zap:'Zap',reveal:'Reveal',tapAnyArrow:'Tap any arrow to remove it',shapeLevel:'Shape level',levelsAway:'levels away',nextShape:'NEXT SHAPE',timeBonus:'+5s',},
-  ru:{title1:'STRAY',title2:'ARROWS',tagline:'головоломка',play:'ИГРАТЬ',levels:'УРОВНИ',daily:'ДЕНЬ',weekly:'НЕДЕЛЯ',stats:'СТАТЫ',achievements:'ДОСТИЖЕНИЯ',settings:'НАСТРОЙКИ',sound:'Звук',theme:'Тема',themeDark:'Тёмная',themeLight:'Светлая',language:'Язык',watchAd:'Смотреть рекламу',coins:'монет',resetProgress:'Сбросить прогресс',areYouSure:'Вы уверены?',yesReset:'ДА, СБРОСИТЬ',cancel:'ОТМЕНА',back:'НАЗАД',hint:'ПОДСКАЗКА',skip:'ПРОПУСК',level:'УРОВЕНЬ',stars:'ЗВЁЗДЫ',streak:'СЕРИЯ',trophy:'КУБОК',on:'ВКЛ',off:'ВЫКЛ',nextLevel:'СЛЕД. УРОВЕНЬ',replay:'ЗАНОВО',home:'ДОМОЙ',gameOver:'ИГРА ОКОНЧЕНА',outOfHearts:'Закончились жизни',retry:'ПОВТОР',continueBtn:'ПРОДОЛЖИТЬ',adUnavailable:'Реклама недоступна',updateAvailable:'Доступно обновление',contrast:'Контраст',skins:'СКИНЫ',equipped:'ВЫБРАН',equip:'ВЫБРАТЬ',notEnough:'Недостаточно монет',removeAds:'Убрать рекламу',restorePurchases:'Восстановить покупки',adsRemovedLabel:'Реклама убрана',adsRemovedMsg:'Реклама убрана — спасибо!',iapUnavailable:'Покупка недоступна',zen:'ДЗЕН',rush:'РЫВОК',score:'СЧЁТ',best:'РЕКОРД',boards:'ДОСКИ',loginTitle:'Ежедневная награда',claim:'ЗАБРАТЬ',day:'День',comeBack:'Возвращайся завтра!',playStreak:'Серия дней',boosters:'Бустеры',shield:'Щит',zap:'Удар',reveal:'Взгляд',tapAnyArrow:'Нажми любую стрелку',shapeLevel:'Фигурный уровень',levelsAway:'уровней до него',nextShape:'СЛЕД. ФИГУРА',timeBonus:'+5с',},
+  en:{title1:'STRAY',title2:'ARROWS',tagline:'puzzle game',play:'PLAY',levels:'LEVELS',daily:'DAILY',weekly:'WEEKLY',stats:'STATS',achievements:'ACHIEVEMENTS',settings:'SETTINGS',sound:'Sound',theme:'Theme',themeDark:'Dark',themeLight:'Light',language:'Language',watchAd:'Watch Ad',coins:'Coins',resetProgress:'Reset Progress',areYouSure:'Are you sure?',yesReset:'YES, RESET',cancel:'CANCEL',back:'BACK',hint:'HINT',skip:'SKIP',level:'LEVEL',stars:'STARS',streak:'STREAK',trophy:'TROPHY',on:'ON',off:'OFF',nextLevel:'NEXT LEVEL',replay:'REPLAY',home:'HOME',gameOver:'GAME OVER',outOfHearts:'You ran out of hearts',retry:'RETRY',continueBtn:'CONTINUE',adUnavailable:'Ad unavailable, try later',updateAvailable:'Update available',contrast:'Contrast',skins:'SKINS',equipped:'EQUIPPED',equip:'EQUIP',notEnough:'Not enough coins',removeAds:'Remove Ads',restorePurchases:'Restore Purchases',adsRemovedLabel:'Ads removed',adsRemovedMsg:'Ads removed — thank you!',iapUnavailable:'Purchase unavailable',zen:'ZEN',rush:'RUSH',score:'SCORE',best:'BEST',boards:'BOARDS',loginTitle:'Daily Reward',claim:'CLAIM',day:'Day',comeBack:'Come back tomorrow!',playStreak:'Play streak',boosters:'Boosters',shield:'Shield',zap:'Zap',reveal:'Reveal',tapAnyArrow:'Tap any arrow to remove it',shapeLevel:'Shape level',levelsAway:'levels away',nextShape:'NEXT SHAPE',timeBonus:'+5s',halfway:'Halfway there!',great:'Great!',amazing:'Amazing!',unstoppable:'Unstoppable!',locked:'Locked — find its key',winStreak:'Win streak',newMechanic:'NEW MECHANIC',lockTitle:'Lock & Key',lockBody:"An arrow with a lock can't fly until the arrow holding the key of the same colour is gone.",newBooster:'NEW BOOSTER',shieldBody:'Absorbs your next mistake — no heart lost.',revealBody:'Shows the next three safe moves.',zapBody:'Removes any arrow you tap, even a locked one.',gotIt:'GOT IT',takeGift:'TAKE +1 FREE',bombTitle:'Bomb',bombBody:'The number is how many moves you have to clear this arrow. Only remove what holds it — every extra move brings it closer to 0.',boom:'BOOM!',defused:'Defused!',bombWentOff:'The bomb went off',hardLevel:'HARD',},
+  ru:{title1:'STRAY',title2:'ARROWS',tagline:'головоломка',play:'ИГРАТЬ',levels:'УРОВНИ',daily:'ДЕНЬ',weekly:'НЕДЕЛЯ',stats:'СТАТЫ',achievements:'ДОСТИЖЕНИЯ',settings:'НАСТРОЙКИ',sound:'Звук',theme:'Тема',themeDark:'Тёмная',themeLight:'Светлая',language:'Язык',watchAd:'Смотреть рекламу',coins:'монет',resetProgress:'Сбросить прогресс',areYouSure:'Вы уверены?',yesReset:'ДА, СБРОСИТЬ',cancel:'ОТМЕНА',back:'НАЗАД',hint:'ПОДСКАЗКА',skip:'ПРОПУСК',level:'УРОВЕНЬ',stars:'ЗВЁЗДЫ',streak:'СЕРИЯ',trophy:'КУБОК',on:'ВКЛ',off:'ВЫКЛ',nextLevel:'СЛЕД. УРОВЕНЬ',replay:'ЗАНОВО',home:'ДОМОЙ',gameOver:'ИГРА ОКОНЧЕНА',outOfHearts:'Закончились жизни',retry:'ПОВТОР',continueBtn:'ПРОДОЛЖИТЬ',adUnavailable:'Реклама недоступна',updateAvailable:'Доступно обновление',contrast:'Контраст',skins:'СКИНЫ',equipped:'ВЫБРАН',equip:'ВЫБРАТЬ',notEnough:'Недостаточно монет',removeAds:'Убрать рекламу',restorePurchases:'Восстановить покупки',adsRemovedLabel:'Реклама убрана',adsRemovedMsg:'Реклама убрана — спасибо!',iapUnavailable:'Покупка недоступна',zen:'ДЗЕН',rush:'РЫВОК',score:'СЧЁТ',best:'РЕКОРД',boards:'ДОСКИ',loginTitle:'Ежедневная награда',claim:'ЗАБРАТЬ',day:'День',comeBack:'Возвращайся завтра!',playStreak:'Серия дней',boosters:'Бустеры',shield:'Щит',zap:'Удар',reveal:'Взгляд',tapAnyArrow:'Нажми любую стрелку',shapeLevel:'Фигурный уровень',levelsAway:'уровней до него',nextShape:'СЛЕД. ФИГУРА',timeBonus:'+5с',halfway:'Полпути!',great:'Отлично!',amazing:'Потрясающе!',unstoppable:'Неудержимо!',locked:'Заперто — найди ключ',winStreak:'Серия побед',newMechanic:'НОВАЯ МЕХАНИКА',lockTitle:'Замок и ключ',lockBody:'Стрела с замком не улетит, пока не уберёшь стрелу с ключом того же цвета.',newBooster:'НОВЫЙ БУСТЕР',shieldBody:'Спасает от следующей ошибки — сердце не теряется.',revealBody:'Показывает три следующих верных хода.',zapBody:'Убирает любую стрелу, на которую нажмёшь, даже запертую.',gotIt:'ПОНЯТНО',takeGift:'ЗАБРАТЬ +1',bombTitle:'Бомба',bombBody:'Число — сколько у тебя ходов, чтобы убрать эту стрелу. Убирай только то, что её держит: каждый лишний ход приближает ноль.',boom:'БАБАХ!',defused:'Обезврежено!',bombWentOff:'Бомба взорвалась',hardLevel:'СЛОЖНЫЙ',},
+
+
   es:{title1:'STRAY',title2:'ARROWS',tagline:'juego de puzzle',play:'JUGAR',levels:'NIVELES',daily:'DIARIO',weekly:'SEMANAL',stats:'STATS',achievements:'LOGROS',settings:'AJUSTES',sound:'Sonido',theme:'Tema',themeDark:'Oscuro',themeLight:'Claro',language:'Idioma',watchAd:'Ver anuncio',coins:'monedas',resetProgress:'Reiniciar',areYouSure:'¿Estás seguro?',yesReset:'SÍ, REINICIAR',cancel:'CANCELAR',back:'ATRÁS',hint:'PISTA',skip:'SALTAR',level:'NIVEL',stars:'ESTR',streak:'RACHA',trophy:'COPA',on:'ON',off:'OFF',nextLevel:'SIGUIENTE',replay:'REPETIR',home:'INICIO',gameOver:'FIN',outOfHearts:'Sin vidas',retry:'REINTENTAR',continueBtn:'CONTINUAR',adUnavailable:'Anuncio no disponible',updateAvailable:'Actualización disponible',contrast:'Contraste',},
   de:{title1:'STRAY',title2:'ARROWS',tagline:'Puzzlespiel',play:'SPIELEN',levels:'LEVEL',daily:'TAG',weekly:'WOCHE',stats:'STATS',achievements:'ERFOLGE',settings:'EINSTELL.',sound:'Ton',theme:'Theme',themeDark:'Dunkel',themeLight:'Hell',language:'Sprache',watchAd:'Werbung ansehen',coins:'Münzen',resetProgress:'Zurücksetzen',areYouSure:'Sicher?',yesReset:'JA, RESET',cancel:'ABBR.',back:'ZURÜCK',hint:'TIPP',skip:'ÜBERSPR.',level:'LVL',stars:'STERNE',streak:'SERIE',trophy:'POKAL',on:'AN',off:'AUS',nextLevel:'WEITER',replay:'NEU',home:'HOME',gameOver:'GAME OVER',outOfHearts:'Keine Herzen mehr',retry:'NEU',continueBtn:'WEITER',adUnavailable:'Werbung nicht verfügbar',updateAvailable:'Update verfügbar',contrast:'Kontrast',},
   fr:{title1:'STRAY',title2:'ARROWS',tagline:'jeu de puzzle',play:'JOUER',levels:'NIVEAUX',daily:'JOUR',weekly:'SEMAINE',stats:'STATS',achievements:'SUCCÈS',settings:'PARAM.',sound:'Son',theme:'Thème',themeDark:'Sombre',themeLight:'Clair',language:'Langue',watchAd:'Voir pub',coins:'pièces',resetProgress:'Réinitialiser',areYouSure:'Sûr ?',yesReset:'OUI, RESET',cancel:'ANNULER',back:'RETOUR',hint:'INDICE',skip:'PASSER',level:'NIV',stars:'ÉTOILES',streak:'SÉRIE',trophy:'COUPE',on:'ON',off:'OFF',nextLevel:'SUIVANT',replay:'REJOUER',home:'ACCUEIL',gameOver:'PERDU',outOfHearts:'Plus de vies',retry:'REJOUER',continueBtn:'CONTINUER',adUnavailable:'Pub indisponible',updateAvailable:'Mise à jour dispo',contrast:'Contraste',},
@@ -1194,6 +1196,22 @@ let undosLeft=3;
 // so daily/weekly replays display "+0 / claimed" instead of advertising the
 // full reward when the player isn't actually getting it.
 let lastGained=0;
+
+// ── v2.1 feel layer ──────────────────────────────────────────────────
+// The 2026-10 teardown of Arrows GO! and Easybrain's Arrow Puzzle found the
+// same puzzle underneath ours — what they add is a reaction to nearly every
+// action (combo counters, "halfway" cheers, win streaks) and something new
+// every few levels (mechanics, boosters). These are the cheapest of those.
+const COMBO_WINDOW=1.8;     // s between correct taps that keeps a combo alive
+let _comboN=0,_comboAt=-9;
+let _halfShown=false;       // "halfway there" fires once per board
+let winStreak=+localStorage.getItem('ae_win_streak')||0;
+let _streakLost=0;          // held while a game over can still be continued
+let _streakBonus=0;         // coins the streak added to the last win
+let _introCard=null;        // {kind:'lock'|'shield'|'reveal'|'zap'} one-time explainer
+let _cardTap=null;          // the tap the card owns this frame — the board never sees it
+let _unlockFx=[];           // padlock pops after a key arrow leaves {idx,t}
+
 let anims=[]; // flying arrow animations
 let shakeAnims=[]; // blocked shake animations
 let _trail=[]; // v2.0 exit-trail sparkles (pooled, hard cap 60)
@@ -1237,6 +1255,7 @@ let zenCount=+localStorage.getItem('ae_zen_count')||0; // total zen boards (driv
 // shape level, or null on procedural boards. Drives the silhouette
 // reveal moment and the per-win shape counter.
 let currentShape=null;
+let currentHard=false;   // v2.2 HARD level — HUD label, set per board
 let _shapeCells=null; // v2.0.1: [[r,c],…] precomputed for the reveal (no per-frame string splits)
 let boosterMenuOpen=false;
 let shieldArmed=false;
@@ -1245,6 +1264,29 @@ let _zapPaid='coins'; // 'inv'|'coins' — remembered so cancelling refunds the 
 let revealUntil=0;
 let revealList=[];
 function _resetBoosterState(){boosterMenuOpen=false;shieldArmed=false;zapArmed=false;revealUntil=0;revealList=[];}
+// Per-board feel state. Call once the board's arrows (and locks) exist —
+// the intro check reads them. A new board also forfeits any streak a game
+// over was holding for a possible continue.
+function _resetRunFx(){
+  _comboN=0;_comboAt=-9;_halfShown=false;_unlockFx=[];_streakLost=0;
+  _queueIntro();
+}
+// At most one explainer per board, and only on the classic track: rush's
+// clock and zen's flow shouldn't stop for a modal. Seen-flags are written
+// when the card is dismissed, so a card closed by killing the app returns.
+function _queueIntro(){
+  _introCard=null;
+  if(gameMode!=='classic'||isDaily||isWeekly)return;
+  // A mechanic on THIS board outranks a booster card: the player can lose
+  // to a bomb they weren't told about, but a booster can wait a board.
+  if(arrows.some(a=>a.cd!=null)&&!localStorage.getItem('ae_intro_bomb')){_introCard={kind:'bomb'};return}
+  if(arrows.some(a=>a.lock!=null)&&!localStorage.getItem('ae_intro_lock')){_introCard={kind:'lock'};return}
+  for(const k of ['shield','reveal','zap']){
+    if(boosterUnlocked(k)&&!localStorage.getItem('ae_bintro_'+k)){_introCard={kind:k};return}
+  }
+}
+
+
 let rushScore=0;         // arrows cleared this rush run
 let rushBoardIdx=0;      // boards generated this run — drives size/difficulty variety
 let rushEndAt=0;         // gt timestamp when the run expires (+5s per board, −3s per block)
@@ -1422,6 +1464,27 @@ const CONTINUE_COST=100;
 // not impulse buys. Inventory (from login rewards) is
 // consumed before coins.
 const BOOST_COSTS={shield:75,reveal:125,zap:150};
+// v2.1: boosters open one at a time instead of all at once. Each arrives
+// with a one-time explainer and a free charge, so the player learns it by
+// using it — handing three tools to a level-6 player taught them to ignore
+// the bolt. Both teardown competitors gate theirs the same way.
+const BOOST_UNLOCK={shield:12,reveal:20,zap:35};
+function boosterUnlocked(k){return maxLevel>=BOOST_UNLOCK[k]}
+function _boostItems(){
+  const it=[];
+  if(gameMode!=='zen'&&boosterUnlocked('shield'))it.push('shield');
+  if(boosterUnlocked('reveal'))it.push('reveal');
+  if(boosterUnlocked('zap'))it.push('zap');
+  return it;
+}
+// Players who were already past a threshold before v2.1 have been using
+// that booster — no explainer and no free charge for it, only for what is
+// genuinely new to them. Runs once; a fresh install has nothing to mark.
+if(!localStorage.getItem('ae_v21')){
+  for(const k in BOOST_UNLOCK)if(maxLevel>=BOOST_UNLOCK[k])_safeSet('ae_bintro_'+k,'1');
+  _safeSet('ae_v21','1');
+}
+
 const AD_COIN_REWARD=60;  // rewarded ad payout (30s view)
 const DAILY_REWARD=100;   // first daily completion of the day (was 50)
 const WEEKLY_REWARD=150;  // first weekly completion (was 200, rebalanced so the
@@ -1473,12 +1536,18 @@ let _interstitialPrepared=false;
 // accidentally by a debug build), we record a warning so it shows up in
 // post-mortem next launch.
 function _admobTestMode(){
+  // Debug builds always serve test ads. Capacitor sets Capacitor.DEBUG from
+  // the APK's FLAG_DEBUGGABLE (Android) / the DEBUG configuration (iOS), so
+  // it is false in every store build — but a side-loaded dev build must
+  // never request real impressions on the production ad units.
+  if(typeof window!=='undefined'&&window.Capacitor&&window.Capacitor.DEBUG===true)return true;
   try{
     const on = localStorage.getItem('ae_admob_test')==='1';
     if(on) _devWarn('admob.testMode','test ads enabled via ae_admob_test');
     return on;
   }catch(e){return false;}
 }
+
 function _logAdErr(stage,e){
   // Persist the latest AdMob failure separately from the general _devWarn ring
   // buffer — Settings -> About surfaces this single field for quick triage of
@@ -1761,9 +1830,36 @@ async function showInterstitialAd(){
     _logAdErr('showInterstitial', e);
   }
 }
+// With a bomb live the useful move is one that digs toward it — a hint that
+// points at any free arrow would spend the player's countdown for them.
+// Works on an alive-mask so the Reveal simulation can use it too. Returns a
+// free arrow from the most urgent bomb's live ancestor set (the bomb itself
+// once free), or -1 when there's no bomb or nothing free toward it.
+function _bombTarget(alive){
+  let b=-1;
+  for(let i=0;i<arrows.length;i++)
+    if(alive[i]&&arrows[i].cd!=null&&(b<0||arrows[i].cdLeft<arrows[b].cdLeft))b=i;
+  if(b<0)return -1;
+  const occ=new Int16Array(gridRows*gridCols).fill(-1);
+  arrows.forEach((a,i)=>{for(const[r,c] of a.cells)occ[r*gridCols+c]=i});
+  const holders=(i)=>{
+    const a=arrows[i],out=[];
+    if(a.lock!=null&&alive[a.lock])out.push(a.lock);
+    const h=a.cells[a.cells.length-1];
+    let r=h[0]+DY[a.dir],c=h[1]+DX[a.dir];
+    while(r>=0&&r<gridRows&&c>=0&&c<gridCols){const j=occ[r*gridCols+c];if(j>=0&&j!==i&&alive[j])out.push(j);r+=DY[a.dir];c+=DX[a.dir]}
+    return out;
+  };
+  const seen=new Set([b]),st=[b];
+  while(st.length){for(const j of holders(st.pop()))if(!seen.has(j)){seen.add(j);st.push(j)}}
+  for(const i of seen)if(!holders(i).length)return i;
+  return -1;
+}
 function useHint(){
   if(coins<HINT_COST||hintTime>0)return false;
+  const toBomb=_bombTarget(arrows.map(a=>a.alive));
   for(let i=0;i<arrows.length;i++){
+    if(toBomb>=0&&i!==toBomb)continue;
     if(arrows[i].alive&&canEscape(i)){
       hintArrow=i;
       hintTime=2.5;
@@ -1818,10 +1914,12 @@ function useBooster(kind){
     revealList=[];
     const alive=arrows.map(x=>x.alive);
     for(let step=0;step<3;step++){
-      let found=-1;
+      let found=_bombTarget(alive);
       for(let i=0;i<arrows.length&&found<0;i++){
+
         if(!alive[i])continue;
         const ar=arrows[i];
+        if(ar.lock!=null&&alive[ar.lock])continue; // locked until its key is gone in this simulation
         const head=ar.cells[ar.cells.length-1];
         let cr=head[0]+DY[ar.dir],cc=head[1]+DX[ar.dir],clear=true;
         while(cr>=0&&cr<gridRows&&cc>=0&&cc<gridCols&&clear){
@@ -1845,10 +1943,15 @@ function useBooster(kind){
 }
 
 // Continue from game over — spend coins to restore hearts, keep arrow progress
+function _restoreStreak(){
+  if(_streakLost){winStreak=_streakLost;_streakLost=0;_safeSet('ae_win_streak',winStreak);}
+}
 function continueFromGameover(){
   if(coins<CONTINUE_COST)return false;
   coins-=CONTINUE_COST;
   undosLeft=3;
+  _restoreStreak();
+  _bombGrace();
   save();
   S='play';
   sfx.tap();haptic(10);
@@ -1891,11 +1994,27 @@ function startRushBoard(){
 // Daily seed: one puzzle per day, same for everyone. Integer day number since epoch.
 function getDailySeed(){return floor(Date.now()/86400000)}
 function dailyDoneKey(){return'ae_daily_'+getDailySeed()}
+// Daily difficulty pinned at level 40 (medium) so each day is a similar
+// challenge — Wordle/NYT model. Seed varies, complexity stays constant.
+function startDailyBoard(){isDaily=true;isWeekly=false;dailySeed=getDailySeed();generateLevel(40,dailySeed*31+7)}
+
 function isDailyDone(){return localStorage.getItem(dailyDoneKey())==='1'}
 
 // Weekly seed: one puzzle per ISO week. Harder than daily — uses lvl 60 difficulty.
 function getWeeklySeed(){return floor(Date.now()/(7*86400000))}
 function weeklyDoneKey(){return'ae_weekly_'+getWeeklySeed()}
+// Weekly difficulty pinned at level 120 (hard) — bigger reward, bigger maze.
+function startWeeklyBoard(){isWeekly=true;isDaily=false;generateLevel(120,getWeeklySeed()*131+71)}
+// Rebuild the board the player is on. Game-over Retry used to call
+// generateLevel(level) unconditionally, so losing a daily and retrying
+// swapped in the player's CLASSIC level with isDaily still set — a
+// different board, paid out as the daily on a win.
+function replayCurrentBoard(){
+  if(isDaily)startDailyBoard();
+  else if(isWeekly)startWeeklyBoard();
+  else generateLevel(level);
+}
+
 function isWeeklyDone(){return localStorage.getItem(weeklyDoneKey())==='1'}
 
 // ================================================================
@@ -1938,14 +2057,17 @@ function generateLevel(lvl,customSeed){
   function _recordCells(){for(const a of arrows)for(const [r,c] of a.cells)_levelCells.add(r+','+c);}
   updateStreak();
 
-  // Handcrafted fast path: I designed specific levels by hand (tutorial
-  // 1-10 + decorative milestones at 5, 10, 50, 100…). When the level
-  // number has a hand-tuned layout, use it instead of procedural.
-  // Daily/weekly bypass this — they pass customSeed.
+  // Shape fast path: since v2.1 the file holds only the picture levels, one
+  // every 5th level from 25 to 2225 — every other level, the tutorial
+  // included, is generated below. Daily/weekly bypass this (they pass
+  // customSeed).
+
   if(!FORCE_FRESH_LEVELS&&customSeed==null&&typeof window!=='undefined'
      &&window.HANDCRAFTED_LEVELS&&window.HANDCRAFTED_LEVELS[lvl]){
     const hc=window.HANDCRAFTED_LEVELS[lvl];
     currentShape=hc.t||null;
+    currentHard=false;   // pictures are the breathers between hard levels
+
     _shapeRevealT=currentShape?0:1;
     gridCols=hc.cols;gridRows=hc.rows;
     arrows=hc.arrows.map(a=>({cells:a.c.map(c=>[c[0],c[1]]),dir:a.d,alive:true}));
@@ -1954,7 +2076,9 @@ function generateLevel(lvl,customSeed){
     minMoves=arrows.length;
     moves=0;timer=0;undosLeft=3;
     _resetBoosterState();
+    _resetRunFx();
     _startZoomIntro();
+
     const key='ae_best_'+lvl;
     bestTime=+localStorage.getItem(key)||0;
     return;
@@ -1965,6 +2089,29 @@ function generateLevel(lvl,customSeed){
   // v1.0.19; BAKED branch removed in v2.0 — handcrafted + procedural only.)
   currentShape=null;
   _shapeRevealT=1;
+  currentHard=false;
+
+  // v2.2: the classic track, daily and weekly use the chained generator —
+  // one or two tappable arrows per step instead of three to six. Zen and
+  // rush keep the older packer: their boards are meant to flow, not stall.
+  if(gameMode==='classic'&&!_genOverride){
+    const spec=_chainSpec(isWeekly?50:lvl);   // weekly: the level-50 hard spec, 15×20
+
+    const P=_buildChained(spec.rows,spec.cols,rng,spec.cfg);
+    const dims=_cropBoard(P,spec.rows,spec.cols);
+    gridCols=dims.cols;gridRows=dims.rows;
+    arrows=P.map(a=>({cells:a.cells,dir:a.dir,alive:true}));
+    currentHard=spec.hard||isWeekly;
+    _recordCells();
+    _shapeCells=null;
+    minMoves=arrows.length;
+    moves=0;timer=0;undosLeft=3;
+    _resetBoosterState();
+    _resetRunFx();
+    _startZoomIntro();
+    bestTime=+localStorage.getItem('ae_best_'+lvl)||0;
+    return;
+  }
 
   // Difficulty curve. Power-0.8 early ramp + cap at lvl 150. The previous
   // 26×34 grid looked sparse once 1-cell dots were removed. Competitor boards
@@ -2442,11 +2589,28 @@ function generateLevel(lvl,customSeed){
   for(const a of arrows)a.alive=true;
   _recordCells();
 
+  // Locks on most classic boards from LOCK_FROM_LEVEL on — not every one,
+  // so they stay a twist rather than the new normal. The first one is
+  // guaranteed: that's the board the explainer card introduces them on.
+  // Daily/weekly/zen/rush are left as tuned (shared seeds, endless flows).
+  if(gameMode==='classic'&&!isDaily&&!isWeekly&&lvl>=LOCK_FROM_LEVEL
+     &&(lvl===LOCK_FROM_LEVEL||rng()<.6)){
+    _assignLocks(arrows,rows,cols,rng,lvl<150?1:2);
+  }
+  // Bombs: half the classic boards from BOMB_FROM_LEVEL, the first one
+  // guaranteed (its explainer card shows there). Slack — spare moves over
+  // the minimum — shrinks with progress: 3, then 2 from 60, 1 from 150.
+  if(gameMode==='classic'&&!isDaily&&!isWeekly&&lvl>=BOMB_FROM_LEVEL
+     &&(lvl===BOMB_FROM_LEVEL||rng()<.5)){
+    _assignBombs(arrows,rows,cols,rng,lvl<120?1:2,lvl<60?3:lvl<150?2:1);
+  }
+
   minMoves=arrows.length;
   moves=0;
   timer=0;
   undosLeft=3;
   _resetBoosterState();
+  _resetRunFx();
   _startZoomIntro();
 
   const key='ae_best_'+lvl;
@@ -2792,7 +2956,249 @@ function onEscapeLine(r,c,hr,hc,dir){
   return false;
 }
 
+// ── v2.2 chained generator ───────────────────────────────────────────
+// Field study of Arrows GO! (levels 1-5 played on device, 2026-10-12): at
+// almost every step of a solve exactly ONE arrow is tappable — ~1.5 on
+// average, 1 at the start of level 4 — while ours offered 2.7-6 (up to 12).
+// With monotone removal there is never a wrong order, so "how many arrows
+// can I tap right now" IS the difficulty: one means searching a tangled
+// board for the single way in; six means tapping anything.
+//
+// Construction runs in reverse solve order: the first arrow placed leaves
+// last. A new arrow must (a) have its own escape ray clear of everything
+// already placed — those all leave after it, so it is solvable by
+// construction — and (b) lie across the rays of every arrow that is
+// currently free, so that once it is down, it is the only way in. Covering
+// several rays at once forces the arrow to meander around its neighbours,
+// which is where the "intricate" look comes from: the long outer snake
+// wrapping their level 4 is just the last arrow placed.
+//
+// `branch` is the difficulty knob: the most free arrows a placement may
+// leave uncovered + 1. 1 = a single path through the whole board.
+function _chainDir(p,h){const dr=h[0]-p[0],dc=h[1]-p[1];return dc===1?0:dr===-1?1:dc===-1?2:3}
+// Self-avoiding random walk over empty cells, biased to keep turning so
+// arrows bend around each other instead of running straight.
+function _chainWalk(occ,R,C,start,L,rng,turn){
+  const path=[[(start/C)|0,start%C]];
+  const used=new Set([start]);
+  let d=(rng()*4)|0;
+  while(path.length<L){
+    const [r,c]=path[path.length-1];
+    const opts=[];
+    for(let k=0;k<4;k++){
+      const nr=r+DY[k],nc=c+DX[k];
+      if(nr<0||nr>=R||nc<0||nc>=C)continue;
+      const id=nr*C+nc;
+      if(occ[id]>=0||used.has(id))continue;
+      if(k===(d+2)%4)continue;
+      opts.push(k);
+    }
+    if(!opts.length)break;
+    // Hug: prefer steps next to cells that are already taken. A walk out
+    // in open space ends up wrapping empty pockets nothing can ever fill
+    // (no head inside one has a way out); hugging packs the board tight.
+    let k=-1,bestS=-1;
+    for(const o of opts){
+      const nr=r+DY[o],nc=c+DX[o];
+      let nb=0;
+      for(let q=0;q<4;q++){const ar=nr+DY[q],ac=nc+DX[q];if(ar<0||ar>=R||ac<0||ac>=C||occ[ar*C+ac]>=0)nb++}
+      const s=nb*1.2+(o===d?(1-turn)*2:turn*2)+rng()*1.5;
+      if(s>bestS){bestS=s;k=o}
+    }
+    d=k;
+
+    const nr=r+DY[k],nc=c+DX[k];
+    used.add(nr*C+nc);path.push([nr,nc]);
+  }
+  return path;
+}
+// Guided path: start on one free arrow's ray, then repeatedly BFS through
+// empty cells to the nearest cell on a ray not yet covered and walk there.
+// A random walk almost never crosses three rays; this crosses them on
+// purpose — and bends around whatever is in between to do it.
+function _chainGuided(occ,R,C,start,rayOf,F,maxLen,rng){
+  const path=[[(start/C)|0,start%C]];
+  const used=new Set([start]);
+  const cov=new Set(rayOf.get(start)||[]);
+  while(cov.size<F.length&&path.length<maxLen){
+    const [r0,c0]=path[path.length-1];
+    const prev=new Map([[r0*C+c0,-1]]);
+    const q=[r0*C+c0];let hit=-1;
+    for(let qi=0;qi<q.length&&hit<0;qi++){
+      const k=q[qi],r=(k/C)|0,c=k%C;
+      const dirs=[0,1,2,3];
+      for(let i=3;i>0;i--){const j=(rng()*(i+1))|0;const t=dirs[i];dirs[i]=dirs[j];dirs[j]=t}
+      for(const d of dirs){
+        const nr=r+DY[d],nc=c+DX[d];
+        if(nr<0||nr>=R||nc<0||nc>=C)continue;
+        const nk=nr*C+nc;
+        if(occ[nk]>=0||used.has(nk)||prev.has(nk))continue;
+        prev.set(nk,k);q.push(nk);
+        const l=rayOf.get(nk);
+        if(l&&l.some(i=>!cov.has(i))){hit=nk;break}
+      }
+    }
+    if(hit<0)break;
+    const route=[];
+    for(let k=hit;k!==r0*C+c0;k=prev.get(k))route.push(k);
+    route.reverse();
+    if(path.length+route.length>maxLen)break;
+    for(const k of route){used.add(k);path.push([(k/C)|0,k%C]);const l=rayOf.get(k);if(l)for(const i of l)cov.add(i)}
+  }
+  return path;
+}
+// Level schedule for the chained generator, after the Arrows GO! pattern:
+// compact boards that grow slowly, and every 3rd level from 5 a HARD one —
+// labelled in the HUD, ~1.35× the side, longer arrows. Hard levels are the
+// sawtooth's peaks; the normal ones between them are the breathers.
+const HARD_COLOR='#8a4fc7';
+function isHardLevel(lvl){return lvl>=5&&lvl%3===2}
+function _chainSpec(lvl){
+  const hard=isHardLevel(lvl);
+  // The board grows, the arrows mostly don't: more arrows is more to read.
+  // Long-arrow boards (14+ cells) came out as a handful of snakes — eleven
+  // taps on level 301 — which reads as easy however tangled it looks.
+  let cols=clp(Math.round(6+Math.sqrt(lvl)*.85),6,12);
+
+  // Normal boards cap at 12 wide, hard at 16: past that, distant regions
+  // of the board each keep a free arrow of their own and the one-way-in feel
+  // dissolves (measured: ~2.2 tappable per step at 16×12, ~3.5-4 at 26×20).
+  if(hard)cols=min(16,Math.round(cols*1.3));
+
+  const rows=Math.round(cols*1.3);
+  const maxLen=clp(5+Math.floor(lvl/25),5,9)+(hard?3:0);
+  return {hard,cols,rows,cfg:{minLen:3,maxLen,branch:1,turn:.45,tries:100,maxStuck:60,peel:true}};
+
+}
+// Drop empty border rows/cols: the generator can leave a ragged margin,
+// and empty cells beyond every arrow change no ray, so cropping them is
+// free — and the board renders larger.
+function _cropBoard(arr,R,C){
+  let r0=R,r1=-1,c0=C,c1=-1;
+  for(const a of arr)for(const[r,c] of a.cells){if(r<r0)r0=r;if(r>r1)r1=r;if(c<c0)c0=c;if(c>c1)c1=c}
+  if(r1<0)return {rows:R,cols:C};
+  for(const a of arr)for(const p of a.cells){p[0]-=r0;p[1]-=c0}
+  return {rows:r1-r0+1,cols:c1-c0+1};
+}
+function _buildChained(R,C,rng,cfg){
+  const occ=new Int16Array(R*C).fill(-1);
+  const P=[];
+  const inB=(r,c)=>r>=0&&r<R&&c>=0&&c<C;
+  const rayClear=(r,c,d)=>{r+=DY[d];c+=DX[d];while(inB(r,c)){if(occ[r*C+c]>=0)return false;r+=DY[d];c+=DX[d]}return true};
+  let stuck=0,forced=0;
+  while(stuck<cfg.maxStuck){
+    // Rays of the currently free arrows, cell → which free arrows it blocks.
+    const F=[];
+    for(let i=0;i<P.length;i++){const a=P[i],h=a.cells[a.cells.length-1];if(rayClear(h[0],h[1],a.dir))F.push(i)}
+    const rayOf=new Map();
+    for(const i of F){
+      const a=P[i],h=a.cells[a.cells.length-1];
+      let r=h[0]+DY[a.dir],c=h[1]+DX[a.dir];
+      while(inB(r,c)){const k=r*C+c;let l=rayOf.get(k);if(!l){l=[];rayOf.set(k,l)}l.push(i);r+=DY[a.dir];c+=DX[a.dir]}
+    }
+    const empty=[];for(let k=0;k<R*C;k++)if(occ[k]<0)empty.push(k);
+    if(!empty.length)break;
+    // Half the seeds sit on a free ray (the arrow must cross those rays);
+    // half anywhere empty — pockets behind arrows are on no ray, and seeding
+    // only from rays left them unfilled forever (45% fill on 18×24). The
+    // guided path carries a pocket seed out to the rays it has to cover.
+    const raySeeds=rayOf.size?[...rayOf.keys()]:empty;
+    let best=null;
+    for(let t=0;t<cfg.tries;t++){
+      // Head first: a head cell and a direction whose ray already reaches
+      // the edge clear, plus an empty cell behind it for the body. Drawing
+      // the body first and testing the head afterwards failed most tries —
+      // a meandering path rarely ends facing open air.
+      const pool=(t&2)?empty:raySeeds;
+      const hk=pool[(rng()*pool.length)|0];
+      const hr=(hk/C)|0,hc=hk%C;
+      // The ray must also be at least one cell long. A head on the border
+      // facing out has an EMPTY ray — nothing later can ever lie across it,
+      // so it stays free for good; 8 of 13 placements leaked that way.
+      const ds=[0,1,2,3].filter(d=>{
+        const br=hr-DY[d],bc=hc-DX[d];
+        return inB(br,bc)&&occ[br*C+bc]<0&&inB(hr+DY[d],hc+DX[d])&&rayClear(hr,hc,d);
+      });
+
+      if(!ds.length)continue;
+      const d=ds[(rng()*ds.length)|0];
+      const L=cfg.minLen+((rng()*(cfg.maxLen-cfg.minLen+1))|0);
+      // Body grows backwards from the cell behind the head: guided across
+      // the free rays it must cover, then topped up by a random walk.
+      const tmp=new Int16Array(occ);tmp[hk]=32000;
+      const nk=(hr-DY[d])*C+(hc-DX[d]);
+      const body=F.length&&t%2===0?_chainGuided(tmp,R,C,nk,rayOf,F,cfg.maxLen+3,rng):[[(nk/C)|0,nk%C]];
+      if(body.length<L-1){
+        for(const[r,c] of body)tmp[r*C+c]=32000;
+        const last=body[body.length-1];
+        const ext=_chainWalk(tmp,R,C,last[0]*C+last[1],L-body.length,rng,cfg.turn);
+        for(let i=1;i<ext.length;i++)body.push(ext[i]);
+      }
+      const cells=body.reverse();cells.push([hr,hc]);   // tail → head
+      if(cells.length<cfg.minLen)continue;
+      const cov=new Set();
+      for(const[r,c] of cells){const l=rayOf.get(r*C+c);if(l)for(const i of l)cov.add(i)}
+      const unc=F.length-cov.size;
+      // Penalise long straight runs: BFS routes run straight, and a board
+      // of straight strands reads as a comb, not a knot.
+      let run=1,longest=1;
+      for(let i=2;i<cells.length;i++){
+        const same=_chainDir(cells[i-2],cells[i-1])===_chainDir(cells[i-1],cells[i]);
+        run=same?run+1:1;if(run>longest)longest=run;
+      }
+      const score=-unc*1000+cells.length*2-max(0,longest-3)*6+rng();
+      if(!best||score>best.score)best={cells,dir:d,unc,score};
+    }
+    // Over budget on branching: retry a few rounds before conceding — late
+    // in the fill, pockets get too small to cover every ray.
+    if(!best||(best.unc>cfg.branch-1&&forced<3)){stuck++;forced++;continue}
+    if(cfg.stats){cfg.stats.placed++;if(best.unc>cfg.branch-1)cfg.stats.forced++;cfg.stats.maxF=max(cfg.stats.maxF,F.length);}
+    forced=0;stuck=0;   // maxStuck bounds CONSECUTIVE failures, not lifetime ones
+    const id=P.length;
+
+
+    for(const[r,c] of best.cells)occ[r*C+c]=id;
+    P.push({cells:best.cells,dir:best.dir});
+  }
+  // Holes: grow a neighbour's TAIL into them. Safe only if the cell sits on
+  // no ray of an arrow placed after that neighbour — those leave first, and
+  // the neighbour would still be in their way. Head and ray are untouched.
+  const onLaterRay=(r0,c0,idx)=>{
+    for(let j=idx+1;j<P.length;j++){
+      const a=P[j],h=a.cells[a.cells.length-1];
+      let r=h[0]+DY[a.dir],c=h[1]+DX[a.dir];
+      while(inB(r,c)){if(r===r0&&c===c0)return true;r+=DY[a.dir];c+=DX[a.dir]}
+    }
+    return false;
+  };
+  for(let grew=true;grew;){
+    grew=false;
+    for(let k=0;k<R*C;k++){
+      if(occ[k]>=0)continue;
+      const r=(k/C)|0,c=k%C;
+      for(let d=0;d<4;d++){
+        const nr=r+DY[d],nc=c+DX[d];
+        if(!inB(nr,nc))continue;
+        const id=occ[nr*C+nc];
+        if(id<0)continue;
+        const a=P[id],tail=a.cells[0];
+        if(tail[0]!==nr||tail[1]!==nc||a.cells.length>=cfg.maxLen+2)continue;
+
+        if(onLaterRay(r,c,id))continue;
+        a.cells.unshift([r,c]);occ[k]=id;grew=true;break;
+      }
+    }
+  }
+  // Optional second pass: the peel may flip arrows the construction had to
+  // leave free (pockets too small to cover) into blocked orientations. It
+  // returns `P` in reverse solve order, same as the construction does.
+  if(cfg.peel)_peelOrient(P,R,C,rng,1,.85);
+  return P.reverse(); // solve order: arrows[0] leaves first
+}
+
+
 // ── Constructive orientation: the peel ──────────────────────────────
+
 // Measured on 16 procedural boards (lvl 301-319): 22 arrows, 6.3 of them
 // tappable on move 1 — 29%. Shape levels over the same metric sit at
 // 10-14%, and the whole difference is HOW the direction gets chosen:
@@ -2990,8 +3396,176 @@ function _peelOrient(placed,rows,cols,rng,openMax,bias){
   return true;
 }
 
+// ── v2.1 lock & key ─────────────────────────────────────────────────
+// A locked arrow can't fly until its key arrow has gone, whatever its ray
+// says. The lock goes on an arrow that is OPEN from the start — the one the
+// eye goes to first — and the key on one buried a few waves deep, so the
+// board asks for a plan instead of a scan. Easybrain ships four mechanics
+// of this kind; we had one for 2000+ levels.
+//
+// Solvability: a lock adds one edge, "L waits for K". The dependency graph
+// stays acyclic — and the board solvable — exactly when K does not itself
+// wait on L, directly or through anything else. So every arrow that waits
+// on L (the `waiting` set) is excluded as a key candidate. Removal stays
+// monotone with locks (a cleared arrow or a gone key never comes back), so
+// the greedy wave walk below is still an exact solvability test.
+const LOCK_FROM_LEVEL=31;        // 30 is a picture level; locks start right after
+const PAIR_COLORS=['#8a6fd1','#3c9d96']; // violet, teal — clear of every arrow skin
+function _lockWaves(arr,deps){
+  const N=arr.length,w=new Array(N).fill(-1);
+  let left=N,k=0;
+  while(left){
+    const ready=[];
+    for(let i=0;i<N;i++){
+      if(w[i]>=0)continue;
+      let ok=true;
+      for(const b of deps[i])if(w[b]<0){ok=false;break}
+      if(ok&&arr[i].lock!=null&&w[arr[i].lock]<0)ok=false;
+      if(ok)ready.push(i);
+    }
+    if(!ready.length)return null;
+    for(const i of ready)w[i]=k;
+    left-=ready.length;k++;
+  }
+  return w;
+}
+// deps[i] = arrows sitting on i's escape ray. Cells never move, so this is
+// static for a board; locks are layered on top via arr[i].lock.
+function _staticDeps(arr,rows,cols){
+  const occ=new Int16Array(rows*cols).fill(-1);
+  arr.forEach((a,i)=>{for(const[r,c] of a.cells)occ[r*cols+c]=i});
+  return arr.map((a,i)=>{
+    const s=new Set(),h=a.cells[a.cells.length-1];
+    let r=h[0]+DY[a.dir],c=h[1]+DX[a.dir];
+    while(r>=0&&r<rows&&c>=0&&c<cols){const j=occ[r*cols+c];if(j>=0&&j!==i)s.add(j);r+=DY[a.dir];c+=DX[a.dir]}
+    return s;
+  });
+}
+function _assignLocks(arr,rows,cols,rng,pairs){
+  const N=arr.length;
+  if(N<6)return 0;
+  const deps=_staticDeps(arr,rows,cols);
+  let made=0;
+
+  for(let p=0;p<pairs;p++){
+    const w=_lockWaves(arr,deps);
+    if(!w)break;
+    let open0=0;
+    const locks=[];
+    for(let i=0;i<N;i++){
+      if(w[i]!==0)continue;
+      open0++;
+      if(arr[i].lock==null&&arr[i].keyFor==null&&arr[i].cells.length>=2)locks.push(i);
+    }
+    if(open0<2||!locks.length)break; // never lock the last opener — the board would start stuck
+    const L=locks[(rng()*locks.length)|0];
+    const waiting=new Set([L]);
+    for(let grew=true;grew;){
+      grew=false;
+      for(let i=0;i<N;i++){
+        if(waiting.has(i))continue;
+        let dep=arr[i].lock!=null&&waiting.has(arr[i].lock);
+        if(!dep)for(const b of deps[i])if(waiting.has(b)){dep=true;break}
+        if(dep){waiting.add(i);grew=true}
+      }
+    }
+    let maxW=0;for(const x of w)if(x>maxW)maxW=x;
+    const hi=max(2,Math.ceil(maxW*.6)); // deep enough to need a plan, not the very last move
+    const keys=[];
+    for(let i=0;i<N;i++){
+      if(waiting.has(i)||arr[i].lock!=null||arr[i].keyFor!=null)continue;
+      if(w[i]>=2&&w[i]<=hi)keys.push(i);
+    }
+    if(!keys.length)break;
+    const K=keys[(rng()*keys.length)|0];
+    arr[L].lock=K;arr[L].pair=p;arr[K].keyFor=L;arr[K].pair=p;
+    made++;
+  }
+  // The construction above can't produce a cycle; this re-walk is the
+  // contract test that a refactor of it never ships a stuck board.
+  if(made&&!_lockWaves(arr,deps)){
+    for(const a of arr){delete a.lock;delete a.keyFor;delete a.pair}
+    _devWarn('assignLocks','lock graph cyclic — locks dropped');
+    return 0;
+  }
+  return made;
+}
+
+// ── v2.1 bomb (countdown) arrows ─────────────────────────────────────
+// Why our boards played "empty": removal is monotone, so there is no wrong
+// order — "tap any free arrow, repeat" solves every board ever generated.
+// Density only makes the SEARCH longer, never the THINKING harder. Arrows
+// GO! ships a countdown arrow (prefab_gameplay_countdownarrow) and Easybrain
+// stop points for exactly this reason: they make order matter.
+//
+// A bomb shows N; every successful removal of another arrow ticks it down,
+// and at 0 the level is lost. Removing it costs at least |anc|+1 moves,
+// where anc = every arrow it waits on, transitively (rays + lock keys), so
+// N = |anc|+1+slack: solvable by construction, and with small slack every
+// tap on an arrow outside anc — the tempting free ones — brings it closer.
+// The puzzle becomes "what exactly is holding this one?".
+const BOMB_FROM_LEVEL=16;
+function _ancestors(arr,deps,x){
+  const seen=new Set(),st=[x];
+  while(st.length){
+    const i=st.pop();
+    const next=[...deps[i]];
+    if(arr[i].lock!=null)next.push(arr[i].lock);
+    for(const b of next)if(!seen.has(b)){seen.add(b);st.push(b)}
+  }
+  seen.delete(x);
+  return seen;
+}
+// Earliest-deadline-first certificate: clear each bomb's whole ancestor set
+// in countdown order; every bomb must still have ≥1 left when reached. A
+// pass proves a winning order exists (EDF over full sets is conservative).
+function _bombsFeasible(arr,deps,bombs){
+  const done=new Set();
+  for(const b of [...bombs].sort((p,q)=>arr[p].cd-arr[q].cd)){
+    for(const x of _ancestors(arr,deps,b))done.add(x);
+    if(done.size>=arr[b].cd)return false; // removals before b, all of which tick it
+    done.add(b);
+  }
+  return true;
+}
+function _assignBombs(arr,rows,cols,rng,count,slack){
+  const N=arr.length;
+  if(N<8)return 0;
+  const deps=_staticDeps(arr,rows,cols);
+  const bombs=[];
+  for(let k=0;k<count;k++){
+    // A bomb is worth having when it sits deep (≥3 arrows over it) but its
+    // ancestor set leaves plenty of the board OUT — those are the decoys.
+    const cand=[];
+    for(let i=0;i<N;i++){
+      const a=arr[i];
+      if(a.cd!=null||a.lock!=null||a.keyFor!=null||a.cells.length<2)continue;
+      const n=_ancestors(arr,deps,i).size;
+      if(n>=3&&n+1<=N*.6)cand.push({i,n});
+    }
+    if(!cand.length)break;
+    const {i,n}=cand[(rng()*cand.length)|0];
+    arr[i].cd=n+1+slack;
+    bombs.push(i);
+    if(!_bombsFeasible(arr,deps,bombs)){
+      // a second bomb may need the first one's set cleared too — give it
+      // exactly that much room, else drop it
+      let need=0;const s=new Set();
+      for(const b of bombs)if(b!==i){for(const x of _ancestors(arr,deps,b))s.add(x);s.add(b)}
+      for(const x of _ancestors(arr,deps,i))s.add(x);
+      need=s.size+1+slack;
+      arr[i].cd=need;
+      if(!_bombsFeasible(arr,deps,bombs)){delete arr[i].cd;bombs.pop();break}
+    }
+  }
+  for(const b of bombs)arr[b].cdLeft=arr[b].cd;
+  return bombs.length;
+}
+
 // Repeatedly find any arrow whose escape line has no alive blocker and
 // "remove" it. If we reach zero arrows, the level is solvable. If we get
+
+
 // stuck with arrows remaining, there's a cycle in the chain-dependency
 // graph and the level is unwinnable — caller should regenerate.
 function _isLevelSolvable(placed,rows,cols){
@@ -3075,9 +3649,11 @@ function _levelQualityOK(placed,rows,cols,lvl){
 // ================================================================
 // Check if arrow[idx] can escape — head cell walks in arrow.dir to grid edge,
 // path must not contain cells of any OTHER alive arrow.
+function _isLocked(a){return a.lock!=null&&!!arrows[a.lock]&&arrows[a.lock].alive}
 function canEscape(idx){
   const a=arrows[idx];
   if(!a||!a.alive)return false;
+  if(_isLocked(a))return false; // hint + tutorial finger must not point at a lock
   const head=a.cells[a.cells.length-1];
   let cr=head[0]+DY[a.dir],cc=head[1]+DX[a.dir];
   while(cr>=0&&cr<gridRows&&cc>=0&&cc<gridCols){
@@ -3140,15 +3716,87 @@ function tapArrowByIndex(idx){
     return;
   }
 
+  // A lock is visible information, not a trap — tapping one costs no heart.
+  // It points at its key instead, which teaches the rule in one tap.
+  if(_isLocked(a)){_lockedTap(a,idx);return}
+
   if(canEscape(idx)){
     a.alive=false;
     moves++;
     if(gameMode==='rush')rushScore++;
+    _comboTick();
+    _bombTick();
     _flyOutArrow(a,idx);
   }else{
+    _comboN=0;
     _blockedTap(a,idx);
   }
 }
+
+// Consecutive correct taps inside COMBO_WINDOW count up. From ×3 a counter
+// floats above the board, pitch rising with it; words mark ×5/×8/×12. In
+// rush a combo tap is worth an extra point — speed is what rush rewards.
+function _comboTick(){
+  _comboN=(gt-_comboAt<COMBO_WINDOW)?_comboN+1:1;
+  _comboAt=gt;
+  if(_comboN<3)return;
+  const word=_comboN>=12?t('unstoppable'):_comboN>=8?t('amazing'):_comboN>=5?t('great'):'';
+  let label='×'+_comboN+(word?'  '+word:'');
+  if(gameMode==='rush'){rushScore++;label+='  +1';}
+  // One live counter, not a stack: fast tapping spawned a new floater per
+  // tap and they piled up on each other. Re-arm the existing one instead.
+  const col=_comboN>=5?TH.star:TH.accent;
+  const live=floaters.find(f=>f.combo);
+  if(live){live.text=label;live.col=col;live.t=.2;}
+  else floaters.push({x:W/2,y:H*.24,text:label,col,t:0,dur:1.4,combo:true});
+
+  playSnd('tap',clp(1+(_comboN-3)*.05,1,1.5));
+}
+
+// Every successful removal ticks each live bomb down; a bomb at 0 ends the
+// level. Zap removals don't tick (they aren't moves) — a booster can buy a
+// bomb time, which is what makes Zap worth its price on these boards.
+let gameoverReason='hearts';   // 'hearts' | 'bomb' — game-over subtitle
+function _bombTick(){
+  for(let i=0;i<arrows.length;i++){
+    const b=arrows[i];
+    if(!b.alive||b.cd==null)continue;
+    b.cdLeft--;
+    if(b.cdLeft<=3&&b.cdLeft>0)haptic(6);
+    if(b.cdLeft<=0){_bombExplode(i);return}
+  }
+}
+function _bombExplode(i){
+  const b=arrows[i];
+  const cs=getCellSize(),gx=getGridX(),gy=getGridY();
+  const head=b.cells[b.cells.length-1];
+  shakeAnims.push({x:gx+head[1]*cs+cs/2,y:gy+head[0]*cs+cs/2,idx:i,t:0,dur:.5});
+  _hurtT=.5;
+  sfx.blocked();haptic([20,40,60]);
+  spawnFloater(W/2,H*.24,t('boom'),TH.arrowBlock);
+  inputLocked=true;
+  gameoverReason='bomb';
+  if(!isDaily&&!isWeekly){_streakLost=winStreak;winStreak=0;_safeSet('ae_win_streak',0);}
+  setTimeout(()=>{S='gameover';sfx.gameover();inputLocked=false},700);
+}
+// A continue after an explosion buys every live bomb five more moves —
+// otherwise the player would be back on a board with a bomb already at 0.
+function _bombGrace(){
+  for(const b of arrows)if(b.alive&&b.cd!=null)b.cdLeft=max(b.cdLeft,0)+5;
+}
+
+function _lockedTap(a,idx){
+
+  _comboN=0;
+  const cs=getCellSize(),gx=getGridX(),gy=getGridY();
+  const head=a.cells[a.cells.length-1];
+  shakeAnims.push({x:gx+head[1]*cs+cs/2,y:gy+head[0]*cs+cs/2,idx,t:0,dur:.2});
+  sfx.blocked();haptic(8);
+  spawnFloater(W/2,H*.24,t('locked'),PAIR_COLORS[a.pair||0]);
+  // Pulse the key for a moment — unless a paid hint is showing, which wins.
+  if(hintTime<=0){hintArrow=a.lock;hintTime=1.4}
+}
+
 
 // The escape animation + win detection, shared by normal taps and the Zap
 // booster. `a.alive` must already be false.
@@ -3171,6 +3819,25 @@ function _flyOutArrow(a,idx){
       path,
     });
     sfx.swoosh(a.dir,a.cells.length);haptic(10);
+
+    // A bomb that leaves (tap or Zap) is defused.
+    if(a.cd!=null){spawnFloater(W/2,H*.30,t('defused'),TH.success);playSnd('coin',1.3);}
+
+    // A key leaving opens its lock — on screen and in the ear.
+    if(a.keyFor!=null&&arrows[a.keyFor]&&arrows[a.keyFor].alive){
+      _unlockFx.push({idx:a.keyFor,t:0});
+      playSnd('coin',1.15);haptic(15);
+    }
+
+    // Halfway cheer — once per board, on boards big enough to feel long.
+    // Rush boards are cleared in seconds; a cheer there is just noise.
+    if(!_halfShown&&gameMode!=='rush'&&arrows.length>=10){
+      let left=0;for(const ar of arrows)if(ar.alive)left++;
+      if(left>0&&left<=arrows.length/2){
+        _halfShown=true;
+        spawnFloater(W/2,H*.18,t('halfway'),TH.success);
+      }
+    }
 
     // Win check
     let allGone=true;
@@ -3210,6 +3877,7 @@ function _flyOutArrow(a,idx){
         const s=max(1,undosLeft);
         const perfect=(s===3);
         let gained=0;
+        _streakBonus=0;
         if(isWeekly){
           if(!isWeeklyDone()){
             gained=WEEKLY_REWARD;
@@ -3228,7 +3896,12 @@ function _flyOutArrow(a,idx){
           maxLevel=max(maxLevel,level+1);  // beating level N unlocks N+1 — even if the player taps Home instead of Next
           totalStars=Object.values(stars).reduce((a,b)=>a+b,0);
           if(currentShape&&firstClear){shapeTotal++;_safeSet('ae_shape_total',shapeTotal);}
-          gained=5+s*5;
+          // Win streak: consecutive classic wins without a game over left
+          // unanswered. +2 coins per step past the first, capped at +10.
+          winStreak++;_safeSet('ae_win_streak',winStreak);
+          _streakBonus=min(winStreak-1,5)*2;
+          gained=5+s*5+_streakBonus;
+
           const key='ae_best_'+level;
           const prev=+localStorage.getItem(key)||99999;
           if(timer<prev)_safeSet(key,floor(timer));
@@ -3285,6 +3958,10 @@ function _blockedTap(a,idx){
       spawnFloater(sx,sy-cs*.6,'-1',TH.arrowBlock);
       if(undosLeft<=0){
         inputLocked=true;
+        // The streak is held, not lost, until the player decides: a
+        // continue (coins or ad) gives it back, anything else forfeits it.
+        if(!isDaily&&!isWeekly){_streakLost=winStreak;winStreak=0;_safeSet('ae_win_streak',0);}
+        gameoverReason='hearts';
         setTimeout(()=>{S='gameover';sfx.gameover();inputLocked=false},500);
       }
     }
@@ -3295,7 +3972,10 @@ function _blockedTap(a,idx){
 // wrong taps don't drain hearts and the next solvable arrow is always
 // pulse-highlighted. Daily/weekly are excluded — those are challenges,
 // not introductions.
-const TUTORIAL_LEVELS=5;
+// 4, not 5: level 5 is the first HARD level (isHardLevel), as in the genre —
+// a finger pointing at the answer on the first boss board would defeat it.
+const TUTORIAL_LEVELS=4;
+
 function isTutorial(){
   // Zen/rush pass a difficulty NUMBER to generateLevel while the global
   // `level` still holds the player's classic progress (possibly 1-5) —
@@ -3585,7 +4265,88 @@ function drawArrowPolyline(pts,sz,col,alpha){
 // Draw a static arrow (used in the grid) — full path from tail to head.
 // Single-cell arrows synthesize a short tail behind the head so the arrowhead
 // has something to sit on.
+// Booster glyphs — shared by the in-game flyout and the unlock card.
+// Drawn around (0,0) at unit scale k=1 (≈16px tall).
+function _glyphBooster(kind,x,y,k,col){
+  X.save();
+  X.translate(x,y);X.scale(k,k);
+  X.strokeStyle=col;X.fillStyle=col;X.lineWidth=1.8;X.lineCap='round';X.lineJoin='round';
+  if(kind==='shield'){
+    X.beginPath();X.moveTo(0,-7);X.lineTo(6,-5);X.lineTo(6,1);
+    X.quadraticCurveTo(6,5,0,8);X.quadraticCurveTo(-6,5,-6,1);
+    X.lineTo(-6,-5);X.closePath();X.stroke();
+  }else if(kind==='zap'){
+    X.beginPath();X.moveTo(2,-8);X.lineTo(-4,1);X.lineTo(0,1);
+    X.lineTo(-2,8);X.lineTo(4,-1);X.lineTo(0,-1);X.closePath();X.stroke();
+  }else{ // reveal — eye
+    X.beginPath();X.ellipse(0,0,8,5,0,0,TAU);X.stroke();
+    X.beginPath();X.arc(0,0,2.4,0,TAU);X.fill();
+  }
+  X.restore();
+}
+// Lock & key glyphs, drawn around (0,0) and scaled so `r` ≈ glyph radius.
+function _glyphLock(x,y,r,col,open){
+  X.save();X.translate(x,y);X.scale(r/7,r/7);
+  X.fillStyle=col;X.strokeStyle=col;X.lineWidth=2;X.lineCap='round';
+  X.beginPath();X.arc(0,open?-4.5:-2,3.4,PI,TAU);X.stroke();   // shackle — lifted when open
+  X.beginPath();X.roundRect(-5,-1.5,10,7.5,1.8);X.fill();       // body
+  X.restore();
+}
+function _glyphKey(x,y,r,col){
+  X.save();X.translate(x,y);X.scale(r/7,r/7);X.rotate(-PI/4);
+  X.strokeStyle=col;X.lineWidth=2;X.lineCap='round';
+  X.beginPath();X.arc(-3.2,0,2.8,0,TAU);X.stroke();             // bow
+  X.beginPath();X.moveTo(-.4,0);X.lineTo(6,0);                 // shaft
+  X.moveTo(3.8,0);X.lineTo(3.8,2.6);X.moveTo(6,0);X.lineTo(6,2.6); // bits
+  X.stroke();
+  X.restore();
+}
+function _badge(x,y,r,col){
+  X.fillStyle=col;
+  X.beginPath();X.arc(x,y,r,0,TAU);X.fill();
+  X.strokeStyle=darkMode?'rgba(0,0,0,.35)':'rgba(255,255,255,.95)';X.lineWidth=1.5;
+  X.beginPath();X.arc(x,y,r,0,TAU);X.stroke();
+}
+// A locked arrow wears its padlock on the body cell next to the head (the
+// head itself stays readable); its key wears the key mid-body. Same colour
+// per pair. Badges go once they stop meaning anything.
+function _drawLockBadges(a,cs,gx,gy,alpha,shakeOff){
+  const r=max(7,cs*.34),col=PAIR_COLORS[a.pair||0],dx=shakeOff||0;
+  X.save();X.globalAlpha=alpha;
+  if(_isLocked(a)){
+    const c=a.cells[max(0,a.cells.length-2)];
+    const x=gx+c[1]*cs+cs/2+dx,y=gy+c[0]*cs+cs/2;
+    _badge(x,y,r,col);_glyphLock(x,y,r*.62,'#fff',false);
+  }
+  if(a.keyFor!=null&&arrows[a.keyFor]&&arrows[a.keyFor].alive){
+    const c=a.cells[(a.cells.length-1)>>1];
+    const x=gx+c[1]*cs+cs/2+dx,y=gy+c[0]*cs+cs/2;
+    _badge(x,y,r,col);_glyphKey(x,y,r*.62,'#fff');
+  }
+  X.restore();
+}
+// Bomb: moves-left number on the body cell next to the head, with a fuse.
+// Orange while there's room, red and pulsing for the last three moves.
+// Warm orange/red read on both the light and the dark board.
+function _bombGlyph(x,y,r,n){
+  const hot=n<=3,col=hot?'#d94f3d':'#e07b39';
+  _badge(x,y,r,col);
+  X.strokeStyle=col;X.lineWidth=max(1.5,r*.16);X.lineCap='round';
+  X.beginPath();X.moveTo(x+r*.55,y-r*.75);X.quadraticCurveTo(x+r*.9,y-r*1.25,x+r*1.18,y-r*1.05);X.stroke();
+  X.fillStyle=TH.star;
+  X.beginPath();X.arc(x+r*1.2,y-r*1.08,max(1.6,r*.2),0,TAU);X.fill();
+  txtP(String(n),x,y+.5,max(9,r*1.05),'#fff');
+}
+function _drawBombBadge(a,cs,gx,gy,alpha,shakeOff){
+  const c=a.cells[max(0,a.cells.length-2)];
+  const pulse=(a.cdLeft<=3&&!reducedMotion)?1+.12*sin(gt*10):1;
+  const x=gx+c[1]*cs+cs/2+(shakeOff||0),y=gy+c[0]*cs+cs/2;
+  X.save();X.globalAlpha=alpha;
+  _bombGlyph(x,y,max(9,cs*.42)*pulse,max(0,a.cdLeft));
+  X.restore();
+}
 function drawArrowStatic(arrow,cs,gx,gy,col,alpha,shakeOff){
+
   const pts=[];
   for(const[r,c] of arrow.cells){
     let x=gx+c*cs+cs/2,y=gy+r*cs+cs/2;
@@ -3696,7 +4457,7 @@ function drawBg(plain){
 
 // True when a modal/overlay is on top — buttons under must NOT consume the
 // tap (the overlay needs it). Also disables their hover state for clarity.
-function _inputBlocked(){return langPickerOpen||loginRewardOpen}
+function _inputBlocked(){return langPickerOpen||loginRewardOpen||(!!_introCard&&S==='play')}
 
 // Shared button rendering. v2.4: dropped the saturated 2-px coloured
 // border — on dark mode the gold border against a nearly-black surface
@@ -4035,10 +4796,11 @@ function drawMenu(){
   // silhouette (no name — the mystery IS the pull). Tap → level select
   // at that page. Cached offscreen per level id.
   {
-    // v2.0.1: shapes are dense (every level 21..300, then every 5th) —
-    // scan forward for the next key carrying a shape id instead of
-    // assuming multiples of 5. Cached per maxLevel: the scan is ~2k map
-    // hits and this runs inside drawMenu.
+    // Scan forward for the next key carrying a shape id rather than
+    // assuming the every-5th layout, so a future data change can't
+    // desync the card. Cached per maxLevel: the scan is ~2k map hits and
+    // this runs inside drawMenu.
+
     if(_showcaseNextFor!==maxLevel&&typeof window!=='undefined'&&window.HANDCRAFTED_LEVELS){
       _showcaseNextFor=maxLevel;_showcaseNextL=0;
       for(let l=Math.max(21,maxLevel);l<=2225;l++){
@@ -4140,15 +4902,12 @@ function drawMenu(){
   }
   const dailyDone=isDailyDone();
   if(drawBtn(dailyDone?t('daily')+' ★':t('daily'),gX+bW/2+bGapX/2,gY1,bW,bH)){
-    goto('play',()=>{isDaily=true;isWeekly=false;dailySeed=getDailySeed();generateLevel(40,dailySeed*31+7)});
-    // Daily difficulty pinned at level 40 (medium) so each day is a similar
-    // challenge — Wordle/NYT model. Seed varies, complexity stays constant.
+    goto('play',startDailyBoard);
   }
   // Row 2
   const weeklyDone=isWeeklyDone();
   if(drawBtn(weeklyDone?t('weekly')+' ★':t('weekly'),gX-bW/2-bGapX/2,gY2,bW,bH,TH.warning)){
-    goto('play',()=>{isWeekly=true;isDaily=false;const ws=getWeeklySeed();generateLevel(120,ws*131+71)});
-    // Weekly difficulty pinned at level 120 (hard) — bigger reward + bigger maze
+    goto('play',startWeeklyBoard);
   }
   if(drawBtn(t('zen'),gX+bW/2+bGapX/2,gY2,bW,bH,TH.success)){
     goto('play',startZen);
@@ -4303,9 +5062,13 @@ function drawPlay(){
   }else{
     // Level title — bigger weight + slight letter-spacing for "Level N"
     // pill feel. Stars below preview the current run's star outcome.
-    txtD('LEVEL '+level,W/2,TOP_Y,20,TH.text);
+    txtD('LEVEL '+level,W/2,TOP_Y,20,currentHard?HARD_COLOR:TH.text);
+    // Hard levels say so, the way the genre does — the label turns a
+    // difficulty spike from "this game got unfair" into "this one is the boss".
+    if(currentHard)txt(t('hardLevel'),W/2,TOP_Y+17,10,HARD_COLOR,'center','800');
+    const starY=TOP_Y+(currentHard?33:24),starR=currentHard?8:9;
     for(let i=0;i<3;i++){
-      drawStar(W/2-26+i*26,TOP_Y+24,9,moves<=minMoves+i*1&&i<(moves<=minMoves?3:moves<=minMoves+2?2:1));
+      drawStar(W/2-26+i*26,starY,starR,moves<=minMoves+i*1&&i<(moves<=minMoves?3:moves<=minMoves+2?2:1));
     }
     // Hearts = lives (top-right, vertically centered with menu button)
     for(let i=0;i<3;i++){
@@ -4343,7 +5106,8 @@ function drawPlay(){
   // expanding into a horizontal flyout of 4 chips. Hidden during the
   // tutorial (nothing to teach yet, and Skip would let a player skip the
   // teaching levels).
-  if(!isTutorial()){
+  // Bolt chip only once something behind it is unlocked for this mode.
+  if(!isTutorial()&&_boostItems().length){
     const bcX=50,bcY=TOP_Y+30;
     const bhv=abs(mx-bcX)<26&&abs(my-bcY)<18;
     // Bolt glyph — accent when armed states are live
@@ -4568,6 +5332,22 @@ function drawPlay(){
 
     const col=isShaking?TH.arrowBlock:(isHinted?TH.star:arrowColor(a,i));
     drawArrowStatic(a,cs,gx,gy,col,revealA,shakeOff);
+    if(a.lock!=null||a.keyFor!=null)_drawLockBadges(a,cs,gx,gy,revealA,shakeOff);
+    if(a.cd!=null)_drawBombBadge(a,cs,gx,gy,revealA,shakeOff);
+  }
+
+  // Padlock pops: when a key leaves, its lock's shackle lifts and the
+  // badge swells and fades over half a second.
+  for(let k=_unlockFx.length-1;k>=0;k--){
+    const f=_unlockFx[k];
+    f.t+=dt;
+    const p=f.t/.5,a=arrows[f.idx];
+    if(p>=1||!a||!a.alive){_unlockFx.splice(k,1);continue}
+    const c=a.cells[max(0,a.cells.length-2)];
+    const x=gx+c[1]*cs+cs/2,y=gy+c[0]*cs+cs/2,r=max(7,cs*.34)*(1+p*.7);
+    X.save();X.globalAlpha=1-p;
+    _badge(x,y,r,PAIR_COLORS[a.pair||0]);_glyphLock(x,y,r*.62,'#fff',true);
+    X.restore();
   }
 
   // Tick down hint timer
@@ -4781,9 +5561,8 @@ function drawPlay(){
   // input naturally falls through to this block while the flyout is open.
   if(!isTutorial()){
     if(boosterMenuOpen){
-      const items=[];
-      if(gameMode!=='zen')items.push('shield');
-      items.push('reveal','zap');
+      const items=_boostItems();
+
       const chipW=82,chipH=40,gap=8;
       const rowW=items.length*chipW+(items.length-1)*gap;
       const x0=W/2-rowW/2,fy=TOP_Y+64;
@@ -4796,23 +5575,7 @@ function drawPlay(){
         X.beginPath();X.roundRect(cx-chipW/2,fy-chipH/2,chipW,chipH,12);X.fill();
         X.strokeStyle=TH.border;X.lineWidth=1;
         X.beginPath();X.roundRect(cx-chipW/2,fy-chipH/2,chipW,chipH,12);X.stroke();
-        // Glyph
-        const gxp=cx-24,gyp=fy;
-        X.save();
-        X.strokeStyle=TH.text;X.lineWidth=1.8;X.lineCap='round';X.lineJoin='round';
-        if(kind==='shield'){
-          X.beginPath();X.moveTo(gxp,gyp-7);X.lineTo(gxp+6,gyp-5);X.lineTo(gxp+6,gyp+1);
-          X.quadraticCurveTo(gxp+6,gyp+5,gxp,gyp+8);X.quadraticCurveTo(gxp-6,gyp+5,gxp-6,gyp+1);
-          X.lineTo(gxp-6,gyp-5);X.closePath();X.stroke();
-        }else if(kind==='zap'){
-          X.beginPath();X.moveTo(gxp+2,gyp-8);X.lineTo(gxp-4,gyp+1);X.lineTo(gxp,gyp+1);
-          X.lineTo(gxp-2,gyp+8);X.lineTo(gxp+4,gyp-1);X.lineTo(gxp,gyp-1);X.closePath();X.stroke();
-        }else{ // reveal — eye
-          X.beginPath();X.ellipse(gxp,gyp,8,5,0,0,TAU);X.stroke();
-          X.fillStyle=TH.text;
-          X.beginPath();X.arc(gxp,gyp,2.4,0,TAU);X.fill();
-        }
-        X.restore();
+        _glyphBooster(kind,cx-24,fy,1,TH.text);
         // Price / inventory badge
         const invN=kind==='shield'?bstShield:kind==='zap'?bstZap:bstReveal;
         if(invN>0){
@@ -4868,8 +5631,8 @@ function drawPlay(){
   // completely empty so the player's thumb has unobstructed room to
   // pan/zoom and tap arrows along the lower rows of the grid.
 
-  // Update timers
-  timer+=dt;
+  // Update timers — the level clock stops while an intro card is up
+  if(!_introCard)timer+=dt;
   totalPlayTime+=dt;
 
 
@@ -4977,7 +5740,12 @@ function drawComplete(){
     stat(cardX + cardW * 0.80, 'TIME', mm + ':' + (ss < 10 ? '0' : '') + ss);
   }
   if (!isDaily && !isWeekly && bestTime > 0) {
-    txt('Best: ' + floor(bestTime) + 's', W/2, H*.53, 11, TH.textDim);
+    txt('Best: ' + floor(bestTime) + 's', W/2, H*.515, 11, TH.textDim);
+  }
+  // Win streak — the bonus is already inside the reward pill below; this
+  // line says where it came from.
+  if (!isDaily && !isWeekly && winStreak >= 2) {
+    txtP(t('winStreak') + ' ×' + winStreak + (_streakBonus ? '  +' + _streakBonus : ''), W/2, H*.545, 13, TH.star);
   }
 
   // Reward — prominent gold pill that scales in like a celebration prize.
@@ -5338,7 +6106,8 @@ function drawGameOver(){
 
   // Title + subtitle
   txtD(t('gameOver'),W/2,H*.34,28,TH.text);
-  txt(t('outOfHearts'),W/2,H*.40,13,TH.textSec);
+  txt(gameoverReason==='bomb'?t('bombWentOff'):t('outOfHearts'),W/2,H*.40,13,TH.textSec);
+
 
   // Action stack — strict y-rhythm: header → 60px → btn → 60px → btn …
   let by = H*.50;
@@ -5346,7 +6115,7 @@ function drawGameOver(){
   // 1. Retry (primary, neutral fill, label in TH.text)
   if(drawBigBtn(t('retry'),W/2,by,220,52)){
     showInterstitialAd();
-    goto('play',()=>{generateLevel(level)});
+    goto('play',replayCurrentBoard);
   }
   by += 64;
 
@@ -5364,7 +6133,8 @@ function drawGameOver(){
 
   // 3. Free continue via rewarded ad
   if(drawBtn(t('continueBtn')+' (Ad)',W/2,by,220,44,TH.success)){
-    showRewardedAd(()=>{undosLeft=3;S='play'});
+    showRewardedAd(()=>{undosLeft=3;_restoreStreak();_bombGrace();S='play'});
+
   }
   by += 56;
 
@@ -5972,8 +6742,68 @@ function drawLoginReward(){
   }
 }
 
+// --- v2.1 INTRO CARD ---
+// One-time explainer over the board for a new mechanic or a newly unlocked
+// booster. It owns every tap while up (stashed in loop() as _cardTap) and
+// the level clock is paused underneath. A booster card hands over a free
+// charge, so the button says what it gives.
+function _wrapLines(text,maxW,sz){
+  X.font=`600 ${sz}px Nunito,sans-serif`;
+  const lines=[];let cur='';
+  for(const w of text.split(' ')){
+    const next=cur?cur+' '+w:w;
+    if(cur&&X.measureText(next).width>maxW){lines.push(cur);cur=w}else cur=next;
+  }
+  if(cur)lines.push(cur);
+  return lines;
+}
+function drawIntroCard(){
+  const k=_introCard.kind,isMech=k==='lock'||k==='bomb';
+  X.fillStyle='rgba(0,0,0,.55)';X.fillRect(0,0,W,H);
+  const pw=308,ph=320,px=(W-pw)/2,py=(H-ph)/2;
+  X.fillStyle=TH.surface;
+  X.beginPath();X.roundRect(px,py,pw,ph,18);X.fill();
+  X.strokeStyle=TH.border;X.lineWidth=1;
+  X.beginPath();X.roundRect(px,py,pw,ph,18);X.stroke();
+
+  const iy=py+62;
+  if(k==='lock'){
+    _badge(W/2-30,iy,24,PAIR_COLORS[0]);_glyphLock(W/2-30,iy,15,'#fff',false);
+    _badge(W/2+30,iy,24,PAIR_COLORS[0]);_glyphKey(W/2+30,iy,15,'#fff');
+  }else if(k==='bomb'){
+    _bombGlyph(W/2-4,iy+4,24,5);
+  }else{
+    X.fillStyle=TH.star+'33';
+    X.beginPath();X.arc(W/2,iy,30,0,TAU);X.fill();
+    _glyphBooster(k,W/2,iy,2.1,TH.text);
+  }
+  txt(isMech?t('newMechanic'):t('newBooster'),W/2,py+112,11,TH.textSec,'center','700');
+  txtD(t(isMech?k+'Title':k),W/2,py+138,22,TH.text);
+  const lines=_wrapLines(t(k+'Body'),pw-48,14);
+  for(let i=0;i<lines.length;i++)txt(lines[i],W/2,py+174+i*20,14,TH.textSec);
+
+  // drawBigBtn is the visual only — its own click is suppressed by
+  // _inputBlocked() while the card is up, same as the login modal.
+  const by=py+ph-38;
+  drawBigBtn(isMech?t('gotIt'):t('takeGift'),W/2,by,210,44,TH.accent);
+  if(_cardTap&&abs(_cardTap.x-W/2)<105&&abs(_cardTap.y-by)<22){
+    if(isMech)_safeSet('ae_intro_'+k,'1');
+    else{
+      _safeSet('ae_bintro_'+k,'1');
+      if(k==='shield'){bstShield++;_safeSet('ae_bst_shield',bstShield);}
+      else if(k==='zap'){bstZap++;_safeSet('ae_bst_zap',bstZap);}
+      else{bstReveal++;_safeSet('ae_bst_reveal',bstReveal);}
+      spawnFloater(W/2,by-44,'+1',TH.star);
+    }
+    sfx.fanfare();haptic(12);
+    _introCard=null;
+  }
+  _cardTap=null;
+}
+
 // --- LEVELS ---
 // Paginated: 25 levels per page (5×5 grid). Unlimited pages. Each card shows
+
 // the level number, stars earned, and lock state.
 const LEVELS_PER_PAGE=25;
 function drawLevels(){
@@ -6236,6 +7066,10 @@ function loop(t){
     X.translate((Math.random()*2-1)*_shakeAmp,(Math.random()*2-1)*_shakeAmp);
   }
 
+  // v2.1 intro card owns the tap while it's up — take it before anything
+  // underneath renders, so neither the board nor the HUD can consume it.
+  if(_introCard&&S==='play'){_cardTap=tapped?{x:tapX,y:tapY}:null;tapped=false;}
+
   // Render
   if(S==='menu')drawMenu();
   else if(S==='play')drawPlay();
@@ -6260,6 +7094,7 @@ function loop(t){
 
   // Top-most overlays (block all underlying input)
   if(loginRewardOpen)drawLoginReward();
+  if(_introCard&&S==='play')drawIntroCard();
   if(langPickerOpen)drawLangPicker();
 
   // End of hurt-shake wrap — overlays above shake with the screen; the
@@ -6339,6 +7174,17 @@ window._ae={
   // taken by _retryDepth). Exposing the real function rather than
   // re-deriving its parameters keeps the test honest as it changes.
   rushBoard(){startRushBoard()},
+  // Plays one tap through the real input path (locks, combo, penalties,
+  // win) — lets QA scripts solve a board without mapping screen coords.
+  tap(i){tapArrowByIndex(i)},
+  // QA: run the chained generator on a bare grid, no game state touched.
+  chained(R,C,seed,cfg){return _buildChained(R,C,seededRandom(seed),cfg)},
+
+  get hearts(){return undosLeft},
+  get state(){return S},
+  get combo(){return _comboN},
+  get winStreak(){return winStreak},
+
   get arrows(){return arrows},
   get gridCols(){return gridCols},
   get gridRows(){return gridRows},

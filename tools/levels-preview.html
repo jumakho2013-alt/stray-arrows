@@ -129,6 +129,8 @@ function analyse(rows, cols, arrows) {
     for (const i of rem) {
       let ok = true;
       for (const b of deps[i]) if (rem.has(b)) { ok = false; break; }
+      // a locked arrow also waits for its key (v2.1 lock & key)
+      if (ok && arrows[i].lock != null && rem.has(arrows[i].lock)) ok = false;
       if (ok) ready.push(i);
     }
     if (!ready.length) return { open, waves, solvable: false, fill: 0 };
@@ -160,7 +162,8 @@ function tile(lvl, win, fresh) {
   else win._ae.generateLevel(lvl);
   const rows = win._ae.gridRows, cols = win._ae.gridCols;
   // Copy the cells out — the next generateLevel call reuses these arrays.
-  const arrows = win._ae.arrows.map((a) => ({ cells: a.cells.map((p) => [p[0], p[1]]), dir: a.dir }));
+  const arrows = win._ae.arrows.map((a) => ({ cells: a.cells.map((p) => [p[0], p[1]]), dir: a.dir, lock: a.lock }));
+  const locks = arrows.filter((a) => a.lock != null).length;
   const m = analyse(rows, cols, arrows);
   const hc = !fresh && win.HANDCRAFTED_LEVELS && win.HANDCRAFTED_LEVELS[lvl];
   const pct = Math.round(m.open.size / arrows.length * 100);
@@ -171,13 +174,14 @@ function tile(lvl, win, fresh) {
     <div class="meta">
       <div class="row"><b>Уровень ${lvl}</b><span class="tag${
         fresh ? ' fresh' : hc && hc.t ? ' shape' : ''}">${
-        fresh ? 'новый генератор' : hc && hc.t ? 'фигура · ' + hc.t
-              : hc ? 'старый, до 2.0' : 'проц'}</span></div>
+        fresh ? 'новый генератор' : hc && hc.t ? 'фигура · ' + hc.t : 'проц'}</span></div>
       <div class="nums">
         <span><i>${arrows.length}</i> стрел</span>
         <span class="hi"><i>${m.open.size}</i> в старте · ${pct}%</span>
         <span><i>${m.waves}</i> волн</span>
         <span><i>${m.fill}%</i> заполнено</span>
+        ${locks ? `<span><i>${locks}</i> замк.</span>` : ''}
+
         ${m.solvable ? '' : '<span class="bad">НЕРАЗРЕШИМ</span>'}
       </div>
     </div>`;

@@ -5,9 +5,47 @@ All notable changes to Stray Arrows are documented here. Format follows
 / deprecated / removed / fixed / security. Versioning is
 [SemVer](https://semver.org).
 
-## [2.0.1] — unreleased
+## [2.1.0] — unreleased
+
+Built on a teardown of Arrows GO! (Meevii/Learnings) and Arrow Puzzle
+(Easybrain): same puzzle as ours, but something new every few levels and a
+reaction to nearly every action. This release takes the cheapest of those.
+
+### Added
+- **Chained level generator** for the classic track, daily and weekly. Field
+  study of Arrows GO! on device: almost every step of their solve offers ONE
+  tappable arrow; ours offered 2.7–6. With monotone removal there is no
+  wrong order, so that count *is* the difficulty. Boards are now built in
+  reverse solve order, each new arrow laid across every currently free ray
+  (head first, body guided through the rays, hugging placed arrows), then
+  re-oriented by the peel. Levels 1–400: ~2.5 tappable per step on normal
+  boards, ~3.1 on hard ones, 0 unsolvable, ≤48 ms.
+- **HARD levels** — every 3rd level from 5, labelled in the HUD in purple,
+  ~1.3× the board and longer arrows: the genre's sawtooth curve. Tutorial
+  shortened to levels 1–4 so level 5 can be the first hard one.
+- **Lock & key** — from level 31, most boards lock an arrow that is open
+
+  from the start to a key arrow a few waves deep. Tapping a lock costs no
+  heart; it pulses the key. Locks are placed so the board stays solvable by
+  construction (no key may itself wait on its lock) and re-verified.
+- **Boosters unlock by level** — Shield at 12, Reveal at 20, Zap at 35, each
+  with a one-time explainer card and a free charge. Players already past a
+  threshold before 2.1 keep their boosters without the card.
+- **Combo counter** (×3 and up, rising pitch, words at ×5/×8/×12; +1 point
+  per combo tap in Rush), **halfway cheer**, and a **win streak** worth
+  +2 coins per step (cap +10) that a continue after game over preserves.
+- `window._ae.tap/hearts/state/combo/winStreak` QA hooks.
+
+### Changed
+- **Level flow: a picture every 5th level, the generator everywhere else.**
+  Levels 1–20 (pre-2.0 boards: level 10 was 42×30 with a third of its
+  arrows tappable blind) and the dense 21–300 picture block (3× smaller
+  than level 20, never ramping back) are now generated.
+  `handcrafted-levels.js` shrinks 1.39 → 1.06 MB, 685 → 441 levels.
+- Dev server moved to port 8790 (8765 collides with another local project).
 
 ### Fixed
+
 - **The procedural generator was running on a dead RNG.** `seededRandom` is
   Park-Miller, valid only for a seed in `[1, m-1]`, but the retry
   perturbation `(baseSeed + 0x9E3779B1*(depth+1))|0` is negative about half

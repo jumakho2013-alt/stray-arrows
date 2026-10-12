@@ -39,7 +39,7 @@ levels and re-generates procedurally (QA only).
 | Path | What |
 |------|------|
 | `index.html` | the whole game — UI, audio, ads, level loader, render loop |
-| `handcrafted-levels.js` | 685 levels: 1-20 tutorial/curated + 665 generated shape levels |
+| `handcrafted-levels.js` | 441 picture levels, one every 5th level 25..2225 — every other level is generated at runtime |
 | `sw.js` | Service Worker — versioned cache |
 | `manifest.json` | PWA manifest |
 | `sounds/` | tap, swoosh, complete, gameover MP3s |
@@ -67,7 +67,8 @@ Shape-level pipeline (offline, deterministic seeds):
 node tools/gen-shape-levels.js     # packs masks from tools/shape-masks.js,
                                    # certifies solvability, writes tools/out/
 node tools/merge-shape-levels.js   # rewrites handcrafted-levels.js
-                                   # (keys 1-20 kept verbatim)
+                                   # (every 5th level, 25..2225)
+
 ```
 
 Then bump `?v=` in the `<script src="handcrafted-levels.js?v=N">` tag in

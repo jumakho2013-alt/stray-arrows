@@ -19,8 +19,10 @@ Each level presents a maze of intertwined arrows. Tap an arrow to send it flying
 - Complete with all hearts intact — earn 3 stars
 
 FEATURES
-- SHAPE LEVELS — every level from 21 to 300 is a picture: hearts, stars, cats,
-  rockets… and milestone levels spell their own number in arrows!
+- SHAPE LEVELS — every 5th level is a picture: hearts, stars, cats, rockets…
+  and milestone levels spell their own number in arrows!
+- LOCK & KEY — locked arrows won't fly until their key arrow is gone
+- Combos, win streaks and boosters that unlock as you progress
 - Zen mode — endless, no hearts, pure relaxation
 - Rush mode — 75-second time attack; every mistake costs seconds
 - Daily login rewards — a 7-day streak calendar with coin and booster gifts
@@ -55,8 +57,11 @@ Stray Arrows — минималистичная головоломка, где �
 - Пройди без ошибок — получи 3 звезды
 
 ОСОБЕННОСТИ
-- ФИГУРНЫЕ УРОВНИ — каждый уровень с 21-го по 300-й это картинка: сердца,
-  звёзды, коты, ракеты… а юбилейные уровни пишут свой номер стрелками!
+- ФИГУРНЫЕ УРОВНИ — каждый 5-й уровень это картинка: сердца, звёзды, коты,
+  ракеты… а юбилейные уровни пишут свой номер стрелками!
+- ЗАМОК И КЛЮЧ — запертая стрела не улетит, пока не уберёшь стрелу с ключом
+- Комбо, серии побед и бустеры, которые открываются по ходу игры
+
 - Режим Дзен — бесконечный, без сердец, чистое расслабление
 - Режим Рывок — 75 секунд на время; каждая ошибка стоит секунд
 - Ежедневные награды за вход — календарь на 7 дней с монетами и бустерами
