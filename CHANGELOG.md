@@ -5,7 +5,7 @@ All notable changes to Stray Arrows are documented here. Format follows
 / deprecated / removed / fixed / security. Versioning is
 [SemVer](https://semver.org).
 
-## [2.1.0] — unreleased
+## [2.1.0] — 2026-10-13
 
 Built on a teardown of Arrows GO! (Meevii/Learnings) and Arrow Puzzle
 (Easybrain): same puzzle as ours, but something new every few levels and a
@@ -53,11 +53,10 @@ reaction to nearly every action. This release takes the cheapest of those.
 - **HARD levels** — every 3rd level from 5, labelled in the HUD in purple,
   ~1.25× the board and longer arrows: the genre's sawtooth curve. Tutorial
   shortened to levels 1–4 so level 5 can be the first hard one.
-- **Lock & key** — from level 31, most boards lock an arrow that is open
-
-  from the start to a key arrow a few waves deep. Tapping a lock costs no
-  heart; it pulses the key. Locks are placed so the board stays solvable by
-  construction (no key may itself wait on its lock) and re-verified.
+- Lock & key and bomb arrows are built (placement, rendering, explainer
+  cards) but parked: they hang off the old procedural path, which no
+  classic level reaches since the chained generator, so no 2.1.0 board
+  has one.
 - **Boosters unlock by level** — Shield at 12, Reveal at 20, Zap at 35, each
   with a one-time explainer card and a free charge. Players already past a
   threshold before 2.1 keep their boosters without the card.
