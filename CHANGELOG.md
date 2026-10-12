@@ -96,6 +96,14 @@ reaction to nearly every action. This release takes the cheapest of those.
   `handcrafted-levels.js` shrinks 1.39 → 1.06 MB, 685 → 441 levels.
 - Dev server moved to port 8790 (8765 collides with another local project).
 
+### Security
+- **Capacitor 8.3.0 → 8.5.3** (core, android, ios, cli): GHSA-rvm3-566m-v7fv,
+  critical — remote content could be loaded at the app origin through the
+  internal HTTP proxy path. iOS build 41 (uploaded on 8.3.0) is superseded
+  by build 42.
+- Dev tooling: tar, js-yaml, brace-expansion, @xmldom/xmldom updated
+  (`npm audit --audit-level=high` clean; CI had started failing on them).
+
 ### Fixed
 
 - **The procedural generator was running on a dead RNG.** `seededRandom` is
