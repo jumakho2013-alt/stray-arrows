@@ -75,7 +75,8 @@ body.letterboxed canvas{
      inline IIFE below instead of blocking initial render. By the time the
      player taps "play", DOMContentLoaded has fired and HANDCRAFTED_LEVELS
      is populated — generateLevel() never sees it undefined in practice. -->
-<script src="handcrafted-levels.js?v=28" defer></script>
+<script src="handcrafted-levels.js?v=29" defer></script>
+
 
 <script>
 // Surface any uncaught error visibly — without this a JS error gives a blank
@@ -3136,6 +3137,12 @@ function _buildChained(R,C,rng,cfg){
       }
       const cells=body.reverse();cells.push([hr,hc]);   // tail → head
       if(cells.length<cfg.minLen)continue;
+      // The body was grown after the head was picked, so it can wander back
+      // across the head's own ray — an arrow that would fly through itself.
+      const own=new Set(cells.map(([r,c])=>r*C+c));
+      let sr=hr+DY[d],sc=hc+DX[d],selfHit=false;
+      while(inB(sr,sc)){if(own.has(sr*C+sc)){selfHit=true;break}sr+=DY[d];sc+=DX[d]}
+      if(selfHit)continue;
       const cov=new Set();
       for(const[r,c] of cells){const l=rayOf.get(r*C+c);if(l)for(const i of l)cov.add(i)}
       const unc=F.length-cov.size;
@@ -3162,9 +3169,11 @@ function _buildChained(R,C,rng,cfg){
   }
   // Holes: grow a neighbour's TAIL into them. Safe only if the cell sits on
   // no ray of an arrow placed after that neighbour — those leave first, and
-  // the neighbour would still be in their way. Head and ray are untouched.
-  const onLaterRay=(r0,c0,idx)=>{
-    for(let j=idx+1;j<P.length;j++){
+  // the neighbour would still be in their way — and not on the neighbour's
+  // own ray, which it would then fly through. Head and ray are untouched.
+
+  const onRayFrom=(r0,c0,from)=>{
+    for(let j=from;j<P.length;j++){
       const a=P[j],h=a.cells[a.cells.length-1];
       let r=h[0]+DY[a.dir],c=h[1]+DX[a.dir];
       while(inB(r,c)){if(r===r0&&c===c0)return true;r+=DY[a.dir];c+=DX[a.dir]}
@@ -3184,7 +3193,9 @@ function _buildChained(R,C,rng,cfg){
         const a=P[id],tail=a.cells[0];
         if(tail[0]!==nr||tail[1]!==nc||a.cells.length>=cfg.maxLen+2)continue;
 
-        if(onLaterRay(r,c,id))continue;
+        if(onRayFrom(r,c,id))continue;
+
+
         a.cells.unshift([r,c]);occ[k]=id;grew=true;break;
       }
     }
@@ -3219,17 +3230,25 @@ function _peelDir(cells,flip){
   const dr=b[0]-a[0],dc=b[1]-a[1];
   return dc===1?0:dr===-1?1:dc===-1?2:3;
 }
+// An orientation whose ray runs back into the arrow's OWN body is not an
+// option: on screen the arrow would fly through itself. Putting `self` in
+// its own blocker set makes the peel see it as blocked for as long as the
+// arrow exists — i.e. never pickable — with no special case anywhere else.
+// (canEscape ignores the arrow's own cells, so this must hold at
+// generation time: 935 shipped picture-level arrows and ~5 per generated
+// board pointed into themselves before this.)
 function _peelRay(occ,rows,cols,cells,flip,self,d){
   const head=flip?cells[0]:cells[cells.length-1];
   const set=new Set();
   let cr=head[0]+DY[d],cc=head[1]+DX[d];
   while(cr>=0&&cr<rows&&cc>=0&&cc<cols){
     const j=occ[cr*cols+cc];
-    if(j>=0&&j!==self)set.add(j);
+    if(j>=0)set.add(j);
     cr+=DY[d];cc+=DX[d];
   }
   return set;
 }
+
 // Wave decomposition over the precomputed dependency sets. Cheap enough to
 // call inside the repair loop because `deps` never has to be rebuilt —
 // flipping one arrow only swaps which of ITS two sets is in play.
@@ -3279,7 +3298,7 @@ function _peelOrient(placed,rows,cols,rng,openMax,bias){
   // unlock = bottleneck: removing it converts many future picks from
   // "open from the start" into "opened by an earlier move".
   const unlock=new Array(N).fill(0);
-  for(let j=0;j<N;j++)for(let f=0;f<2;f++)for(const b of deps[j][f])unlock[b]++;
+  for(let j=0;j<N;j++)for(let f=0;f<2;f++)for(const b of deps[j][f])if(b!==j)unlock[b]++;
   const alive=new Set();
   for(let i=0;i<N;i++)alive.add(i);
   const orientation=new Array(N).fill(-1);
@@ -3321,11 +3340,18 @@ function _peelOrient(placed,rows,cols,rng,openMax,bias){
   while(alive.size){
     const choices=freeChoices();
     if(!choices.length){
+      // An arrow that points into itself whichever end is the head can
+      // never leave — drop it before anything innocent.
+      let selfStuck=-1;
+      for(const i of alive)if(deps[i][0].has(i)&&deps[i][1].has(i)){selfStuck=i;break}
+      if(selfStuck>=0){alive.delete(selfStuck);dropped++;continue}
       const blockCount=new Map();
+
       for(const j of alive)
         for(let f=0;f<2;f++)
           for(const b of deps[j][f])
-            if(alive.has(b))blockCount.set(b,(blockCount.get(b)||0)+1);
+            if(b!==j&&alive.has(b))blockCount.set(b,(blockCount.get(b)||0)+1);
+
       let victim=-1,most=-1;
       for(const i of alive){
         const bc=blockCount.get(i)||0;

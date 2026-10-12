@@ -60,7 +60,15 @@ reaction to nearly every action. This release takes the cheapest of those.
   and bodies and break it. Measured at level 301: 167 of 168 attempts
   unsolvable, so every board fell through 30 retries into the
   halved-difficulty escape hatch. Fixed by `_peelOrient` below.
+- **Arrows that flew through themselves.** The path test ignores an arrow's
+  own cells, and no generator stopped a head from pointing back into its own
+  body — 935 arrows in 339 of the 441 shipped picture levels (2.0), and ~5
+  per generated board. The peel (runtime and offline) now counts an arrow's
+  own cells as blockers, the chained generator rejects such candidates, the
+  affected picture levels were re-oriented or regenerated with their shapes
+  kept, and `npm run validate` fails on any arrow whose ray re-enters itself.
 - Rush boards could exceed their own `maxLen` — absorption was bounded only
+
   as a side effect of the escape-line gate, so a 10×10 board came back as
   seven 20-cell serpents. `maxLen` is enforced directly at every growth site.
 

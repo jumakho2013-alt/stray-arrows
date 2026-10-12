@@ -3,6 +3,9 @@
 //  • each cell is inside the grid
 //  • no two arrows share a cell (heads or bodies)
 //  • level is solvable (topological unwinding succeeds)
+//  • no arrow's escape ray crosses its OWN body — the game ignores own
+//    cells when testing a path, so such an arrow would fly through itself
+
 //  • shape keys (≥25): arrow len ≥ 2, d matches the last cell segment,
 //    known `t` shape id, initial openness within the tier's hard cap
 //  • key coverage is exactly {25,30,…,2225} — every other level is built
@@ -146,6 +149,12 @@ for (const lvlKey in HANDCRAFTED) {
     for (let i = 0; i < level.arrows.length; i++) {
       const a = level.arrows[i];
       if (a.c.length < 2) { errs.push(`arrow ${i}: len ${a.c.length} < 2`); continue; }
+      const own = new Set(a.c.map(([r, c]) => r + ',' + c));
+      const [hr, hc] = a.c[a.c.length - 1];
+      for (let r = hr + DY[a.d], c = hc + DX[a.d]; r >= 0 && r < level.rows && c >= 0 && c < level.cols; r += DY[a.d], c += DX[a.d]) {
+        if (own.has(r + ',' + c)) { errs.push(`arrow ${i}: ray runs back into its own body at (${r},${c})`); break; }
+      }
+
       const seg = dirOfSegment(a.c[a.c.length - 2], a.c[a.c.length - 1]);
       if (seg !== a.d) errs.push(`arrow ${i}: d=${a.d} but last segment points ${seg}`);
     }

@@ -413,12 +413,16 @@ function rayBlockers(board, snakes, cells, flip) {
   const dr = ((head / cols) | 0) - ((prev / cols) | 0);
   const dc = (head % cols) - (prev % cols);
   const d = dirOf(dr, dc);
-  const self = occ[head];
+  // The arrow's OWN cells count as blockers: an orientation whose ray runs
+  // back into its own body would fly through itself on screen, and with
+  // `self` in the set the peel can never pick it (self is alive while it
+  // is being considered). The game's canEscape ignores own cells, so this
+  // has to hold here — 935 shipped arrows broke it before v2.2.
   const set = new Set();
   let r = ((head / cols) | 0) + dr, c = (head % cols) + dc;
   while (r >= 0 && r < rows && c >= 0 && c < cols) {
     const id = occ[r * cols + c];
-    if (id >= 0 && id !== self) set.add(id);
+    if (id >= 0) set.add(id);
     r += dr; c += dc;
   }
   return { d, blockers: set };
@@ -435,7 +439,8 @@ function peel(board, snakes, rng, bias, budget = 1200) {
   const unlock = new Array(n).fill(0);
   for (let j = 0; j < n; j++)
     for (let f = 0; f < 2; f++)
-      for (const b of info[j][f].blockers) unlock[b]++;
+      for (const b of info[j][f].blockers) if (b !== j) unlock[b]++;
+
   const alive = new Set(snakes.map((_, i) => i));
   const orientation = new Array(n).fill(-1);
   const stack = []; // frames: {choices, tried, chosenIdx, snake}
