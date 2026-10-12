@@ -2153,16 +2153,15 @@ function generateLevel(lvl,customSeed){
       if(lone)region[k]^=1;
     }
     const sp=_chainSpec(lvl);
-    // Narrow strips of ground (pizza: one cell wide down both sides) can
-    // leave a few cells no valid move reaches; the next build of the same
-    // stream usually closes them. Keep the fullest of up to three; a stray
-    // hole or two is not worth tripling the build time of a big picture.
-    let P=null,placed=-1;
-    for(let att=0;att<3&&placed<R*Cn*.98;att++){
-      const Q=_buildChained(R,Cn,rng,{...sp.cfg,maxLen:sp.cfg.maxLen-(sp.hard?3:0),region});
-      const q=Q.reduce((n,a)=>n+a.cells.length,0);
-      if(q>placed){P=Q;placed=q}
-    }
+    // Pictures are the breathers: the normal target, not the hard one, and
+    // the best-of count sized to THIS board. Repeated builds also close the
+    // odd strip of ground a first build leaves (pizza: one cell wide down
+    // both sides).
+    const n=R*Cn;
+    const P=_buildBest(R,Cn,rng,{...sp.cfg,maxLen:sp.cfg.maxLen-(sp.hard?3:0),
+      target:sp.cfg.target+(sp.hard?.15:0),
+      best:n<=250?3:n<=420?2:1,region});
+    const placed=P.reduce((k,a)=>k+a.cells.length,0);
     if(placed>=R*Cn*.9){
       gridCols=Cn;gridRows=R;
       arrows=P.map(a=>({cells:a.cells,dir:a.dir,alive:true,pic:region[a.cells[0][0]*Cn+a.cells[0][1]]===1}));
@@ -2203,7 +2202,7 @@ function generateLevel(lvl,customSeed){
   if(gameMode==='classic'&&!_genOverride){
     const spec=_chainSpec(isWeekly?50:lvl);   // weekly: the level-50 hard spec, 15×20
 
-    const P=_buildChained(spec.rows,spec.cols,rng,spec.cfg);
+    const P=_buildBest(spec.rows,spec.cols,rng,spec.cfg);
     const dims=_cropBoard(P,spec.rows,spec.cols);
     gridCols=dims.cols;gridRows=dims.rows;
     arrows=P.map(a=>({cells:a.cells,dir:a.dir,alive:true}));
@@ -3177,7 +3176,16 @@ function _chainSpec(lvl){
   if(hard)cols=min(16,Math.round(cols*1.25));
   const rows=Math.round(cols*(tut?1.3:1.6));
   const maxLen=clp(5+Math.floor(lvl/25),5,9)+(hard?3:0);
-  return {hard,cols,rows,cfg:{minLen:3,maxLen,branch:1,turn:.45,tries:100,maxStuck:60,peel:true}};
+  // Difficulty curve: the target number of tappable arrows per step falls
+  // with the level — 2.2 at 5, ~1.85 at 25, ~1.7 at 50, the 1.6 floor by
+  // ~70 — and hard levels aim 0.15 lower. The tutorial aims loose (2.3):
+  // its boards came out tighter than level 5. Measured at 22×14 the same
+  // settings give anything from 1.26 to 2.39 per seed, so the build is
+  // repeated until one is close — up to 3× on small boards, 2× up to the
+  // 16×26 hard board (~40 ms a build), once on the 700-cell late pictures.
+  const target=tut?2.3:max(1.6,2.55-.22*Math.log(lvl))-(hard?.15:0);
+  const n=cols*rows,best=tut?1:n<=250?3:n<=420?2:1;
+  return {hard,cols,rows,cfg:{minLen:3,maxLen,branch:1,turn:.45,tries:100,maxStuck:60,peel:true,target,best}};
 
 }
 // Drop empty border rows/cols: the generator can leave a ragged margin,
@@ -3194,6 +3202,37 @@ function _cropBoard(arr,R,C){
 // arrow stays inside one region — the picture or the ground around it — so
 // the picture can be drawn in its own colour; rays cross regions freely, so
 // picture and ground arrows still block each other.
+// Tappable arrows per step over a FIFO solve (lower = harder): the metric
+// the tighten pass optimises and _buildBest picks by.
+function _tapsPerStep(P,R,C){
+  const occ=new Int16Array(R*C).fill(-1);
+  P.forEach((a,i)=>{for(const[r,c] of a.cells)occ[r*C+c]=i});
+  const n=P.length,cnt=new Int16Array(n),rev=Array.from({length:n},()=>[]);
+  for(let i=0;i<n;i++){
+    const a=P[i],h=a.cells[a.cells.length-1];
+    let r=h[0]+DY[a.dir],c=h[1]+DX[a.dir];
+    while(r>=0&&r<R&&c>=0&&c<C){const j=occ[r*C+c];if(j>=0&&j!==i&&!rev[j].includes(i)){rev[j].push(i);cnt[i]++}r+=DY[a.dir];c+=DX[a.dir]}
+  }
+  const q=[];for(let i=0;i<n;i++)if(!cnt[i])q.push(i);
+  let sum=0;
+  for(let k=0;k<n;k++){if(k>=q.length)return Infinity;sum+=q.length-k;for(const i of rev[q[k]])if(--cnt[i]===0)q.push(i)}
+  return sum/max(1,n);
+}
+// Up to cfg.best builds from the same stream (so still one board per seed),
+// keeping the one nearest cfg.target; a hole costs 0.1. Stops early once a
+// full board lands within 0.1 of it.
+function _buildBest(R,C,rng,cfg){
+  let best=null,bs=Infinity;
+  for(let k=0;k<(cfg.best||1);k++){
+    const P=_buildChained(R,C,rng,cfg);
+    const holes=R*C-P.reduce((n,a)=>n+a.cells.length,0);
+    const ps=_tapsPerStep(P,R,C);
+    const sc=(cfg.target!=null?Math.abs(ps-cfg.target):ps)+holes*.1;
+    if(sc<bs){best=P;bs=sc}
+    if(!holes&&cfg.target!=null&&Math.abs(ps-cfg.target)<=.1)break;
+  }
+  return best;
+}
 function _buildChained(R,C,rng,cfg){
   const occ=new Int16Array(R*C).fill(-1);
   const P=[];
@@ -3332,7 +3371,7 @@ function _buildChained(R,C,rng,cfg){
   // returns `P` in reverse solve order, same as the construction does.
   if(cfg.peel)_peelOrient(P,R,C,rng,1,.85);
   P.reverse(); // solve order: arrows[0] leaves first
-  return cfg.fill===false?P:_fillHoles(P,R,C,rng,cfg.maxLen+3,reg);
+  return cfg.fill===false?P:_fillHoles(P,R,C,rng,cfg.maxLen+3,reg,cfg.target);
 }
 
 // ── Hole fill ────────────────────────────────────────────────────────
@@ -3351,32 +3390,48 @@ function _buildChained(R,C,rng,cfg){
 // re-enters its own body. Among valid moves the one leaving the fewest
 // tappable arrows per step wins, so a filled hole costs the least
 // difficulty it can. Returns the arrows in a solve order.
-function _fillHoles(P,R,C,rng,capLen,reg){
+function _fillHoles(P,R,C,rng,capLen,reg,target){
   const N=R*C,inB=(r,c)=>r>=0&&r<R&&c>=0&&c<C,same=(a,b)=>!reg||reg[a]===reg[b];
   const occ=new Int16Array(N).fill(-1);
   P.forEach((a,i)=>{for(const[r,c] of a.cells)occ[r*C+c]=i});
   // Tappable arrows per step over a FIFO solve; Infinity = unsolvable or an
-  // arrow that would fly through itself.
+  // arrow that would fly through itself. Called thousands of times per
+  // board by the fill and tighten passes, so it allocates nothing: edges go
+  // into flat typed buffers, then a CSR adjacency, then Kahn over a ring.
+  // (Arrows never outnumber cells; edges never outnumber cells × ray length.)
+  const EMAX=N*max(R,C);
+  const cntB=new Int32Array(N),degB=new Int32Array(N),markB=new Int32Array(N),
+        startB=new Int32Array(N+1),posB=new Int32Array(N+1),qB=new Int32Array(N),
+        EJ=new Int32Array(EMAX),EI=new Int32Array(EMAX),adjB=new Int32Array(EMAX);
   const evalBoard=()=>{
-    const n=P.length,cnt=new Int16Array(n),rev=Array.from({length:n},()=>[]);
+    const n=P.length;
+    let alive=0,m=0;
+    for(let i=0;i<n;i++){cntB[i]=0;degB[i]=0;markB[i]=-1}
     for(let i=0;i<n;i++){
-      const a=P[i],h=a.cells[a.cells.length-1];
-      let r=h[0]+DY[a.dir],c=h[1]+DX[a.dir],last=-1;
-      while(inB(r,c)){
+      const a=P[i],L=a.cells.length;
+      if(!L)continue;                   // joined away by the tighten pass
+      alive++;
+      const h=a.cells[L-1],dy=DY[a.dir],dx=DX[a.dir];
+      let r=h[0]+dy,c=h[1]+dx;
+      while(r>=0&&r<R&&c>=0&&c<C){
         const j=occ[r*C+c];
         if(j===i)return Infinity;
-        if(j>=0&&j!==last&&!rev[j].includes(i)){rev[j].push(i);cnt[i]++}
-        last=j;r+=DY[a.dir];c+=DX[a.dir];
+        if(j>=0&&markB[j]!==i){markB[j]=i;EJ[m]=j;EI[m]=i;m++;cntB[i]++;degB[j]++}
+        r+=dy;c+=dx;
       }
     }
-    const q=[];for(let i=0;i<n;i++)if(!cnt[i])q.push(i);
-    let sum=0;
-    for(let k=0;k<n;k++){
-      if(k>=q.length)return Infinity;
-      sum+=q.length-k;
-      for(const i of rev[q[k]])if(--cnt[i]===0)q.push(i);
+    startB[0]=0;
+    for(let j=0;j<n;j++){startB[j+1]=startB[j]+degB[j];posB[j]=startB[j]}
+    for(let e=0;e<m;e++)adjB[posB[EJ[e]]++]=EI[e];
+    let qh=0,qt=0,sum=0;
+    for(let i=0;i<n;i++)if(!cntB[i]&&P[i].cells.length)qB[qt++]=i;
+    for(let k=0;k<alive;k++){
+      if(qh>=qt)return Infinity;
+      sum+=qt-qh;
+      const x=qB[qh++];
+      for(let e=startB[x];e<startB[x+1];e++){const y=adjB[e];if(--cntB[y]===0)qB[qt++]=y}
     }
-    return sum/max(1,n);
+    return sum/max(1,alive);
   };
   const stepDir=(a,b)=>_chainDir(a,b);
   // Random self-avoiding path through holes from k, length ≤ L.
@@ -3467,6 +3522,72 @@ function _fillHoles(P,R,C,rng,capLen,reg){
       if(best){best.apply();changed=true}
     }
     if(!changed)break;
+  }
+  // Steer toward the level's target of tappable arrows per step — the
+  // difficulty curve's knob; without it every level sat at ~2.1-2.5. Both
+  // ways: an early level that came out too tight is loosened as readily as
+  // a late one is tightened. Local moves, each kept only if it brings the
+  // board closer to the target and keeps it valid (no
+  // cell changes owner region, nothing flies through itself, solvable):
+  //   · flip an arrow end for end (its cells stay, no other ray moves),
+  //   · join an arrow whose head touches another's tail into one snake,
+  //   · trade an end cell: a head steps into the neighbour's tail cell, or
+  //     a tail takes the neighbour's head cell — the head turns, its ray
+  //     swings to a new line, and the neighbour shortens by one.
+  if(target!=null){
+    let cur=evalBoard();
+    const ord=P.map((_,i)=>i),off=v=>Math.abs(v-target),near=()=>off(cur)<=.05;
+    const tryMove=(apply,revert)=>{apply();const sc=evalBoard();if(sc<Infinity&&off(sc)<off(cur)){cur=sc;return true}revert();return false};
+    const setOwner=(k,id)=>{occ[k]=id};
+    for(let pass=0;pass<6&&!near();pass++){
+      for(let i=ord.length-1;i>0;i--){const j=(rng()*(i+1))|0;const t=ord[i];ord[i]=ord[j];ord[j]=t}
+      let improved=false;
+      for(const i of ord){
+        if(near())break;
+        const a=P[i];
+        if(!a.cells.length)continue;
+        const od=a.dir;
+        if(tryMove(()=>{a.cells.reverse();const m=a.cells.length;a.dir=stepDir(a.cells[m-2],a.cells[m-1])},
+                   ()=>{a.cells.reverse();a.dir=od})){improved=true;continue}
+        let done=false;
+        const t0=a.cells[0],ah=a.cells[a.cells.length-1];
+        for(let d=0;d<4&&!done;d++){
+          // Neighbours of a's tail: b's head → join, or b's head cell → take.
+          let nr=t0[0]+DY[d],nc=t0[1]+DX[d];
+          if(inB(nr,nc)&&same(nr*C+nc,t0[0]*C+t0[1])){
+            const j=occ[nr*C+nc],b=j>=0&&j!==i?P[j]:null;
+            const bh=b&&b.cells[b.cells.length-1];
+            if(bh&&bh[0]===nr&&bh[1]===nc){
+              const ac=a.cells,bc=b.cells,bd=b.dir,k=nr*C+nc;
+              if(bc.length+ac.length<=capLen+4&&tryMove(
+                ()=>{a.cells=bc.concat(ac);b.cells=[];for(const[pr,pc] of bc)setOwner(pr*C+pc,i)},
+                ()=>{a.cells=ac;b.cells=bc;for(const[pr,pc] of bc)setOwner(pr*C+pc,j)})){done=true;break}
+              if(bc.length>=3&&ac.length<capLen+4&&tryMove(
+                ()=>{a.cells=[bh,...ac];b.cells=bc.slice(0,-1);b.dir=stepDir(bc[bc.length-3],bc[bc.length-2]);setOwner(k,i)},
+                ()=>{a.cells=ac;b.cells=bc;b.dir=bd;setOwner(k,j)})){done=true;break}
+            }
+          }
+          // Neighbours of a's head: b's tail cell → a's head steps into it.
+          nr=ah[0]+DY[d];nc=ah[1]+DX[d];
+          if(inB(nr,nc)&&same(nr*C+nc,ah[0]*C+ah[1])){
+            const j=occ[nr*C+nc],b=j>=0&&j!==i?P[j]:null;
+            const bt=b&&b.cells[0];
+            if(bt&&bt[0]===nr&&bt[1]===nc&&b.cells.length>=3&&a.cells.length<capLen+4){
+              const ac=a.cells,bc=b.cells,k=nr*C+nc;
+              if(tryMove(
+                ()=>{a.cells=[...ac,bt];a.dir=stepDir(ah,bt);b.cells=bc.slice(1);setOwner(k,i)},
+                ()=>{a.cells=ac;a.dir=od;b.cells=bc;setOwner(k,j)})){done=true;break}
+            }
+          }
+        }
+        if(done)improved=true;
+      }
+      if(!improved)break;
+    }
+    // Drop the arrows that were joined away and re-key the grid.
+    for(let i=P.length-1;i>=0;i--)if(!P[i].cells.length)P.splice(i,1);
+    occ.fill(-1);
+    P.forEach((a,i)=>{for(const[r,c] of a.cells)occ[r*C+c]=i});
   }
   // Solve order (Kahn), the order every caller of the chained path expects.
   const n=P.length,cnt=new Int16Array(n),rev=Array.from({length:n},()=>[]);

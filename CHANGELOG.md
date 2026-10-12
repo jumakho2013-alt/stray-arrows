@@ -18,8 +18,17 @@ reaction to nearly every action. This release takes the cheapest of those.
   wrong order, so that count *is* the difficulty. Boards are now built in
   reverse solve order, each new arrow laid across every currently free ray
   (head first, body guided through the rays, hugging placed arrows), then
-  re-oriented by the peel. Levels 1–3000: ~2.4 tappable per step on normal
-  boards, ~2.5 on hard ones, 0 unsolvable, 20–65 ms a board.
+  re-oriented by the peel. 0 unsolvable, 20–120 ms a board.
+- **A difficulty curve that actually descends.** Every level used to sit at
+  ~2.3 tappable arrows per step (2.5 on hard). Each level now has a target
+  — 2.3 in the tutorial, 2.2 at 5, ~1.7 by 50, a 1.6 floor, hard 0.15
+  lower — and the board is steered to it both ways by local moves (flip
+  an arrow, join two into one snake, trade an end cell so a head turns),
+  each kept only if it keeps the board valid. Seeds vary wildly (1.26–2.39
+  at 22×14), so up to 3 builds (2 on big boards) are tried and the closest
+  kept. Measured: normal 2.0 (5–20) → 1.78 (21–50) → ~1.7; steps with a
+  single possible move 25% → 50%. Level 53: 2.12 → 1.55 per step, 26% →
+  58% single-move steps.
 - **Bigger boards that keep growing.** Boards stopped growing at 12×16 by
   level 45 and were shaped 1.3:1, leaving empty paper above and below.
   Now (after the tutorial) 8×13 at level 6 → 11×18 at 50 → 15×24 by ~200,
