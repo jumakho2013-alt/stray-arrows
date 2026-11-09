@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stray Arrows — get the game</title>
+<meta name="description" content="Stray Arrows — the arrow maze puzzle. Free on the App Store and Google Play.">
+<meta property="og:title" content="Stray Arrows">
+<meta property="og:description" content="Untangle it — if you can. Free on the App Store and Google Play.">
+<meta property="og:image" content="https://jumakho2013-alt.github.io/stray-arrows/get/share.png">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#f6ebdd">
+<link rel="icon" href="icon.png">
+<script>
+// One link for the ad: an iPhone goes to the App Store, an Android phone to
+// Google Play, at once. Anything else (a computer, an unknown browser) stays
+// on this page and picks a store by hand. utm_* in the link are passed on to
+// Google Play as the install referrer, so Play Console can count installs
+// that came from a given ad.
+(function () {
+  var IOS = 'https://apps.apple.com/app/id6763406927';
+  var PKG = 'com.strayarrows.puzzle';
+  var q = location.search.slice(1), ref = [];
+  q.split('&').forEach(function (kv) { if (/^utm_[a-z]+=/.test(kv)) ref.push(kv); });
+  var PLAY = 'https://play.google.com/store/apps/details?id=' + PKG +
+    (ref.length ? '&referrer=' + encodeURIComponent(ref.join('&')) : '');
+  window.__stores = { ios: IOS, play: PLAY };
+  var ua = navigator.userAgent || '';
+  var ios = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var android = /Android/i.test(ua);
+  if (ios) { location.replace(IOS); return; }
+  if (android) {
+    // The Play Store app itself; the web page if the browser can't open it
+    // (some in-app browsers can't), after a beat.
+    var intent = 'intent://details?id=' + PKG + (ref.length ? '&referrer=' + encodeURIComponent(ref.join('&')) : '') +
+      '#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=' + encodeURIComponent(PLAY) + ';end';
+    location.href = intent;
+    setTimeout(function () { if (!document.hidden) location.replace(PLAY); }, 1200);
+  }
+})();
+</script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#f6ebdd;--bg2:#efd8bf;--text:#3b2a22;--sec:#7a6558;--accent:#d97a3a;--btn:#2b211c;--btnText:#fff}
+  @media (prefers-color-scheme:dark){:root{--bg:#2a201d;--bg2:#1f1816;--text:#f3e9dc;--sec:#bba796;--accent:#f0a06a;--btn:#f3e9dc;--btnText:#2a201d}}
+  html,body{height:100%}
+  body{background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    display:flex;align-items:center;justify-content:center;padding:24px 16px;min-height:100vh}
+  main{width:100%;max-width:380px;text-align:center}
+  img{width:132px;height:132px;border-radius:30px;box-shadow:0 14px 34px rgba(60,35,20,.28)}
+  h1{margin-top:22px;font-size:44px;line-height:1.02;font-weight:800;letter-spacing:.04em}
+  h1 span{display:block;color:var(--accent)}
+  p{margin-top:12px;color:var(--sec);font-size:18px;font-weight:600}
+  .btns{margin-top:28px;display:flex;flex-direction:column;gap:12px}
+  a.store{display:flex;align-items:center;justify-content:center;gap:10px;height:58px;border-radius:16px;background:var(--btn);color:var(--btnText);
+    text-decoration:none;font-size:18px;font-weight:700}
+  a.store small{display:block;font-size:12px;font-weight:600;opacity:.75;text-align:left;line-height:1.1}
+  a.store b{display:block;text-align:left;line-height:1.1}
+  a.store:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  .free{margin-top:18px;font-size:14px}
+</style>
+</head>
+<body>
+<main>
+  <img src="icon.png" alt="Stray Arrows icon">
+  <h1>STRAY<span>ARROWS</span></h1>
+  <p id="tag">Untangle it — if you can</p>
+  <div class="btns">
+    <a class="store" id="ios" href="https://apps.apple.com/app/id6763406927"><div><small id="ios-s">Download on the</small><b>App Store</b></div></a>
+    <a class="store" id="play" href="https://play.google.com/store/apps/details?id=com.strayarrows.puzzle"><div><small id="play-s">Get it on</small><b>Google Play</b></div></a>
+  </div>
+  <p class="free" id="free">Free puzzle game</p>
+</main>
+<script>
+  // the store buttons carry the ad's utm_* on to Google Play, as the redirect does
+  if (window.__stores) document.getElementById('play').href = window.__stores.play;
+  if (/^ru/i.test(navigator.language || '')) {
+    document.documentElement.lang = 'ru';
+    document.getElementById('tag').textContent = 'Распутай, если сможешь';
+    document.getElementById('ios-s').textContent = 'Загрузите в';
+    document.getElementById('play-s').textContent = 'Доступно в';
+    document.getElementById('free').textContent = 'Бесплатная головоломка';
+  }
+</script>
+</body>
+</html>
