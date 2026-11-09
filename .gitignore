@@ -1,33 +1,30 @@
-node_modules/
-android/.gradle/
-android/build/
-android/app/build/
-android/capacitor-cordova-android-plugins/build/
-ios/App/Pods/
-ios/App/build/
-*.apk
-*.aab
-*.keystore
 
 # Android signing config — passwords live here, never in build.gradle.
-# Use android/keystore.properties.example as a template for setup.
-android/keystore.properties
-
-# macOS metadata
-.DS_Store
-
 # Claude Code transient state — keep launch.json tracked, ignore everything else
+# Use android/keystore.properties.example as a template for setup.
+# Xcode user data (per-user state, not needed in repo)
+# but log bundles can land in the project dir)
+# iOS build artifacts (xcodebuild creates these in DerivedData by default,
+# macOS metadata
+*.aab
+*.apk
+*.keystore
+*.xcresult
+.DS_Store
 .claude/scheduled_tasks.lock
-.claude/worktrees/
 .claude/sessions/
 .claude/state/
-
-# iOS build artifacts (xcodebuild creates these in DerivedData by default,
-# but log bundles can land in the project dir)
-*.xcresult
-ios/App/build/
-ios/App/DerivedData/
-
-# Xcode user data (per-user state, not needed in repo)
-ios/App/App.xcodeproj/xcuserdata/
+.claude/worktrees/
+android/.gradle/
+android/app/build/
+android/build/
+android/capacitor-cordova-android-plugins/build/
+android/keystore.properties
 ios/App/App.xcodeproj/project.xcworkspace/xcuserdata/
+ios/App/App.xcodeproj/xcuserdata/
+ios/App/DerivedData/
+ios/App/Pods/
+ios/App/build/
+node_modules/
+tools/data/
+assets/

@@ -1,0 +1,12407 @@
+[
+ {
+  "lvl": 21,
+  "shape": "icecream",
+  "tier": "A",
+  "attempt": 26,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 6,
+  "chain": 6,
+  "avgBlockers": 1.4545454545454546,
+  "open": [
+   4,
+   16,
+   17
+  ]
+ },
+ {
+  "lvl": 22,
+  "shape": "hourglass",
+  "tier": "A",
+  "attempt": 29,
+  "inBand": true,
+  "arrows": 23,
+  "initialOpen": 1,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 1.826086956521739,
+  "open": [
+   2
+  ]
+ },
+ {
+  "lvl": 23,
+  "shape": "lightning",
+  "tier": "A",
+  "attempt": 19,
+  "inBand": true,
+  "arrows": 15,
+  "initialOpen": 3,
+  "waves": 6,
+  "chain": 6,
+  "avgBlockers": 1.1333333333333333,
+  "open": [
+   4,
+   8,
+   10
+  ]
+ },
+ {
+  "lvl": 24,
+  "shape": "apple",
+  "tier": "A",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.0476190476190474,
+  "open": [
+   1,
+   4,
+   5
+  ]
+ },
+ {
+  "lvl": 25,
+  "shape": "crab",
+  "tier": "A",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 2.090909090909091,
+  "open": [
+   5,
+   15,
+   17
+  ]
+ },
+ {
+  "lvl": 26,
+  "shape": "balloon",
+  "tier": "A",
+  "attempt": 54,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 2.4583333333333335,
+  "open": [
+   10,
+   12,
+   17
+  ]
+ },
+ {
+  "lvl": 27,
+  "shape": "pencil",
+  "tier": "A",
+  "attempt": 29,
+  "inBand": true,
+  "arrows": 16,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 1.25,
+  "open": [
+   0,
+   12,
+   15
+  ]
+ },
+ {
+  "lvl": 28,
+  "shape": "bell",
+  "tier": "A",
+  "attempt": 21,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 2,
+  "open": [
+   13,
+   16,
+   18
+  ]
+ },
+ {
+  "lvl": 29,
+  "shape": "tent",
+  "tier": "A",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 14,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 1.4285714285714286,
+  "open": [
+   3,
+   8,
+   11
+  ]
+ },
+ {
+  "lvl": 30,
+  "shape": "mushroom",
+  "tier": "A",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.6842105263157894,
+  "open": [
+   1,
+   6,
+   10
+  ]
+ },
+ {
+  "lvl": 31,
+  "shape": "octopus",
+  "tier": "A",
+  "attempt": 29,
+  "inBand": true,
+  "arrows": 23,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.260869565217391,
+  "open": [
+   5,
+   8,
+   20
+  ]
+ },
+ {
+  "lvl": 32,
+  "shape": "tree",
+  "tier": "A",
+  "attempt": 44,
+  "inBand": true,
+  "arrows": 16,
+  "initialOpen": 3,
+  "waves": 6,
+  "chain": 6,
+  "avgBlockers": 1.625,
+  "open": [
+   7,
+   9,
+   11
+  ]
+ },
+ {
+  "lvl": 33,
+  "shape": "donut",
+  "tier": "A",
+  "attempt": 16,
+  "inBand": true,
+  "arrows": 18,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 1.7222222222222223,
+  "open": [
+   3,
+   6,
+   14
+  ]
+ },
+ {
+  "lvl": 34,
+  "shape": "umbrella",
+  "tier": "A",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.227272727272727,
+  "open": [
+   5,
+   6,
+   20
+  ]
+ },
+ {
+  "lvl": 35,
+  "shape": "bat",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 2,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.4166666666666665,
+  "open": [
+   7,
+   14
+  ]
+ },
+ {
+  "lvl": 36,
+  "shape": "snowman",
+  "tier": "A",
+  "attempt": 18,
+  "inBand": true,
+  "arrows": 25,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.68,
+  "open": [
+   0,
+   3,
+   24
+  ]
+ },
+ {
+  "lvl": 37,
+  "shape": "owl",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.7083333333333333,
+  "open": [
+   5,
+   12,
+   20
+  ]
+ },
+ {
+  "lvl": 38,
+  "shape": "diamond",
+  "tier": "A",
+  "attempt": 280,
+  "inBand": false,
+  "arrows": 19,
+  "initialOpen": 4,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.5789473684210527,
+  "open": [
+   6,
+   8,
+   10,
+   18
+  ]
+ },
+ {
+  "lvl": 39,
+  "shape": "fish",
+  "tier": "A",
+  "attempt": 27,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.4761904761904763,
+  "open": [
+   2,
+   7,
+   11
+  ]
+ },
+ {
+  "lvl": 40,
+  "shape": "dolphin",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 1.5789473684210527,
+  "open": [
+   7,
+   12,
+   13
+  ]
+ },
+ {
+  "lvl": 41,
+  "shape": "boat",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 14,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 1.7857142857142858,
+  "open": [
+   5,
+   6,
+   10
+  ]
+ },
+ {
+  "lvl": 42,
+  "shape": "kite",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 16,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.75,
+  "open": [
+   0,
+   2,
+   12
+  ]
+ },
+ {
+  "lvl": 43,
+  "shape": "clock",
+  "tier": "A",
+  "attempt": 10,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 2.1363636363636362,
+  "open": [
+   0,
+   3,
+   21
+  ]
+ },
+ {
+  "lvl": 44,
+  "shape": "cherry",
+  "tier": "A",
+  "attempt": 26,
+  "inBand": true,
+  "arrows": 14,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.6428571428571428,
+  "open": [
+   5,
+   10,
+   13
+  ]
+ },
+ {
+  "lvl": 45,
+  "shape": "butterfly",
+  "tier": "A",
+  "attempt": 54,
+  "inBand": true,
+  "arrows": 32,
+  "initialOpen": 3,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.875,
+  "open": [
+   0,
+   13,
+   24
+  ]
+ },
+ {
+  "lvl": 46,
+  "shape": "train",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.210526315789474,
+  "open": [
+   1,
+   5,
+   8
+  ]
+ },
+ {
+  "lvl": 47,
+  "shape": "pizza",
+  "tier": "A",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 15,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.9333333333333333,
+  "open": [
+   6,
+   9,
+   12
+  ]
+ },
+ {
+  "lvl": 48,
+  "shape": "gift",
+  "tier": "A",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.7,
+  "open": [
+   2,
+   10,
+   29
+  ]
+ },
+ {
+  "lvl": 49,
+  "shape": "penguin",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 16,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.6875,
+  "open": [
+   3,
+   10,
+   12
+  ]
+ },
+ {
+  "lvl": 50,
+  "shape": "50",
+  "tier": "A",
+  "attempt": 10,
+  "inBand": true,
+  "arrows": 20,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.45,
+  "open": [
+   1,
+   11,
+   14
+  ]
+ },
+ {
+  "lvl": 51,
+  "shape": "snail",
+  "tier": "A",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.375,
+  "open": [
+   10,
+   16,
+   21
+  ]
+ },
+ {
+  "lvl": 52,
+  "shape": "dog",
+  "tier": "A",
+  "attempt": 49,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.0454545454545454,
+  "open": [
+   3,
+   8,
+   21
+  ]
+ },
+ {
+  "lvl": 53,
+  "shape": "pear",
+  "tier": "A",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 18,
+  "initialOpen": 3,
+  "waves": 6,
+  "chain": 6,
+  "avgBlockers": 2.1666666666666665,
+  "open": [
+   5,
+   15,
+   16
+  ]
+ },
+ {
+  "lvl": 54,
+  "shape": "pig",
+  "tier": "A",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 27,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.4444444444444446,
+  "open": [
+   5,
+   12,
+   20
+  ]
+ },
+ {
+  "lvl": 55,
+  "shape": "mountain",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 20,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.1,
+  "open": [
+   0,
+   5,
+   8
+  ]
+ },
+ {
+  "lvl": 56,
+  "shape": "key",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 15,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.0666666666666667,
+  "open": [
+   4,
+   10,
+   11
+  ]
+ },
+ {
+  "lvl": 57,
+  "shape": "plane",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 15,
+  "initialOpen": 3,
+  "waves": 6,
+  "chain": 6,
+  "avgBlockers": 1.8,
+  "open": [
+   6,
+   7,
+   13
+  ]
+ },
+ {
+  "lvl": 58,
+  "shape": "cactus",
+  "tier": "A",
+  "attempt": 16,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 1.5238095238095237,
+  "open": [
+   2,
+   5,
+   15
+  ]
+ },
+ {
+  "lvl": 59,
+  "shape": "paw",
+  "tier": "A",
+  "attempt": 17,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.125,
+  "open": [
+   4,
+   7,
+   8
+  ]
+ },
+ {
+  "lvl": 60,
+  "shape": "anchor",
+  "tier": "A",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.1818181818181817,
+  "open": [
+   9,
+   14,
+   17
+  ]
+ },
+ {
+  "lvl": 61,
+  "shape": "swan",
+  "tier": "A",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.8076923076923075,
+  "open": [
+   7,
+   17,
+   20
+  ]
+ },
+ {
+  "lvl": 62,
+  "shape": "cat",
+  "tier": "A",
+  "attempt": 8,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.6666666666666665,
+  "open": [
+   0,
+   8,
+   29
+  ]
+ },
+ {
+  "lvl": 63,
+  "shape": "palm",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 6,
+  "chain": 6,
+  "avgBlockers": 2.4210526315789473,
+  "open": [
+   10,
+   15,
+   16
+  ]
+ },
+ {
+  "lvl": 64,
+  "shape": "hat",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 20,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.05,
+  "open": [
+   6,
+   12,
+   17
+  ]
+ },
+ {
+  "lvl": 65,
+  "shape": "flag",
+  "tier": "A",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 16,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 1.9375,
+  "open": [
+   0,
+   4,
+   12
+  ]
+ },
+ {
+  "lvl": 66,
+  "shape": "crown",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.7142857142857144,
+  "open": [
+   0,
+   12,
+   26
+  ]
+ },
+ {
+  "lvl": 67,
+  "shape": "sword",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 13,
+  "initialOpen": 3,
+  "waves": 6,
+  "chain": 6,
+  "avgBlockers": 0.8461538461538461,
+  "open": [
+   6,
+   7,
+   8
+  ]
+ },
+ {
+  "lvl": 68,
+  "shape": "cloud",
+  "tier": "A",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.5416666666666665,
+  "open": [
+   2,
+   8,
+   11
+  ]
+ },
+ {
+  "lvl": 69,
+  "shape": "cup",
+  "tier": "A",
+  "attempt": 20,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 3,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.3548387096774195,
+  "open": [
+   3,
+   13,
+   29
+  ]
+ },
+ {
+  "lvl": 70,
+  "shape": "elephant",
+  "tier": "A",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 25,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.64,
+  "open": [
+   2,
+   7,
+   12
+  ]
+ },
+ {
+  "lvl": 71,
+  "shape": "fox",
+  "tier": "A",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 25,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.24,
+  "open": [
+   1,
+   5,
+   7
+  ]
+ },
+ {
+  "lvl": 72,
+  "shape": "bee",
+  "tier": "A",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.642857142857143,
+  "open": [
+   2,
+   20,
+   27
+  ]
+ },
+ {
+  "lvl": 73,
+  "shape": "house",
+  "tier": "A",
+  "attempt": 138,
+  "inBand": true,
+  "arrows": 27,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.074074074074074,
+  "open": [
+   0,
+   2,
+   12
+  ]
+ },
+ {
+  "lvl": 74,
+  "shape": "car",
+  "tier": "A",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 2,
+  "open": [
+   1,
+   4,
+   7
+  ]
+ },
+ {
+  "lvl": 75,
+  "shape": "rabbit",
+  "tier": "A",
+  "attempt": 40,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.7272727272727273,
+  "open": [
+   9,
+   11,
+   18
+  ]
+ },
+ {
+  "lvl": 76,
+  "shape": "chick",
+  "tier": "A",
+  "attempt": 79,
+  "inBand": true,
+  "arrows": 25,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.04,
+  "open": [
+   12,
+   16,
+   20
+  ]
+ },
+ {
+  "lvl": 77,
+  "shape": "wave",
+  "tier": "A",
+  "attempt": 24,
+  "inBand": true,
+  "arrows": 20,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.7,
+  "open": [
+   2,
+   4,
+   17
+  ]
+ },
+ {
+  "lvl": 78,
+  "shape": "sun",
+  "tier": "A",
+  "attempt": 27,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.607142857142857,
+  "open": [
+   1,
+   5,
+   6
+  ]
+ },
+ {
+  "lvl": 79,
+  "shape": "bird",
+  "tier": "A",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.6538461538461537,
+  "open": [
+   12,
+   14,
+   16
+  ]
+ },
+ {
+  "lvl": 80,
+  "shape": "cake",
+  "tier": "A",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 27,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.1481481481481484,
+  "open": [
+   0,
+   2,
+   21
+  ]
+ },
+ {
+  "lvl": 81,
+  "shape": "whale",
+  "tier": "A",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.1538461538461537,
+  "open": [
+   10,
+   12,
+   14
+  ]
+ },
+ {
+  "lvl": 82,
+  "shape": "planet",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": false,
+  "arrows": 24,
+  "initialOpen": 4,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 2.25,
+  "open": [
+   3,
+   5,
+   11,
+   20
+  ]
+ },
+ {
+  "lvl": 83,
+  "shape": "heart",
+  "tier": "A",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.227272727272727,
+  "open": [
+   3,
+   12,
+   21
+  ]
+ },
+ {
+  "lvl": 84,
+  "shape": "flower",
+  "tier": "A",
+  "attempt": 22,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.9166666666666667,
+  "open": [
+   0,
+   4,
+   14
+  ]
+ },
+ {
+  "lvl": 85,
+  "shape": "glasses",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 1.4210526315789473,
+  "open": [
+   1,
+   6,
+   16
+  ]
+ },
+ {
+  "lvl": 86,
+  "shape": "frog",
+  "tier": "A",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 1.8846153846153846,
+  "open": [
+   9,
+   13,
+   23
+  ]
+ },
+ {
+  "lvl": 87,
+  "shape": "camera",
+  "tier": "A",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 29,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.2413793103448274,
+  "open": [
+   0,
+   10,
+   17
+  ]
+ },
+ {
+  "lvl": 88,
+  "shape": "infinity",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.25,
+  "open": [
+   0,
+   11,
+   18
+  ]
+ },
+ {
+  "lvl": 89,
+  "shape": "smiley",
+  "tier": "A",
+  "attempt": 49,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.032258064516129,
+  "open": [
+   13,
+   20,
+   27
+  ]
+ },
+ {
+  "lvl": 90,
+  "shape": "note",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 13,
+  "initialOpen": 3,
+  "waves": 5,
+  "chain": 5,
+  "avgBlockers": 1.2307692307692308,
+  "open": [
+   0,
+   9,
+   11
+  ]
+ },
+ {
+  "lvl": 91,
+  "shape": "comet",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.4166666666666667,
+  "open": [
+   11,
+   16,
+   22
+  ]
+ },
+ {
+  "lvl": 92,
+  "shape": "duck",
+  "tier": "A",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.8333333333333333,
+  "open": [
+   5,
+   21,
+   22
+  ]
+ },
+ {
+  "lvl": 93,
+  "shape": "snowflake",
+  "tier": "A",
+  "attempt": 283,
+  "inBand": false,
+  "arrows": 22,
+  "initialOpen": 6,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.1818181818181819,
+  "open": [
+   2,
+   15,
+   16,
+   17,
+   20,
+   21
+  ]
+ },
+ {
+  "lvl": 94,
+  "shape": "mouse",
+  "tier": "A",
+  "attempt": 68,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.2083333333333335,
+  "open": [
+   0,
+   12,
+   15
+  ]
+ },
+ {
+  "lvl": 95,
+  "shape": "magnet",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 27,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 1.8888888888888888,
+  "open": [
+   3,
+   11,
+   15
+  ]
+ },
+ {
+  "lvl": 96,
+  "shape": "leaf",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 20,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.95,
+  "open": [
+   9,
+   15,
+   19
+  ]
+ },
+ {
+  "lvl": 97,
+  "shape": "moon",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 17,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.6470588235294117,
+  "open": [
+   6,
+   7,
+   13
+  ]
+ },
+ {
+  "lvl": 98,
+  "shape": "star",
+  "tier": "A",
+  "attempt": 52,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.9047619047619047,
+  "open": [
+   2,
+   3,
+   8
+  ]
+ },
+ {
+  "lvl": 99,
+  "shape": "ladybug",
+  "tier": "A",
+  "attempt": 63,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 1.8571428571428572,
+  "open": [
+   10,
+   16,
+   24
+  ]
+ },
+ {
+  "lvl": 100,
+  "shape": "100",
+  "tier": "A",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.3214285714285716,
+  "open": [
+   4,
+   10,
+   13
+  ]
+ },
+ {
+  "lvl": 101,
+  "shape": "bear",
+  "tier": "A",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.0357142857142856,
+  "open": [
+   3,
+   18,
+   26
+  ]
+ },
+ {
+  "lvl": 102,
+  "shape": "turtle",
+  "tier": "A",
+  "attempt": 27,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.5806451612903225,
+  "open": [
+   1,
+   8,
+   10
+  ]
+ },
+ {
+  "lvl": 103,
+  "shape": "lock",
+  "tier": "A",
+  "attempt": 77,
+  "inBand": true,
+  "arrows": 29,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 2.413793103448276,
+  "open": [
+   10,
+   12,
+   20
+  ]
+ },
+ {
+  "lvl": 104,
+  "shape": "raindrop",
+  "tier": "A",
+  "attempt": 47,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 2,
+  "open": [
+   2,
+   6,
+   14
+  ]
+ },
+ {
+  "lvl": 105,
+  "shape": "rocket",
+  "tier": "A",
+  "attempt": 38,
+  "inBand": true,
+  "arrows": 23,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 1.7826086956521738,
+  "open": [
+   1,
+   4,
+   5
+  ]
+ },
+ {
+  "lvl": 106,
+  "shape": "cat",
+  "tier": "A",
+  "attempt": 21,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.033333333333333,
+  "open": [
+   16,
+   23,
+   25
+  ]
+ },
+ {
+  "lvl": 107,
+  "shape": "bell",
+  "tier": "A",
+  "attempt": 121,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.380952380952381,
+  "open": [
+   5,
+   14,
+   20
+  ]
+ },
+ {
+  "lvl": 108,
+  "shape": "raindrop",
+  "tier": "A",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.5714285714285716,
+  "open": [
+   12,
+   13,
+   15
+  ]
+ },
+ {
+  "lvl": 109,
+  "shape": "sword",
+  "tier": "A",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 16,
+  "initialOpen": 3,
+  "waves": 6,
+  "chain": 6,
+  "avgBlockers": 1.1875,
+  "open": [
+   1,
+   7,
+   14
+  ]
+ },
+ {
+  "lvl": 110,
+  "shape": "smiley",
+  "tier": "A",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.588235294117647,
+  "open": [
+   2,
+   3,
+   23
+  ]
+ },
+ {
+  "lvl": 111,
+  "shape": "cherry",
+  "tier": "A",
+  "attempt": 20,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.8571428571428572,
+  "open": [
+   3,
+   10,
+   16
+  ]
+ },
+ {
+  "lvl": 112,
+  "shape": "wave",
+  "tier": "A",
+  "attempt": 67,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.090909090909091,
+  "open": [
+   2,
+   3,
+   4
+  ]
+ },
+ {
+  "lvl": 113,
+  "shape": "tent",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 17,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.4705882352941178,
+  "open": [
+   3,
+   4,
+   7
+  ]
+ },
+ {
+  "lvl": 114,
+  "shape": "diamond",
+  "tier": "A",
+  "attempt": 49,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.8571428571428572,
+  "open": [
+   4,
+   8,
+   10
+  ]
+ },
+ {
+  "lvl": 115,
+  "shape": "pear",
+  "tier": "A",
+  "attempt": 83,
+  "inBand": true,
+  "arrows": 20,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.1,
+  "open": [
+   17,
+   18,
+   19
+  ]
+ },
+ {
+  "lvl": 116,
+  "shape": "note",
+  "tier": "A",
+  "attempt": 10,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 1.8421052631578947,
+  "open": [
+   8,
+   14,
+   15
+  ]
+ },
+ {
+  "lvl": 117,
+  "shape": "mouse",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.9285714285714286,
+  "open": [
+   0,
+   11,
+   19
+  ]
+ },
+ {
+  "lvl": 118,
+  "shape": "penguin",
+  "tier": "A",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 27,
+  "initialOpen": 2,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.185185185185185,
+  "open": [
+   12,
+   24
+  ]
+ },
+ {
+  "lvl": 119,
+  "shape": "mountain",
+  "tier": "A",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.3333333333333335,
+  "open": [
+   1,
+   8,
+   10
+  ]
+ },
+ {
+  "lvl": 120,
+  "shape": "boat",
+  "tier": "A",
+  "attempt": 20,
+  "inBand": true,
+  "arrows": 17,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 2,
+  "open": [
+   2,
+   8,
+   12
+  ]
+ },
+ {
+  "lvl": 121,
+  "shape": "plane",
+  "tier": "A",
+  "attempt": 12,
+  "inBand": true,
+  "arrows": 16,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.0625,
+  "open": [
+   1,
+   4,
+   11
+  ]
+ },
+ {
+  "lvl": 122,
+  "shape": "kite",
+  "tier": "A",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 1.894736842105263,
+  "open": [
+   7,
+   10,
+   14
+  ]
+ },
+ {
+  "lvl": 123,
+  "shape": "cactus",
+  "tier": "A",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 20,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.75,
+  "open": [
+   4,
+   6,
+   18
+  ]
+ },
+ {
+  "lvl": 124,
+  "shape": "moon",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 1.4761904761904763,
+  "open": [
+   7,
+   11,
+   12
+  ]
+ },
+ {
+  "lvl": 125,
+  "shape": "magnet",
+  "tier": "A",
+  "attempt": 71,
+  "inBand": true,
+  "arrows": 32,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.78125,
+  "open": [
+   4,
+   18,
+   19
+  ]
+ },
+ {
+  "lvl": 126,
+  "shape": "mushroom",
+  "tier": "A",
+  "attempt": 55,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 2.25,
+  "open": [
+   10,
+   15,
+   20
+  ]
+ },
+ {
+  "lvl": 127,
+  "shape": "frog",
+  "tier": "A",
+  "attempt": 26,
+  "inBand": true,
+  "arrows": 33,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.515151515151515,
+  "open": [
+   16,
+   18,
+   29
+  ]
+ },
+ {
+  "lvl": 128,
+  "shape": "duck",
+  "tier": "A",
+  "attempt": 22,
+  "inBand": true,
+  "arrows": 29,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.1724137931034484,
+  "open": [
+   17,
+   23,
+   24
+  ]
+ },
+ {
+  "lvl": 129,
+  "shape": "lock",
+  "tier": "A",
+  "attempt": 35,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.7419354838709675,
+  "open": [
+   16,
+   17,
+   24
+  ]
+ },
+ {
+  "lvl": 130,
+  "shape": "bear",
+  "tier": "A",
+  "attempt": 44,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.806451612903226,
+  "open": [
+   4,
+   18,
+   25
+  ]
+ },
+ {
+  "lvl": 131,
+  "shape": "turtle",
+  "tier": "A",
+  "attempt": 24,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.466666666666667,
+  "open": [
+   9,
+   14,
+   22
+  ]
+ },
+ {
+  "lvl": 132,
+  "shape": "train",
+  "tier": "A",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 1.9047619047619047,
+  "open": [
+   6,
+   15,
+   20
+  ]
+ },
+ {
+  "lvl": 133,
+  "shape": "swan",
+  "tier": "A",
+  "attempt": 36,
+  "inBand": true,
+  "arrows": 27,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.3333333333333335,
+  "open": [
+   5,
+   12,
+   20
+  ]
+ },
+ {
+  "lvl": 134,
+  "shape": "rabbit",
+  "tier": "A",
+  "attempt": 153,
+  "inBand": true,
+  "arrows": 35,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.257142857142857,
+  "open": [
+   4,
+   11,
+   32
+  ]
+ },
+ {
+  "lvl": 135,
+  "shape": "crown",
+  "tier": "A",
+  "attempt": 20,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.225806451612903,
+  "open": [
+   7,
+   8,
+   21
+  ]
+ },
+ {
+  "lvl": 136,
+  "shape": "fish",
+  "tier": "A",
+  "attempt": 48,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.7333333333333334,
+  "open": [
+   7,
+   24,
+   27
+  ]
+ },
+ {
+  "lvl": 137,
+  "shape": "chick",
+  "tier": "A",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.7142857142857144,
+  "open": [
+   6,
+   16,
+   20
+  ]
+ },
+ {
+  "lvl": 138,
+  "shape": "comet",
+  "tier": "A",
+  "attempt": 66,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.8333333333333335,
+  "open": [
+   6,
+   11,
+   29
+  ]
+ },
+ {
+  "lvl": 139,
+  "shape": "snail",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 33,
+  "initialOpen": 3,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.757575757575758,
+  "open": [
+   14,
+   15,
+   30
+  ]
+ },
+ {
+  "lvl": 140,
+  "shape": "elephant",
+  "tier": "A",
+  "attempt": 14,
+  "inBand": true,
+  "arrows": 25,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 1.84,
+  "open": [
+   2,
+   18,
+   21
+  ]
+ },
+ {
+  "lvl": 141,
+  "shape": "bat",
+  "tier": "A",
+  "attempt": 142,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.5294117647058822,
+  "open": [
+   5,
+   6,
+   33
+  ]
+ },
+ {
+  "lvl": 142,
+  "shape": "octopus",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3.096774193548387,
+  "open": [
+   7,
+   9,
+   24
+  ]
+ },
+ {
+  "lvl": 143,
+  "shape": "rocket",
+  "tier": "A",
+  "attempt": 26,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.6315789473684212,
+  "open": [
+   5,
+   11,
+   17
+  ]
+ },
+ {
+  "lvl": 144,
+  "shape": "paw",
+  "tier": "A",
+  "attempt": 128,
+  "inBand": true,
+  "arrows": 27,
+  "initialOpen": 3,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2,
+  "open": [
+   6,
+   8,
+   19
+  ]
+ },
+ {
+  "lvl": 145,
+  "shape": "bee",
+  "tier": "A",
+  "attempt": 81,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.4285714285714284,
+  "open": [
+   1,
+   5,
+   10
+  ]
+ },
+ {
+  "lvl": 146,
+  "shape": "flower",
+  "tier": "A",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 32,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.1875,
+  "open": [
+   7,
+   12,
+   14
+  ]
+ },
+ {
+  "lvl": 147,
+  "shape": "anchor",
+  "tier": "A",
+  "attempt": 34,
+  "inBand": true,
+  "arrows": 29,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.4827586206896552,
+  "open": [
+   8,
+   12,
+   23
+  ]
+ },
+ {
+  "lvl": 148,
+  "shape": "house",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": false,
+  "arrows": 34,
+  "initialOpen": 4,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.5,
+  "open": [
+   0,
+   18,
+   22,
+   27
+  ]
+ },
+ {
+  "lvl": 149,
+  "shape": "hourglass",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.7857142857142856,
+  "open": [
+   17,
+   19,
+   20
+  ]
+ },
+ {
+  "lvl": 150,
+  "shape": "butterfly",
+  "tier": "A",
+  "attempt": 46,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.289473684210526,
+  "open": [
+   8,
+   27,
+   31
+  ]
+ },
+ {
+  "lvl": 151,
+  "shape": "icecream",
+  "tier": "A",
+  "attempt": 59,
+  "inBand": true,
+  "arrows": 23,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.4347826086956523,
+  "open": [
+   0,
+   4,
+   18
+  ]
+ },
+ {
+  "lvl": 152,
+  "shape": "flag",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 2.6842105263157894,
+  "open": [
+   2,
+   12,
+   14
+  ]
+ },
+ {
+  "lvl": 153,
+  "shape": "lightning",
+  "tier": "A",
+  "attempt": 26,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.7272727272727273,
+  "open": [
+   6,
+   9,
+   11
+  ]
+ },
+ {
+  "lvl": 154,
+  "shape": "heart",
+  "tier": "A",
+  "attempt": 23,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 2.076923076923077,
+  "open": [
+   2,
+   7,
+   10
+  ]
+ },
+ {
+  "lvl": 155,
+  "shape": "infinity",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 25,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.16,
+  "open": [
+   2,
+   5,
+   10
+  ]
+ },
+ {
+  "lvl": 156,
+  "shape": "cake",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.8,
+  "open": [
+   16,
+   24,
+   27
+  ]
+ },
+ {
+  "lvl": 157,
+  "shape": "crab",
+  "tier": "A",
+  "attempt": 27,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.9411764705882355,
+  "open": [
+   8,
+   11,
+   13
+  ]
+ },
+ {
+  "lvl": 158,
+  "shape": "pig",
+  "tier": "A",
+  "attempt": 64,
+  "inBand": true,
+  "arrows": 39,
+  "initialOpen": 2,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.3076923076923075,
+  "open": [
+   25,
+   30
+  ]
+ },
+ {
+  "lvl": 159,
+  "shape": "gift",
+  "tier": "A",
+  "attempt": 26,
+  "inBand": true,
+  "arrows": 37,
+  "initialOpen": 3,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.5135135135135136,
+  "open": [
+   15,
+   18,
+   28
+  ]
+ },
+ {
+  "lvl": 160,
+  "shape": "sun",
+  "tier": "A",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 35,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.2857142857142856,
+  "open": [
+   1,
+   13,
+   32
+  ]
+ },
+ {
+  "lvl": 161,
+  "shape": "palm",
+  "tier": "A",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 20,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.95,
+  "open": [
+   1,
+   5,
+   10
+  ]
+ },
+ {
+  "lvl": 162,
+  "shape": "cup",
+  "tier": "A",
+  "attempt": 39,
+  "inBand": true,
+  "arrows": 32,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.84375,
+  "open": [
+   5,
+   17,
+   24
+  ]
+ },
+ {
+  "lvl": 163,
+  "shape": "planet",
+  "tier": "A",
+  "attempt": 51,
+  "inBand": false,
+  "arrows": 35,
+  "initialOpen": 4,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.257142857142857,
+  "open": [
+   0,
+   10,
+   20,
+   29
+  ]
+ },
+ {
+  "lvl": 164,
+  "shape": "ladybug",
+  "tier": "A",
+  "attempt": 25,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.3846153846153846,
+  "open": [
+   2,
+   12,
+   14
+  ]
+ },
+ {
+  "lvl": 165,
+  "shape": "whale",
+  "tier": "A",
+  "attempt": 18,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.0588235294117645,
+  "open": [
+   12,
+   29,
+   30
+  ]
+ },
+ {
+  "lvl": 166,
+  "shape": "car",
+  "tier": "A",
+  "attempt": 42,
+  "inBand": true,
+  "arrows": 25,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.44,
+  "open": [
+   1,
+   7,
+   18
+  ]
+ },
+ {
+  "lvl": 167,
+  "shape": "key",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 1.7619047619047619,
+  "open": [
+   2,
+   3,
+   18
+  ]
+ },
+ {
+  "lvl": 168,
+  "shape": "glasses",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.4761904761904763,
+  "open": [
+   0,
+   5,
+   20
+  ]
+ },
+ {
+  "lvl": 169,
+  "shape": "leaf",
+  "tier": "A",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 23,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.826086956521739,
+  "open": [
+   2,
+   4,
+   15
+  ]
+ },
+ {
+  "lvl": 170,
+  "shape": "camera",
+  "tier": "A",
+  "attempt": 56,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 1.8666666666666667,
+  "open": [
+   3,
+   9,
+   11
+  ]
+ },
+ {
+  "lvl": 171,
+  "shape": "donut",
+  "tier": "A",
+  "attempt": 25,
+  "inBand": true,
+  "arrows": 33,
+  "initialOpen": 3,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.4242424242424243,
+  "open": [
+   7,
+   23,
+   26
+  ]
+ },
+ {
+  "lvl": 172,
+  "shape": "dolphin",
+  "tier": "A",
+  "attempt": 113,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.25,
+  "open": [
+   0,
+   1,
+   18
+  ]
+ },
+ {
+  "lvl": 173,
+  "shape": "tree",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.8846153846153846,
+  "open": [
+   2,
+   5,
+   12
+  ]
+ },
+ {
+  "lvl": 174,
+  "shape": "umbrella",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 25,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.4,
+  "open": [
+   5,
+   12,
+   18
+  ]
+ },
+ {
+  "lvl": 175,
+  "shape": "owl",
+  "tier": "A",
+  "attempt": 45,
+  "inBand": true,
+  "arrows": 35,
+  "initialOpen": 3,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.742857142857143,
+  "open": [
+   7,
+   19,
+   27
+  ]
+ },
+ {
+  "lvl": 176,
+  "shape": "apple",
+  "tier": "A",
+  "attempt": 43,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.433333333333333,
+  "open": [
+   3,
+   10,
+   14
+  ]
+ },
+ {
+  "lvl": 177,
+  "shape": "pencil",
+  "tier": "A",
+  "attempt": 19,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.5,
+  "open": [
+   12,
+   13,
+   17
+  ]
+ },
+ {
+  "lvl": 178,
+  "shape": "dog",
+  "tier": "A",
+  "attempt": 106,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.8529411764705883,
+  "open": [
+   2,
+   6,
+   11
+  ]
+ },
+ {
+  "lvl": 179,
+  "shape": "bird",
+  "tier": "A",
+  "attempt": 82,
+  "inBand": false,
+  "arrows": 29,
+  "initialOpen": 4,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.5517241379310347,
+  "open": [
+   3,
+   21,
+   25,
+   26
+  ]
+ },
+ {
+  "lvl": 180,
+  "shape": "hat",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 2.423076923076923,
+  "open": [
+   2,
+   14,
+   18
+  ]
+ },
+ {
+  "lvl": 181,
+  "shape": "cloud",
+  "tier": "A",
+  "attempt": 68,
+  "inBand": true,
+  "arrows": 29,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3.2413793103448274,
+  "open": [
+   13,
+   14,
+   17
+  ]
+ },
+ {
+  "lvl": 182,
+  "shape": "fox",
+  "tier": "A",
+  "attempt": 18,
+  "inBand": true,
+  "arrows": 29,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 1.9310344827586208,
+  "open": [
+   4,
+   18,
+   23
+  ]
+ },
+ {
+  "lvl": 183,
+  "shape": "balloon",
+  "tier": "A",
+  "attempt": 126,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.8529411764705883,
+  "open": [
+   6,
+   16,
+   32
+  ]
+ },
+ {
+  "lvl": 184,
+  "shape": "clock",
+  "tier": "A",
+  "attempt": 19,
+  "inBand": true,
+  "arrows": 32,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.46875,
+  "open": [
+   7,
+   9,
+   16
+  ]
+ },
+ {
+  "lvl": 185,
+  "shape": "snowman",
+  "tier": "A",
+  "attempt": 46,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 3,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.763157894736842,
+  "open": [
+   6,
+   26,
+   33
+  ]
+ },
+ {
+  "lvl": 186,
+  "shape": "snowflake",
+  "tier": "A",
+  "attempt": 46,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.9642857142857144,
+  "open": [
+   2,
+   14,
+   19
+  ]
+ },
+ {
+  "lvl": 187,
+  "shape": "star",
+  "tier": "A",
+  "attempt": 34,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.3846153846153846,
+  "open": [
+   2,
+   12,
+   15
+  ]
+ },
+ {
+  "lvl": 188,
+  "shape": "pizza",
+  "tier": "A",
+  "attempt": 119,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 2,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 3.064516129032258,
+  "open": [
+   12,
+   24
+  ]
+ },
+ {
+  "lvl": 189,
+  "shape": "elephant",
+  "tier": "A",
+  "attempt": 27,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2,
+  "open": [
+   24,
+   25,
+   30
+  ]
+ },
+ {
+  "lvl": 190,
+  "shape": "planet",
+  "tier": "A",
+  "attempt": 174,
+  "inBand": true,
+  "arrows": 33,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.242424242424242,
+  "open": [
+   1,
+   20,
+   27
+  ]
+ },
+ {
+  "lvl": 191,
+  "shape": "bat",
+  "tier": "A",
+  "attempt": 29,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.2903225806451615,
+  "open": [
+   12,
+   18,
+   30
+  ]
+ },
+ {
+  "lvl": 192,
+  "shape": "glasses",
+  "tier": "A",
+  "attempt": 37,
+  "inBand": true,
+  "arrows": 25,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.48,
+  "open": [
+   4,
+   15,
+   19
+  ]
+ },
+ {
+  "lvl": 193,
+  "shape": "leaf",
+  "tier": "A",
+  "attempt": 27,
+  "inBand": true,
+  "arrows": 29,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.1724137931034484,
+  "open": [
+   6,
+   16,
+   18
+  ]
+ },
+ {
+  "lvl": 194,
+  "shape": "wave",
+  "tier": "A",
+  "attempt": 167,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.676470588235294,
+  "open": [
+   15,
+   25,
+   33
+  ]
+ },
+ {
+  "lvl": 195,
+  "shape": "apple",
+  "tier": "A",
+  "attempt": 36,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.5294117647058822,
+  "open": [
+   2,
+   14,
+   31
+  ]
+ },
+ {
+  "lvl": 196,
+  "shape": "butterfly",
+  "tier": "A",
+  "attempt": 81,
+  "inBand": false,
+  "arrows": 41,
+  "initialOpen": 4,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.7804878048780486,
+  "open": [
+   15,
+   23,
+   27,
+   35
+  ]
+ },
+ {
+  "lvl": 197,
+  "shape": "bear",
+  "tier": "A",
+  "attempt": 18,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.7058823529411766,
+  "open": [
+   9,
+   10,
+   11
+  ]
+ },
+ {
+  "lvl": 198,
+  "shape": "tent",
+  "tier": "A",
+  "attempt": 41,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.227272727272727,
+  "open": [
+   3,
+   11,
+   16
+  ]
+ },
+ {
+  "lvl": 199,
+  "shape": "raindrop",
+  "tier": "A",
+  "attempt": 45,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.3076923076923075,
+  "open": [
+   9,
+   11,
+   24
+  ]
+ },
+ {
+  "lvl": 200,
+  "shape": "200",
+  "tier": "A",
+  "attempt": 10,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.8666666666666667,
+  "open": [
+   13,
+   20,
+   21
+  ]
+ },
+ {
+  "lvl": 201,
+  "shape": "lock",
+  "tier": "A",
+  "attempt": 109,
+  "inBand": true,
+  "arrows": 36,
+  "initialOpen": 3,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.3333333333333335,
+  "open": [
+   6,
+   11,
+   33
+  ]
+ },
+ {
+  "lvl": 202,
+  "shape": "crab",
+  "tier": "A",
+  "attempt": 48,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.1470588235294117,
+  "open": [
+   11,
+   16,
+   20
+  ]
+ },
+ {
+  "lvl": 203,
+  "shape": "train",
+  "tier": "A",
+  "attempt": 62,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.5714285714285716,
+  "open": [
+   2,
+   7,
+   20
+  ]
+ },
+ {
+  "lvl": 204,
+  "shape": "mountain",
+  "tier": "A",
+  "attempt": 27,
+  "inBand": true,
+  "arrows": 32,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.28125,
+  "open": [
+   9,
+   14,
+   23
+  ]
+ },
+ {
+  "lvl": 205,
+  "shape": "dog",
+  "tier": "A",
+  "attempt": 333,
+  "inBand": true,
+  "arrows": 32,
+  "initialOpen": 3,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 2.71875,
+  "open": [
+   4,
+   9,
+   13
+  ]
+ },
+ {
+  "lvl": 206,
+  "shape": "key",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 25,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.04,
+  "open": [
+   1,
+   5,
+   14
+  ]
+ },
+ {
+  "lvl": 207,
+  "shape": "frog",
+  "tier": "A",
+  "attempt": 100,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.5526315789473686,
+  "open": [
+   11,
+   18,
+   20
+  ]
+ },
+ {
+  "lvl": 208,
+  "shape": "diamond",
+  "tier": "A",
+  "attempt": 5,
+  "inBand": false,
+  "arrows": 30,
+  "initialOpen": 4,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 1.8,
+  "open": [
+   4,
+   13,
+   16,
+   27
+  ]
+ },
+ {
+  "lvl": 209,
+  "shape": "note",
+  "tier": "A",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 25,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 2.04,
+  "open": [
+   2,
+   4,
+   9
+  ]
+ },
+ {
+  "lvl": 210,
+  "shape": "duck",
+  "tier": "A",
+  "attempt": 270,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.642857142857143,
+  "open": [
+   2,
+   6,
+   22
+  ]
+ },
+ {
+  "lvl": 211,
+  "shape": "penguin",
+  "tier": "A",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 1.8928571428571428,
+  "open": [
+   11,
+   21,
+   23
+  ]
+ },
+ {
+  "lvl": 212,
+  "shape": "heart",
+  "tier": "A",
+  "attempt": 119,
+  "inBand": true,
+  "arrows": 32,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.15625,
+  "open": [
+   1,
+   20,
+   28
+  ]
+ },
+ {
+  "lvl": 213,
+  "shape": "comet",
+  "tier": "A",
+  "attempt": 102,
+  "inBand": true,
+  "arrows": 33,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.6666666666666665,
+  "open": [
+   4,
+   6,
+   28
+  ]
+ },
+ {
+  "lvl": 214,
+  "shape": "turtle",
+  "tier": "A",
+  "attempt": 32,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 3.225806451612903,
+  "open": [
+   5,
+   22,
+   27
+  ]
+ },
+ {
+  "lvl": 215,
+  "shape": "kite",
+  "tier": "A",
+  "attempt": 121,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.6666666666666667,
+  "open": [
+   1,
+   15,
+   18
+  ]
+ },
+ {
+  "lvl": 216,
+  "shape": "bird",
+  "tier": "A",
+  "attempt": 298,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.967741935483871,
+  "open": [
+   3,
+   17,
+   28
+  ]
+ },
+ {
+  "lvl": 217,
+  "shape": "dolphin",
+  "tier": "A",
+  "attempt": 82,
+  "inBand": true,
+  "arrows": 29,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.8275862068965518,
+  "open": [
+   11,
+   22,
+   27
+  ]
+ },
+ {
+  "lvl": 218,
+  "shape": "sword",
+  "tier": "A",
+  "attempt": 14,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.5238095238095237,
+  "open": [
+   6,
+   10,
+   15
+  ]
+ },
+ {
+  "lvl": 219,
+  "shape": "snowflake",
+  "tier": "A",
+  "attempt": 203,
+  "inBand": false,
+  "arrows": 26,
+  "initialOpen": 4,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 2.423076923076923,
+  "open": [
+   3,
+   8,
+   18,
+   20
+  ]
+ },
+ {
+  "lvl": 220,
+  "shape": "donut",
+  "tier": "A",
+  "attempt": 100,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 1.9333333333333333,
+  "open": [
+   18,
+   20,
+   21
+  ]
+ },
+ {
+  "lvl": 221,
+  "shape": "pear",
+  "tier": "A",
+  "attempt": 18,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 2.3181818181818183,
+  "open": [
+   9,
+   14,
+   19
+  ]
+ },
+ {
+  "lvl": 222,
+  "shape": "car",
+  "tier": "A",
+  "attempt": 19,
+  "inBand": true,
+  "arrows": 29,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.6206896551724137,
+  "open": [
+   3,
+   15,
+   26
+  ]
+ },
+ {
+  "lvl": 223,
+  "shape": "rocket",
+  "tier": "A",
+  "attempt": 101,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.5,
+  "open": [
+   3,
+   11,
+   20
+  ]
+ },
+ {
+  "lvl": 224,
+  "shape": "fish",
+  "tier": "A",
+  "attempt": 101,
+  "inBand": true,
+  "arrows": 37,
+  "initialOpen": 3,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.6486486486486487,
+  "open": [
+   15,
+   33,
+   34
+  ]
+ },
+ {
+  "lvl": 225,
+  "shape": "bee",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.064516129032258,
+  "open": [
+   8,
+   23,
+   27
+  ]
+ },
+ {
+  "lvl": 226,
+  "shape": "rabbit",
+  "tier": "A",
+  "attempt": 98,
+  "inBand": true,
+  "arrows": 39,
+  "initialOpen": 3,
+  "waves": 25,
+  "chain": 25,
+  "avgBlockers": 2.8974358974358974,
+  "open": [
+   4,
+   26,
+   32
+  ]
+ },
+ {
+  "lvl": 227,
+  "shape": "clock",
+  "tier": "A",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 35,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.5714285714285716,
+  "open": [
+   1,
+   9,
+   11
+  ]
+ },
+ {
+  "lvl": 228,
+  "shape": "palm",
+  "tier": "A",
+  "attempt": 64,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 1.9230769230769231,
+  "open": [
+   3,
+   11,
+   25
+  ]
+ },
+ {
+  "lvl": 229,
+  "shape": "ladybug",
+  "tier": "A",
+  "attempt": 261,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.7666666666666666,
+  "open": [
+   0,
+   3,
+   19
+  ]
+ },
+ {
+  "lvl": 230,
+  "shape": "bell",
+  "tier": "A",
+  "attempt": 175,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.6666666666666665,
+  "open": [
+   1,
+   12,
+   26
+  ]
+ },
+ {
+  "lvl": 231,
+  "shape": "cloud",
+  "tier": "A",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 32,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.5,
+  "open": [
+   4,
+   5,
+   28
+  ]
+ },
+ {
+  "lvl": 232,
+  "shape": "cat",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 36,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.2777777777777777,
+  "open": [
+   11,
+   16,
+   22
+  ]
+ },
+ {
+  "lvl": 233,
+  "shape": "hourglass",
+  "tier": "A",
+  "attempt": 169,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 3,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 2.5952380952380953,
+  "open": [
+   8,
+   13,
+   19
+  ]
+ },
+ {
+  "lvl": 234,
+  "shape": "infinity",
+  "tier": "A",
+  "attempt": 13,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.2333333333333334,
+  "open": [
+   2,
+   19,
+   26
+  ]
+ },
+ {
+  "lvl": 235,
+  "shape": "cactus",
+  "tier": "A",
+  "attempt": 61,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.142857142857143,
+  "open": [
+   15,
+   19,
+   26
+  ]
+ },
+ {
+  "lvl": 236,
+  "shape": "paw",
+  "tier": "A",
+  "attempt": 44,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.3666666666666667,
+  "open": [
+   9,
+   12,
+   15
+  ]
+ },
+ {
+  "lvl": 237,
+  "shape": "icecream",
+  "tier": "A",
+  "attempt": 27,
+  "inBand": true,
+  "arrows": 32,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.875,
+  "open": [
+   11,
+   12,
+   30
+  ]
+ },
+ {
+  "lvl": 238,
+  "shape": "chick",
+  "tier": "A",
+  "attempt": 12,
+  "inBand": true,
+  "arrows": 37,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.864864864864865,
+  "open": [
+   5,
+   18,
+   19
+  ]
+ },
+ {
+  "lvl": 239,
+  "shape": "flag",
+  "tier": "A",
+  "attempt": 25,
+  "inBand": true,
+  "arrows": 29,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.6206896551724137,
+  "open": [
+   18,
+   22,
+   24
+  ]
+ },
+ {
+  "lvl": 240,
+  "shape": "balloon",
+  "tier": "A",
+  "attempt": 45,
+  "inBand": true,
+  "arrows": 40,
+  "initialOpen": 2,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 2.325,
+  "open": [
+   3,
+   26
+  ]
+ },
+ {
+  "lvl": 241,
+  "shape": "octopus",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 33,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.757575757575758,
+  "open": [
+   22,
+   24,
+   25
+  ]
+ },
+ {
+  "lvl": 242,
+  "shape": "cake",
+  "tier": "A",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3.25,
+  "open": [
+   5,
+   7,
+   26
+  ]
+ },
+ {
+  "lvl": 243,
+  "shape": "hat",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.769230769230769,
+  "open": [
+   7,
+   22,
+   23
+  ]
+ },
+ {
+  "lvl": 244,
+  "shape": "flower",
+  "tier": "A",
+  "attempt": 355,
+  "inBand": true,
+  "arrows": 32,
+  "initialOpen": 3,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.59375,
+  "open": [
+   1,
+   5,
+   15
+  ]
+ },
+ {
+  "lvl": 245,
+  "shape": "cherry",
+  "tier": "A",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 2,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.730769230769231,
+  "open": [
+   5,
+   20
+  ]
+ },
+ {
+  "lvl": 246,
+  "shape": "anchor",
+  "tier": "A",
+  "attempt": 146,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.176470588235294,
+  "open": [
+   20,
+   26,
+   27
+  ]
+ },
+ {
+  "lvl": 247,
+  "shape": "whale",
+  "tier": "A",
+  "attempt": 42,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.736842105263158,
+  "open": [
+   13,
+   20,
+   32
+  ]
+ },
+ {
+  "lvl": 248,
+  "shape": "cup",
+  "tier": "A",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.357142857142857,
+  "open": [
+   3,
+   26,
+   28
+  ]
+ },
+ {
+  "lvl": 249,
+  "shape": "plane",
+  "tier": "A",
+  "attempt": 37,
+  "inBand": true,
+  "arrows": 23,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.3043478260869565,
+  "open": [
+   1,
+   14,
+   20
+  ]
+ },
+ {
+  "lvl": 250,
+  "shape": "star",
+  "tier": "A",
+  "attempt": 111,
+  "inBand": true,
+  "arrows": 27,
+  "initialOpen": 3,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.074074074074074,
+  "open": [
+   5,
+   11,
+   21
+  ]
+ },
+ {
+  "lvl": 251,
+  "shape": "fox",
+  "tier": "A",
+  "attempt": 222,
+  "inBand": true,
+  "arrows": 37,
+  "initialOpen": 3,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.8378378378378377,
+  "open": [
+   5,
+   13,
+   28
+  ]
+ },
+ {
+  "lvl": 252,
+  "shape": "lightning",
+  "tier": "A",
+  "attempt": 17,
+  "inBand": true,
+  "arrows": 27,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 1.962962962962963,
+  "open": [
+   9,
+   19,
+   21
+  ]
+ },
+ {
+  "lvl": 253,
+  "shape": "snowman",
+  "tier": "A",
+  "attempt": 23,
+  "inBand": false,
+  "arrows": 41,
+  "initialOpen": 4,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.7560975609756095,
+  "open": [
+   3,
+   7,
+   11,
+   22
+  ]
+ },
+ {
+  "lvl": 254,
+  "shape": "swan",
+  "tier": "A",
+  "attempt": 276,
+  "inBand": true,
+  "arrows": 33,
+  "initialOpen": 3,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.515151515151515,
+  "open": [
+   20,
+   25,
+   27
+  ]
+ },
+ {
+  "lvl": 255,
+  "shape": "smiley",
+  "tier": "A",
+  "attempt": 326,
+  "inBand": true,
+  "arrows": 36,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.6944444444444446,
+  "open": [
+   4,
+   9,
+   23
+  ]
+ },
+ {
+  "lvl": 256,
+  "shape": "house",
+  "tier": "A",
+  "attempt": 7,
+  "inBand": false,
+  "arrows": 38,
+  "initialOpen": 4,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.6315789473684212,
+  "open": [
+   3,
+   22,
+   28,
+   33
+  ]
+ },
+ {
+  "lvl": 257,
+  "shape": "pig",
+  "tier": "A",
+  "attempt": 122,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 2,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.0952380952380953,
+  "open": [
+   8,
+   41
+  ]
+ },
+ {
+  "lvl": 258,
+  "shape": "owl",
+  "tier": "A",
+  "attempt": 43,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 3.558139534883721,
+  "open": [
+   5,
+   15,
+   26
+  ]
+ },
+ {
+  "lvl": 259,
+  "shape": "pizza",
+  "tier": "A",
+  "attempt": 182,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3,
+  "open": [
+   7,
+   15,
+   16
+  ]
+ },
+ {
+  "lvl": 260,
+  "shape": "pencil",
+  "tier": "A",
+  "attempt": 91,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.4285714285714286,
+  "open": [
+   3,
+   9,
+   15
+  ]
+ },
+ {
+  "lvl": 261,
+  "shape": "tree",
+  "tier": "A",
+  "attempt": 97,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.3,
+  "open": [
+   1,
+   9,
+   16
+  ]
+ },
+ {
+  "lvl": 262,
+  "shape": "gift",
+  "tier": "A",
+  "attempt": 114,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 3,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.357142857142857,
+  "open": [
+   25,
+   37,
+   38
+  ]
+ },
+ {
+  "lvl": 263,
+  "shape": "crown",
+  "tier": "A",
+  "attempt": 70,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 3,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.1052631578947367,
+  "open": [
+   6,
+   19,
+   29
+  ]
+ },
+ {
+  "lvl": 264,
+  "shape": "snail",
+  "tier": "A",
+  "attempt": 125,
+  "inBand": true,
+  "arrows": 45,
+  "initialOpen": 3,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.111111111111111,
+  "open": [
+   2,
+   19,
+   38
+  ]
+ },
+ {
+  "lvl": 265,
+  "shape": "boat",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 27,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.1481481481481484,
+  "open": [
+   2,
+   6,
+   14
+  ]
+ },
+ {
+  "lvl": 266,
+  "shape": "mouse",
+  "tier": "A",
+  "attempt": 126,
+  "inBand": true,
+  "arrows": 36,
+  "initialOpen": 3,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.0833333333333335,
+  "open": [
+   4,
+   15,
+   34
+  ]
+ },
+ {
+  "lvl": 267,
+  "shape": "magnet",
+  "tier": "A",
+  "attempt": 242,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 3,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.9285714285714284,
+  "open": [
+   5,
+   27,
+   28
+  ]
+ },
+ {
+  "lvl": 268,
+  "shape": "camera",
+  "tier": "A",
+  "attempt": 175,
+  "inBand": true,
+  "arrows": 45,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.4,
+  "open": [
+   2,
+   23,
+   29
+  ]
+ },
+ {
+  "lvl": 269,
+  "shape": "sun",
+  "tier": "A",
+  "attempt": 330,
+  "inBand": false,
+  "arrows": 43,
+  "initialOpen": 4,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.441860465116279,
+  "open": [
+   10,
+   16,
+   21,
+   34
+  ]
+ },
+ {
+  "lvl": 270,
+  "shape": "umbrella",
+  "tier": "A",
+  "attempt": 12,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 3,
+  "open": [
+   13,
+   14,
+   24
+  ]
+ },
+ {
+  "lvl": 271,
+  "shape": "moon",
+  "tier": "A",
+  "attempt": 8,
+  "inBand": true,
+  "arrows": 23,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.565217391304348,
+  "open": [
+   5,
+   6,
+   17
+  ]
+ },
+ {
+  "lvl": 272,
+  "shape": "mushroom",
+  "tier": "A",
+  "attempt": 146,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 3.289473684210526,
+  "open": [
+   11,
+   22,
+   28
+  ]
+ },
+ {
+  "lvl": 273,
+  "shape": "boat",
+  "tier": "A",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 25,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.8,
+  "open": [
+   10,
+   15,
+   19
+  ]
+ },
+ {
+  "lvl": 274,
+  "shape": "sun",
+  "tier": "A",
+  "attempt": 220,
+  "inBand": true,
+  "arrows": 40,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 3.15,
+  "open": [
+   0,
+   33,
+   34
+  ]
+ },
+ {
+  "lvl": 275,
+  "shape": "icecream",
+  "tier": "A",
+  "attempt": 65,
+  "inBand": false,
+  "arrows": 32,
+  "initialOpen": 4,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.34375,
+  "open": [
+   14,
+   22,
+   28,
+   29
+  ]
+ },
+ {
+  "lvl": 276,
+  "shape": "octopus",
+  "tier": "A",
+  "attempt": 169,
+  "inBand": true,
+  "arrows": 39,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 3.076923076923077,
+  "open": [
+   4,
+   14,
+   20
+  ]
+ },
+ {
+  "lvl": 277,
+  "shape": "tent",
+  "tier": "A",
+  "attempt": 39,
+  "inBand": true,
+  "arrows": 27,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.074074074074074,
+  "open": [
+   3,
+   20,
+   22
+  ]
+ },
+ {
+  "lvl": 278,
+  "shape": "kite",
+  "tier": "A",
+  "attempt": 26,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 1.9285714285714286,
+  "open": [
+   4,
+   15,
+   18
+  ]
+ },
+ {
+  "lvl": 279,
+  "shape": "train",
+  "tier": "A",
+  "attempt": 14,
+  "inBand": true,
+  "arrows": 36,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.8333333333333335,
+  "open": [
+   1,
+   32,
+   34
+  ]
+ },
+ {
+  "lvl": 280,
+  "shape": "whale",
+  "tier": "A",
+  "attempt": 69,
+  "inBand": true,
+  "arrows": 39,
+  "initialOpen": 3,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.3076923076923075,
+  "open": [
+   12,
+   27,
+   34
+  ]
+ },
+ {
+  "lvl": 281,
+  "shape": "butterfly",
+  "tier": "A",
+  "attempt": 118,
+  "inBand": false,
+  "arrows": 52,
+  "initialOpen": 4,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 3.5,
+  "open": [
+   2,
+   7,
+   32,
+   41
+  ]
+ },
+ {
+  "lvl": 282,
+  "shape": "plane",
+  "tier": "A",
+  "attempt": 28,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.3461538461538463,
+  "open": [
+   3,
+   8,
+   15
+  ]
+ },
+ {
+  "lvl": 283,
+  "shape": "key",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 1.9285714285714286,
+  "open": [
+   2,
+   10,
+   20
+  ]
+ },
+ {
+  "lvl": 284,
+  "shape": "donut",
+  "tier": "A",
+  "attempt": 363,
+  "inBand": true,
+  "arrows": 40,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.675,
+  "open": [
+   1,
+   12,
+   14
+  ]
+ },
+ {
+  "lvl": 285,
+  "shape": "balloon",
+  "tier": "A",
+  "attempt": 252,
+  "inBand": false,
+  "arrows": 42,
+  "initialOpen": 4,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 2.9285714285714284,
+  "open": [
+   17,
+   26,
+   33,
+   34
+  ]
+ },
+ {
+  "lvl": 286,
+  "shape": "gift",
+  "tier": "A",
+  "attempt": 71,
+  "inBand": true,
+  "arrows": 49,
+  "initialOpen": 3,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.816326530612245,
+  "open": [
+   17,
+   29,
+   35
+  ]
+ },
+ {
+  "lvl": 287,
+  "shape": "cherry",
+  "tier": "A",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 29,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.2413793103448274,
+  "open": [
+   0,
+   13,
+   21
+  ]
+ },
+ {
+  "lvl": 288,
+  "shape": "crown",
+  "tier": "A",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 39,
+  "initialOpen": 3,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.41025641025641,
+  "open": [
+   13,
+   15,
+   24
+  ]
+ },
+ {
+  "lvl": 289,
+  "shape": "dog",
+  "tier": "A",
+  "attempt": 45,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.4210526315789473,
+  "open": [
+   10,
+   13,
+   30
+  ]
+ },
+ {
+  "lvl": 290,
+  "shape": "lock",
+  "tier": "A",
+  "attempt": 100,
+  "inBand": false,
+  "arrows": 41,
+  "initialOpen": 4,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.682926829268293,
+  "open": [
+   28,
+   29,
+   34,
+   39
+  ]
+ },
+ {
+  "lvl": 291,
+  "shape": "turtle",
+  "tier": "A",
+  "attempt": 152,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.6315789473684212,
+  "open": [
+   2,
+   6,
+   14
+  ]
+ },
+ {
+  "lvl": 292,
+  "shape": "clock",
+  "tier": "A",
+  "attempt": 162,
+  "inBand": false,
+  "arrows": 44,
+  "initialOpen": 4,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.409090909090909,
+  "open": [
+   15,
+   18,
+   38,
+   42
+  ]
+ },
+ {
+  "lvl": 293,
+  "shape": "flag",
+  "tier": "A",
+  "attempt": 14,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.142857142857143,
+  "open": [
+   2,
+   8,
+   12
+  ]
+ },
+ {
+  "lvl": 294,
+  "shape": "diamond",
+  "tier": "A",
+  "attempt": 170,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.8823529411764706,
+  "open": [
+   2,
+   9,
+   10
+  ]
+ },
+ {
+  "lvl": 295,
+  "shape": "swan",
+  "tier": "A",
+  "attempt": 332,
+  "inBand": true,
+  "arrows": 39,
+  "initialOpen": 3,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 3.1538461538461537,
+  "open": [
+   16,
+   17,
+   18
+  ]
+ },
+ {
+  "lvl": 296,
+  "shape": "fish",
+  "tier": "A",
+  "attempt": 5,
+  "inBand": false,
+  "arrows": 43,
+  "initialOpen": 4,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.3488372093023258,
+  "open": [
+   18,
+   31,
+   32,
+   37
+  ]
+ },
+ {
+  "lvl": 297,
+  "shape": "mouse",
+  "tier": "A",
+  "attempt": 81,
+  "inBand": false,
+  "arrows": 43,
+  "initialOpen": 4,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.7674418604651163,
+  "open": [
+   3,
+   14,
+   39,
+   42
+  ]
+ },
+ {
+  "lvl": 298,
+  "shape": "dolphin",
+  "tier": "A",
+  "attempt": 50,
+  "inBand": false,
+  "arrows": 35,
+  "initialOpen": 4,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.6857142857142855,
+  "open": [
+   13,
+   15,
+   16,
+   19
+  ]
+ },
+ {
+  "lvl": 299,
+  "shape": "bell",
+  "tier": "A",
+  "attempt": 288,
+  "inBand": true,
+  "arrows": 37,
+  "initialOpen": 3,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.864864864864865,
+  "open": [
+   11,
+   15,
+   30
+  ]
+ },
+ {
+  "lvl": 300,
+  "shape": "300",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.2333333333333334,
+  "open": [
+   10,
+   21,
+   27
+  ]
+ },
+ {
+  "lvl": 305,
+  "shape": "bee",
+  "tier": "A",
+  "attempt": 29,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2,
+  "open": [
+   5,
+   7,
+   8
+  ]
+ },
+ {
+  "lvl": 310,
+  "shape": "frog",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 2,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.625,
+  "open": [
+   3,
+   16
+  ]
+ },
+ {
+  "lvl": 315,
+  "shape": "elephant",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 23,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 1.3478260869565217,
+  "open": [
+   2,
+   4,
+   19
+  ]
+ },
+ {
+  "lvl": 320,
+  "shape": "note",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 13,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.3076923076923077,
+  "open": [
+   6,
+   10,
+   11
+  ]
+ },
+ {
+  "lvl": 325,
+  "shape": "cat",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.1666666666666665,
+  "open": [
+   0,
+   15,
+   19
+  ]
+ },
+ {
+  "lvl": 330,
+  "shape": "bear",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.9047619047619047,
+  "open": [
+   12,
+   13,
+   19
+  ]
+ },
+ {
+  "lvl": 335,
+  "shape": "cup",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 27,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.5185185185185186,
+  "open": [
+   7,
+   8,
+   10
+  ]
+ },
+ {
+  "lvl": 340,
+  "shape": "lightning",
+  "tier": "A",
+  "attempt": 10,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 1.263157894736842,
+  "open": [
+   4,
+   12,
+   17
+  ]
+ },
+ {
+  "lvl": 345,
+  "shape": "bat",
+  "tier": "A",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.7272727272727273,
+  "open": [
+   1,
+   9,
+   19
+  ]
+ },
+ {
+  "lvl": 350,
+  "shape": "glasses",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 17,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.4705882352941178,
+  "open": [
+   4,
+   5,
+   8
+  ]
+ },
+ {
+  "lvl": 355,
+  "shape": "smiley",
+  "tier": "A",
+  "attempt": 26,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 2.5,
+  "open": [
+   6,
+   13,
+   16
+  ]
+ },
+ {
+  "lvl": 360,
+  "shape": "wave",
+  "tier": "A",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.631578947368421,
+  "open": [
+   1,
+   3,
+   17
+  ]
+ },
+ {
+  "lvl": 365,
+  "shape": "snail",
+  "tier": "A",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.6666666666666667,
+  "open": [
+   13,
+   19,
+   23
+  ]
+ },
+ {
+  "lvl": 370,
+  "shape": "sword",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 12,
+  "initialOpen": 3,
+  "waves": 6,
+  "chain": 6,
+  "avgBlockers": 0.9166666666666666,
+  "open": [
+   1,
+   4,
+   5
+  ]
+ },
+ {
+  "lvl": 375,
+  "shape": "cloud",
+  "tier": "A",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.894736842105263,
+  "open": [
+   3,
+   11,
+   14
+  ]
+ },
+ {
+  "lvl": 380,
+  "shape": "fox",
+  "tier": "A",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 1.8095238095238095,
+  "open": [
+   10,
+   12,
+   18
+  ]
+ },
+ {
+  "lvl": 385,
+  "shape": "rocket",
+  "tier": "A",
+  "attempt": 33,
+  "inBand": true,
+  "arrows": 17,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 1.6470588235294117,
+  "open": [
+   10,
+   11,
+   16
+  ]
+ },
+ {
+  "lvl": 390,
+  "shape": "snowman",
+  "tier": "A",
+  "attempt": 23,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 1.7083333333333333,
+  "open": [
+   5,
+   7,
+   11
+  ]
+ },
+ {
+  "lvl": 395,
+  "shape": "cactus",
+  "tier": "A",
+  "attempt": 17,
+  "inBand": true,
+  "arrows": 20,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.9,
+  "open": [
+   1,
+   8,
+   15
+  ]
+ },
+ {
+  "lvl": 400,
+  "shape": "400",
+  "tier": "A",
+  "attempt": 45,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 3,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 1.9666666666666666,
+  "open": [
+   20,
+   21,
+   24
+  ]
+ },
+ {
+  "lvl": 405,
+  "shape": "duck",
+  "tier": "A",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 6,
+  "chain": 6,
+  "avgBlockers": 1.7619047619047619,
+  "open": [
+   3,
+   6,
+   12
+  ]
+ },
+ {
+  "lvl": 410,
+  "shape": "moon",
+  "tier": "A",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 15,
+  "initialOpen": 3,
+  "waves": 6,
+  "chain": 6,
+  "avgBlockers": 1.5333333333333334,
+  "open": [
+   4,
+   7,
+   14
+  ]
+ },
+ {
+  "lvl": 415,
+  "shape": "leaf",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 15,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.5333333333333334,
+  "open": [
+   1,
+   4,
+   6
+  ]
+ },
+ {
+  "lvl": 420,
+  "shape": "heart",
+  "tier": "A",
+  "attempt": 16,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.4210526315789473,
+  "open": [
+   1,
+   8,
+   17
+  ]
+ },
+ {
+  "lvl": 425,
+  "shape": "pizza",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 20,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2,
+  "open": [
+   6,
+   10,
+   19
+  ]
+ },
+ {
+  "lvl": 430,
+  "shape": "snowflake",
+  "tier": "A",
+  "attempt": 312,
+  "inBand": false,
+  "arrows": 19,
+  "initialOpen": 5,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.8421052631578947,
+  "open": [
+   3,
+   7,
+   13,
+   14,
+   17
+  ]
+ },
+ {
+  "lvl": 435,
+  "shape": "pig",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 23,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.7391304347826086,
+  "open": [
+   1,
+   8,
+   13
+  ]
+ },
+ {
+  "lvl": 440,
+  "shape": "ladybug",
+  "tier": "A",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2.0952380952380953,
+  "open": [
+   0,
+   4,
+   14
+  ]
+ },
+ {
+  "lvl": 445,
+  "shape": "car",
+  "tier": "A",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.7142857142857144,
+  "open": [
+   3,
+   4,
+   8
+  ]
+ },
+ {
+  "lvl": 450,
+  "shape": "penguin",
+  "tier": "A",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 17,
+  "initialOpen": 3,
+  "waves": 7,
+  "chain": 7,
+  "avgBlockers": 1.9411764705882353,
+  "open": [
+   1,
+   3,
+   12
+  ]
+ },
+ {
+  "lvl": 455,
+  "shape": "flower",
+  "tier": "A",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.7142857142857142,
+  "open": [
+   1,
+   11,
+   12
+  ]
+ },
+ {
+  "lvl": 460,
+  "shape": "hourglass",
+  "tier": "A",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 22,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.7272727272727273,
+  "open": [
+   2,
+   8,
+   19
+  ]
+ },
+ {
+  "lvl": 465,
+  "shape": "umbrella",
+  "tier": "A",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 17,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 2,
+  "open": [
+   3,
+   14,
+   15
+  ]
+ },
+ {
+  "lvl": 470,
+  "shape": "hat",
+  "tier": "A",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 18,
+  "initialOpen": 3,
+  "waves": 6,
+  "chain": 6,
+  "avgBlockers": 2,
+  "open": [
+   3,
+   4,
+   10
+  ]
+ },
+ {
+  "lvl": 475,
+  "shape": "crab",
+  "tier": "A",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 21,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 2,
+  "open": [
+   5,
+   12,
+   14
+  ]
+ },
+ {
+  "lvl": 480,
+  "shape": "infinity",
+  "tier": "A",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 20,
+  "initialOpen": 3,
+  "waves": 8,
+  "chain": 8,
+  "avgBlockers": 1.65,
+  "open": [
+   4,
+   5,
+   9
+  ]
+ },
+ {
+  "lvl": 485,
+  "shape": "cake",
+  "tier": "A",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 19,
+  "initialOpen": 3,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.7894736842105263,
+  "open": [
+   3,
+   12,
+   13
+  ]
+ },
+ {
+  "lvl": 490,
+  "shape": "pencil",
+  "tier": "A",
+  "attempt": 23,
+  "inBand": true,
+  "arrows": 15,
+  "initialOpen": 3,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.1333333333333333,
+  "open": [
+   1,
+   9,
+   13
+  ]
+ },
+ {
+  "lvl": 495,
+  "shape": "apple",
+  "tier": "A",
+  "attempt": 16,
+  "inBand": true,
+  "arrows": 23,
+  "initialOpen": 1,
+  "waves": 9,
+  "chain": 9,
+  "avgBlockers": 1.826086956521739,
+  "open": [
+   11
+  ]
+ },
+ {
+  "lvl": 500,
+  "shape": "500",
+  "tier": "B",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 32,
+  "initialOpen": 5,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.375,
+  "open": [
+   1,
+   8,
+   16,
+   18,
+   29
+  ]
+ },
+ {
+  "lvl": 505,
+  "shape": "tree",
+  "tier": "B",
+  "attempt": 111,
+  "inBand": true,
+  "arrows": 36,
+  "initialOpen": 5,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.0555555555555554,
+  "open": [
+   3,
+   4,
+   17,
+   19,
+   26
+  ]
+ },
+ {
+  "lvl": 510,
+  "shape": "paw",
+  "tier": "B",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.3684210526315788,
+  "open": [
+   11,
+   15,
+   19,
+   21,
+   27
+  ]
+ },
+ {
+  "lvl": 515,
+  "shape": "owl",
+  "tier": "B",
+  "attempt": 17,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 5,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 2.980769230769231,
+  "open": [
+   10,
+   21,
+   29,
+   34,
+   37
+  ]
+ },
+ {
+  "lvl": 520,
+  "shape": "raindrop",
+  "tier": "B",
+  "attempt": 119,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.1578947368421053,
+  "open": [
+   11,
+   24,
+   26,
+   27,
+   30
+  ]
+ },
+ {
+  "lvl": 525,
+  "shape": "rabbit",
+  "tier": "B",
+  "attempt": 69,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 5,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.75,
+  "open": [
+   2,
+   22,
+   23,
+   25,
+   27
+  ]
+ },
+ {
+  "lvl": 530,
+  "shape": "mountain",
+  "tier": "B",
+  "attempt": 33,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 5,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 2.604651162790698,
+  "open": [
+   1,
+   5,
+   15,
+   20,
+   33
+  ]
+ },
+ {
+  "lvl": 535,
+  "shape": "palm",
+  "tier": "B",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.066666666666667,
+  "open": [
+   2,
+   5,
+   6,
+   15,
+   22
+  ]
+ },
+ {
+  "lvl": 540,
+  "shape": "star",
+  "tier": "B",
+  "attempt": 52,
+  "inBand": true,
+  "arrows": 40,
+  "initialOpen": 5,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 3,
+  "open": [
+   11,
+   15,
+   22,
+   32,
+   35
+  ]
+ },
+ {
+  "lvl": 545,
+  "shape": "chick",
+  "tier": "B",
+  "attempt": 24,
+  "inBand": true,
+  "arrows": 36,
+  "initialOpen": 4,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.2222222222222223,
+  "open": [
+   2,
+   3,
+   14,
+   28
+  ]
+ },
+ {
+  "lvl": 550,
+  "shape": "pear",
+  "tier": "B",
+  "attempt": 8,
+  "inBand": true,
+  "arrows": 33,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.242424242424242,
+  "open": [
+   2,
+   6,
+   12,
+   14,
+   22
+  ]
+ },
+ {
+  "lvl": 555,
+  "shape": "mushroom",
+  "tier": "B",
+  "attempt": 29,
+  "inBand": true,
+  "arrows": 46,
+  "initialOpen": 5,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 3.260869565217391,
+  "open": [
+   1,
+   4,
+   16,
+   17,
+   22
+  ]
+ },
+ {
+  "lvl": 560,
+  "shape": "anchor",
+  "tier": "B",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 47,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3.021276595744681,
+  "open": [
+   2,
+   36,
+   38,
+   44,
+   46
+  ]
+ },
+ {
+  "lvl": 565,
+  "shape": "camera",
+  "tier": "B",
+  "attempt": 46,
+  "inBand": true,
+  "arrows": 47,
+  "initialOpen": 5,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.1702127659574466,
+  "open": [
+   6,
+   11,
+   18,
+   22,
+   36
+  ]
+ },
+ {
+  "lvl": 570,
+  "shape": "planet",
+  "tier": "B",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 49,
+  "initialOpen": 5,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 3.2653061224489797,
+  "open": [
+   12,
+   15,
+   19,
+   21,
+   22
+  ]
+ },
+ {
+  "lvl": 575,
+  "shape": "bird",
+  "tier": "B",
+  "attempt": 20,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 5,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.2142857142857144,
+  "open": [
+   1,
+   9,
+   26,
+   35,
+   39
+  ]
+ },
+ {
+  "lvl": 580,
+  "shape": "comet",
+  "tier": "B",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 45,
+  "initialOpen": 5,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.8222222222222224,
+  "open": [
+   9,
+   20,
+   23,
+   34,
+   41
+  ]
+ },
+ {
+  "lvl": 585,
+  "shape": "house",
+  "tier": "B",
+  "attempt": 39,
+  "inBand": true,
+  "arrows": 46,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.6956521739130435,
+  "open": [
+   7,
+   16,
+   31,
+   32,
+   39
+  ]
+ },
+ {
+  "lvl": 590,
+  "shape": "magnet",
+  "tier": "B",
+  "attempt": 22,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 5,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.7857142857142856,
+  "open": [
+   18,
+   20,
+   21,
+   27,
+   34
+  ]
+ },
+ {
+  "lvl": 595,
+  "shape": "mountain",
+  "tier": "B",
+  "attempt": 23,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3.13953488372093,
+  "open": [
+   7,
+   9,
+   13,
+   14,
+   40
+  ]
+ },
+ {
+  "lvl": 600,
+  "shape": "600",
+  "tier": "B",
+  "attempt": 13,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 5,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.4,
+  "open": [
+   0,
+   4,
+   13,
+   20,
+   27
+  ]
+ },
+ {
+  "lvl": 605,
+  "shape": "sword",
+  "tier": "B",
+  "attempt": 12,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 5,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.4615384615384615,
+  "open": [
+   4,
+   7,
+   15,
+   20,
+   22
+  ]
+ },
+ {
+  "lvl": 610,
+  "shape": "chick",
+  "tier": "B",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 5,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.3333333333333335,
+  "open": [
+   10,
+   14,
+   21,
+   27,
+   32
+  ]
+ },
+ {
+  "lvl": 615,
+  "shape": "rabbit",
+  "tier": "B",
+  "attempt": 12,
+  "inBand": true,
+  "arrows": 48,
+  "initialOpen": 4,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.6458333333333335,
+  "open": [
+   5,
+   15,
+   39,
+   40
+  ]
+ },
+ {
+  "lvl": 620,
+  "shape": "ladybug",
+  "tier": "B",
+  "attempt": 14,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 4,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.697674418604651,
+  "open": [
+   0,
+   1,
+   26,
+   36
+  ]
+ },
+ {
+  "lvl": 625,
+  "shape": "bird",
+  "tier": "B",
+  "attempt": 42,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3.186046511627907,
+  "open": [
+   5,
+   7,
+   8,
+   10,
+   20
+  ]
+ },
+ {
+  "lvl": 630,
+  "shape": "dolphin",
+  "tier": "B",
+  "attempt": 20,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 5,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.761904761904762,
+  "open": [
+   0,
+   7,
+   10,
+   12,
+   14
+  ]
+ },
+ {
+  "lvl": 635,
+  "shape": "hat",
+  "tier": "B",
+  "attempt": 13,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.676470588235294,
+  "open": [
+   10,
+   15,
+   23,
+   26,
+   31
+  ]
+ },
+ {
+  "lvl": 640,
+  "shape": "camera",
+  "tier": "B",
+  "attempt": 8,
+  "inBand": true,
+  "arrows": 44,
+  "initialOpen": 5,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.022727272727273,
+  "open": [
+   2,
+   4,
+   8,
+   27,
+   35
+  ]
+ },
+ {
+  "lvl": 645,
+  "shape": "lock",
+  "tier": "B",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 48,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.6666666666666665,
+  "open": [
+   5,
+   8,
+   19,
+   20,
+   28
+  ]
+ },
+ {
+  "lvl": 650,
+  "shape": "bat",
+  "tier": "B",
+  "attempt": 20,
+  "inBand": true,
+  "arrows": 40,
+  "initialOpen": 5,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.5,
+  "open": [
+   0,
+   2,
+   6,
+   16,
+   29
+  ]
+ },
+ {
+  "lvl": 655,
+  "shape": "lightning",
+  "tier": "B",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 33,
+  "initialOpen": 5,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.272727272727273,
+  "open": [
+   2,
+   8,
+   13,
+   17,
+   30
+  ]
+ },
+ {
+  "lvl": 660,
+  "shape": "crown",
+  "tier": "B",
+  "attempt": 22,
+  "inBand": true,
+  "arrows": 44,
+  "initialOpen": 5,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.8863636363636362,
+  "open": [
+   17,
+   23,
+   25,
+   35,
+   37
+  ]
+ },
+ {
+  "lvl": 665,
+  "shape": "pear",
+  "tier": "B",
+  "attempt": 47,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 4,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.823529411764706,
+  "open": [
+   4,
+   9,
+   21,
+   27
+  ]
+ },
+ {
+  "lvl": 670,
+  "shape": "frog",
+  "tier": "B",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 45,
+  "initialOpen": 5,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.5555555555555554,
+  "open": [
+   2,
+   9,
+   17,
+   31,
+   40
+  ]
+ },
+ {
+  "lvl": 675,
+  "shape": "hourglass",
+  "tier": "B",
+  "attempt": 53,
+  "inBand": true,
+  "arrows": 47,
+  "initialOpen": 5,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 2.6595744680851063,
+  "open": [
+   19,
+   20,
+   22,
+   25,
+   33
+  ]
+ },
+ {
+  "lvl": 680,
+  "shape": "owl",
+  "tier": "B",
+  "attempt": 36,
+  "inBand": true,
+  "arrows": 55,
+  "initialOpen": 5,
+  "waves": 24,
+  "chain": 24,
+  "avgBlockers": 2.8181818181818183,
+  "open": [
+   5,
+   12,
+   30,
+   41,
+   48
+  ]
+ },
+ {
+  "lvl": 685,
+  "shape": "car",
+  "tier": "B",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 37,
+  "initialOpen": 5,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.972972972972973,
+  "open": [
+   2,
+   4,
+   11,
+   25,
+   28
+  ]
+ },
+ {
+  "lvl": 690,
+  "shape": "balloon",
+  "tier": "B",
+  "attempt": 162,
+  "inBand": true,
+  "arrows": 50,
+  "initialOpen": 5,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.9,
+  "open": [
+   5,
+   6,
+   20,
+   23,
+   33
+  ]
+ },
+ {
+  "lvl": 695,
+  "shape": "heart",
+  "tier": "B",
+  "attempt": 13,
+  "inBand": true,
+  "arrows": 37,
+  "initialOpen": 4,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.864864864864865,
+  "open": [
+   7,
+   22,
+   28,
+   30
+  ]
+ },
+ {
+  "lvl": 700,
+  "shape": "700",
+  "tier": "B",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 3,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 1.8461538461538463,
+  "open": [
+   8,
+   18,
+   21
+  ]
+ },
+ {
+  "lvl": 705,
+  "shape": "sun",
+  "tier": "B",
+  "attempt": 95,
+  "inBand": true,
+  "arrows": 49,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.816326530612245,
+  "open": [
+   6,
+   8,
+   13,
+   17,
+   27
+  ]
+ },
+ {
+  "lvl": 710,
+  "shape": "infinity",
+  "tier": "B",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 5,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.2666666666666666,
+  "open": [
+   8,
+   12,
+   23,
+   26,
+   27
+  ]
+ },
+ {
+  "lvl": 715,
+  "shape": "bell",
+  "tier": "B",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 5,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.5789473684210527,
+  "open": [
+   2,
+   11,
+   12,
+   30,
+   35
+  ]
+ },
+ {
+  "lvl": 720,
+  "shape": "glasses",
+  "tier": "B",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 33,
+  "initialOpen": 4,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3,
+  "open": [
+   5,
+   13,
+   16,
+   17
+  ]
+ },
+ {
+  "lvl": 725,
+  "shape": "pizza",
+  "tier": "B",
+  "attempt": 59,
+  "inBand": true,
+  "arrows": 41,
+  "initialOpen": 5,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.4390243902439024,
+  "open": [
+   0,
+   6,
+   7,
+   10,
+   35
+  ]
+ },
+ {
+  "lvl": 730,
+  "shape": "wave",
+  "tier": "B",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 46,
+  "initialOpen": 5,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.0217391304347827,
+  "open": [
+   8,
+   23,
+   27,
+   28,
+   34
+  ]
+ },
+ {
+  "lvl": 735,
+  "shape": "cloud",
+  "tier": "B",
+  "attempt": 36,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 5,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.2142857142857144,
+  "open": [
+   11,
+   20,
+   27,
+   29,
+   39
+  ]
+ },
+ {
+  "lvl": 740,
+  "shape": "crab",
+  "tier": "B",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 37,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.135135135135135,
+  "open": [
+   2,
+   24,
+   25,
+   32,
+   34
+  ]
+ },
+ {
+  "lvl": 745,
+  "shape": "raindrop",
+  "tier": "B",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 35,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 3.3142857142857145,
+  "open": [
+   0,
+   5,
+   8,
+   13,
+   33
+  ]
+ },
+ {
+  "lvl": 750,
+  "shape": "key",
+  "tier": "B",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 3,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.323529411764706,
+  "open": [
+   13,
+   18,
+   27
+  ]
+ },
+ {
+  "lvl": 755,
+  "shape": "umbrella",
+  "tier": "B",
+  "attempt": 22,
+  "inBand": true,
+  "arrows": 36,
+  "initialOpen": 5,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.8333333333333335,
+  "open": [
+   8,
+   13,
+   24,
+   29,
+   34
+  ]
+ },
+ {
+  "lvl": 760,
+  "shape": "elephant",
+  "tier": "B",
+  "attempt": 26,
+  "inBand": true,
+  "arrows": 48,
+  "initialOpen": 5,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.5,
+  "open": [
+   3,
+   14,
+   16,
+   38,
+   40
+  ]
+ },
+ {
+  "lvl": 765,
+  "shape": "cup",
+  "tier": "B",
+  "attempt": 68,
+  "inBand": true,
+  "arrows": 50,
+  "initialOpen": 5,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 2.7,
+  "open": [
+   4,
+   5,
+   13,
+   16,
+   36
+  ]
+ },
+ {
+  "lvl": 770,
+  "shape": "fish",
+  "tier": "B",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.953488372093023,
+  "open": [
+   11,
+   13,
+   18,
+   21,
+   30
+  ]
+ },
+ {
+  "lvl": 775,
+  "shape": "diamond",
+  "tier": "B",
+  "attempt": 84,
+  "inBand": true,
+  "arrows": 36,
+  "initialOpen": 5,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.6944444444444446,
+  "open": [
+   13,
+   20,
+   28,
+   29,
+   34
+  ]
+ },
+ {
+  "lvl": 780,
+  "shape": "plane",
+  "tier": "B",
+  "attempt": 24,
+  "inBand": true,
+  "arrows": 24,
+  "initialOpen": 5,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 1.8333333333333333,
+  "open": [
+   0,
+   3,
+   7,
+   9,
+   19
+  ]
+ },
+ {
+  "lvl": 785,
+  "shape": "cherry",
+  "tier": "B",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 5,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.3823529411764706,
+  "open": [
+   4,
+   13,
+   16,
+   26,
+   29
+  ]
+ },
+ {
+  "lvl": 790,
+  "shape": "flower",
+  "tier": "B",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 44,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.5,
+  "open": [
+   0,
+   9,
+   16,
+   35,
+   37
+  ]
+ },
+ {
+  "lvl": 795,
+  "shape": "note",
+  "tier": "B",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 1.8387096774193548,
+  "open": [
+   1,
+   17,
+   18,
+   19,
+   23
+  ]
+ },
+ {
+  "lvl": 800,
+  "shape": "800",
+  "tier": "B",
+  "attempt": 53,
+  "inBand": true,
+  "arrows": 28,
+  "initialOpen": 5,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.75,
+  "open": [
+   0,
+   17,
+   19,
+   21,
+   27
+  ]
+ },
+ {
+  "lvl": 805,
+  "shape": "tree",
+  "tier": "B",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.411764705882353,
+  "open": [
+   3,
+   11,
+   15,
+   23,
+   30
+  ]
+ },
+ {
+  "lvl": 810,
+  "shape": "planet",
+  "tier": "B",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 5,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 3.046511627906977,
+  "open": [
+   5,
+   6,
+   18,
+   26,
+   33
+  ]
+ },
+ {
+  "lvl": 815,
+  "shape": "fox",
+  "tier": "B",
+  "attempt": 26,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 5,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.857142857142857,
+  "open": [
+   8,
+   12,
+   16,
+   23,
+   26
+  ]
+ },
+ {
+  "lvl": 820,
+  "shape": "boat",
+  "tier": "B",
+  "attempt": 13,
+  "inBand": true,
+  "arrows": 33,
+  "initialOpen": 5,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.1515151515151514,
+  "open": [
+   1,
+   3,
+   5,
+   12,
+   14
+  ]
+ },
+ {
+  "lvl": 825,
+  "shape": "butterfly",
+  "tier": "B",
+  "attempt": 32,
+  "inBand": true,
+  "arrows": 65,
+  "initialOpen": 4,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.1538461538461537,
+  "open": [
+   10,
+   11,
+   42,
+   49
+  ]
+ },
+ {
+  "lvl": 830,
+  "shape": "donut",
+  "tier": "B",
+  "attempt": 13,
+  "inBand": true,
+  "arrows": 39,
+  "initialOpen": 4,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.128205128205128,
+  "open": [
+   4,
+   8,
+   27,
+   28
+  ]
+ },
+ {
+  "lvl": 835,
+  "shape": "turtle",
+  "tier": "B",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 55,
+  "initialOpen": 5,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.909090909090909,
+  "open": [
+   1,
+   18,
+   21,
+   22,
+   33
+  ]
+ },
+ {
+  "lvl": 840,
+  "shape": "mouse",
+  "tier": "B",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 5,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.289473684210526,
+  "open": [
+   14,
+   15,
+   16,
+   23,
+   24
+  ]
+ },
+ {
+  "lvl": 845,
+  "shape": "tent",
+  "tier": "B",
+  "attempt": 19,
+  "inBand": true,
+  "arrows": 37,
+  "initialOpen": 5,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.027027027027027,
+  "open": [
+   0,
+   6,
+   7,
+   18,
+   27
+  ]
+ },
+ {
+  "lvl": 850,
+  "shape": "kite",
+  "tier": "B",
+  "attempt": 13,
+  "inBand": true,
+  "arrows": 33,
+  "initialOpen": 5,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.393939393939394,
+  "open": [
+   3,
+   21,
+   23,
+   24,
+   32
+  ]
+ },
+ {
+  "lvl": 855,
+  "shape": "apple",
+  "tier": "B",
+  "attempt": 85,
+  "inBand": true,
+  "arrows": 46,
+  "initialOpen": 5,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 3.5,
+  "open": [
+   14,
+   15,
+   21,
+   38,
+   44
+  ]
+ },
+ {
+  "lvl": 860,
+  "shape": "pencil",
+  "tier": "B",
+  "attempt": 16,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 4,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 1.7333333333333334,
+  "open": [
+   0,
+   3,
+   11,
+   16
+  ]
+ },
+ {
+  "lvl": 865,
+  "shape": "bear",
+  "tier": "B",
+  "attempt": 40,
+  "inBand": true,
+  "arrows": 49,
+  "initialOpen": 5,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 2.9183673469387754,
+  "open": [
+   12,
+   17,
+   33,
+   43,
+   46
+  ]
+ },
+ {
+  "lvl": 870,
+  "shape": "snowflake",
+  "tier": "B",
+  "attempt": 52,
+  "inBand": true,
+  "arrows": 35,
+  "initialOpen": 4,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.3142857142857145,
+  "open": [
+   10,
+   11,
+   22,
+   28
+  ]
+ },
+ {
+  "lvl": 875,
+  "shape": "house",
+  "tier": "B",
+  "attempt": 61,
+  "inBand": true,
+  "arrows": 50,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.66,
+  "open": [
+   14,
+   25,
+   31,
+   38,
+   45
+  ]
+ },
+ {
+  "lvl": 880,
+  "shape": "duck",
+  "tier": "B",
+  "attempt": 10,
+  "inBand": true,
+  "arrows": 45,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.7111111111111112,
+  "open": [
+   5,
+   28,
+   29,
+   40,
+   44
+  ]
+ },
+ {
+  "lvl": 885,
+  "shape": "gift",
+  "tier": "B",
+  "attempt": 12,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 5,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.3461538461538463,
+  "open": [
+   8,
+   17,
+   18,
+   35,
+   38
+  ]
+ },
+ {
+  "lvl": 890,
+  "shape": "cat",
+  "tier": "B",
+  "attempt": 31,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 5,
+  "waves": 24,
+  "chain": 24,
+  "avgBlockers": 2.9038461538461537,
+  "open": [
+   4,
+   17,
+   22,
+   25,
+   41
+  ]
+ },
+ {
+  "lvl": 895,
+  "shape": "pig",
+  "tier": "B",
+  "attempt": 39,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 5,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.269230769230769,
+  "open": [
+   1,
+   8,
+   11,
+   17,
+   45
+  ]
+ },
+ {
+  "lvl": 900,
+  "shape": "900",
+  "tier": "B",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 4,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 1.9666666666666666,
+  "open": [
+   2,
+   7,
+   11,
+   20
+  ]
+ },
+ {
+  "lvl": 905,
+  "shape": "penguin",
+  "tier": "B",
+  "attempt": 13,
+  "inBand": true,
+  "arrows": 37,
+  "initialOpen": 5,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.5405405405405403,
+  "open": [
+   0,
+   4,
+   7,
+   8,
+   36
+  ]
+ },
+ {
+  "lvl": 910,
+  "shape": "anchor",
+  "tier": "B",
+  "attempt": 66,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 5,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 3.0714285714285716,
+  "open": [
+   1,
+   4,
+   9,
+   13,
+   18
+  ]
+ },
+ {
+  "lvl": 915,
+  "shape": "cactus",
+  "tier": "B",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 36,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.4444444444444446,
+  "open": [
+   3,
+   7,
+   24,
+   31,
+   33
+  ]
+ },
+ {
+  "lvl": 920,
+  "shape": "palm",
+  "tier": "B",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 5,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2,
+  "open": [
+   5,
+   8,
+   18,
+   20,
+   26
+  ]
+ },
+ {
+  "lvl": 925,
+  "shape": "cake",
+  "tier": "B",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 5,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.9069767441860463,
+  "open": [
+   13,
+   18,
+   23,
+   26,
+   39
+  ]
+ },
+ {
+  "lvl": 930,
+  "shape": "paw",
+  "tier": "B",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 40,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.475,
+  "open": [
+   4,
+   10,
+   15,
+   23,
+   32
+  ]
+ },
+ {
+  "lvl": 935,
+  "shape": "whale",
+  "tier": "B",
+  "attempt": 12,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.6511627906976742,
+  "open": [
+   9,
+   15,
+   16,
+   23,
+   42
+  ]
+ },
+ {
+  "lvl": 940,
+  "shape": "rocket",
+  "tier": "B",
+  "attempt": 10,
+  "inBand": true,
+  "arrows": 37,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.5945945945945947,
+  "open": [
+   3,
+   4,
+   7,
+   18,
+   35
+  ]
+ },
+ {
+  "lvl": 945,
+  "shape": "bee",
+  "tier": "B",
+  "attempt": 50,
+  "inBand": true,
+  "arrows": 40,
+  "initialOpen": 5,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 2.95,
+  "open": [
+   2,
+   3,
+   5,
+   8,
+   33
+  ]
+ },
+ {
+  "lvl": 950,
+  "shape": "icecream",
+  "tier": "B",
+  "attempt": 54,
+  "inBand": true,
+  "arrows": 40,
+  "initialOpen": 5,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.75,
+  "open": [
+   13,
+   14,
+   22,
+   28,
+   35
+  ]
+ },
+ {
+  "lvl": 955,
+  "shape": "star",
+  "tier": "B",
+  "attempt": 36,
+  "inBand": true,
+  "arrows": 44,
+  "initialOpen": 5,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.340909090909091,
+  "open": [
+   10,
+   13,
+   21,
+   35,
+   40
+  ]
+ },
+ {
+  "lvl": 960,
+  "shape": "swan",
+  "tier": "B",
+  "attempt": 35,
+  "inBand": true,
+  "arrows": 39,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.769230769230769,
+  "open": [
+   1,
+   6,
+   9,
+   10,
+   38
+  ]
+ },
+ {
+  "lvl": 965,
+  "shape": "train",
+  "tier": "B",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 3,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.5,
+  "open": [
+   3,
+   20,
+   36
+  ]
+ },
+ {
+  "lvl": 970,
+  "shape": "octopus",
+  "tier": "B",
+  "attempt": 12,
+  "inBand": true,
+  "arrows": 50,
+  "initialOpen": 5,
+  "waves": 26,
+  "chain": 26,
+  "avgBlockers": 3.14,
+  "open": [
+   12,
+   14,
+   29,
+   40,
+   41
+  ]
+ },
+ {
+  "lvl": 975,
+  "shape": "magnet",
+  "tier": "B",
+  "attempt": 20,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 5,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.558139534883721,
+  "open": [
+   13,
+   18,
+   26,
+   31,
+   42
+  ]
+ },
+ {
+  "lvl": 980,
+  "shape": "smiley",
+  "tier": "B",
+  "attempt": 28,
+  "inBand": true,
+  "arrows": 50,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.76,
+  "open": [
+   2,
+   3,
+   17,
+   35,
+   37
+  ]
+ },
+ {
+  "lvl": 985,
+  "shape": "clock",
+  "tier": "B",
+  "attempt": 19,
+  "inBand": true,
+  "arrows": 48,
+  "initialOpen": 5,
+  "waves": 27,
+  "chain": 27,
+  "avgBlockers": 2.8958333333333335,
+  "open": [
+   4,
+   11,
+   14,
+   19,
+   20
+  ]
+ },
+ {
+  "lvl": 990,
+  "shape": "flag",
+  "tier": "B",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 36,
+  "initialOpen": 5,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.6944444444444446,
+  "open": [
+   3,
+   6,
+   18,
+   32,
+   33
+  ]
+ },
+ {
+  "lvl": 995,
+  "shape": "snowman",
+  "tier": "B",
+  "attempt": 231,
+  "inBand": true,
+  "arrows": 46,
+  "initialOpen": 5,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 3.130434782608696,
+  "open": [
+   0,
+   8,
+   9,
+   19,
+   39
+  ]
+ },
+ {
+  "lvl": 1000,
+  "shape": "1000",
+  "tier": "B",
+  "attempt": 225,
+  "inBand": true,
+  "arrows": 60,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.7333333333333334,
+  "open": [
+   10,
+   19,
+   28,
+   31,
+   54
+  ]
+ },
+ {
+  "lvl": 1005,
+  "shape": "moon",
+  "tier": "B",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.1666666666666665,
+  "open": [
+   7,
+   11,
+   15,
+   24,
+   26
+  ]
+ },
+ {
+  "lvl": 1010,
+  "shape": "leaf",
+  "tier": "B",
+  "attempt": 21,
+  "inBand": true,
+  "arrows": 32,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 1.96875,
+  "open": [
+   1,
+   14,
+   22,
+   30,
+   31
+  ]
+ },
+ {
+  "lvl": 1015,
+  "shape": "mushroom",
+  "tier": "B",
+  "attempt": 18,
+  "inBand": true,
+  "arrows": 44,
+  "initialOpen": 5,
+  "waves": 23,
+  "chain": 23,
+  "avgBlockers": 3.6363636363636362,
+  "open": [
+   2,
+   20,
+   21,
+   24,
+   41
+  ]
+ },
+ {
+  "lvl": 1020,
+  "shape": "comet",
+  "tier": "B",
+  "attempt": 43,
+  "inBand": true,
+  "arrows": 45,
+  "initialOpen": 4,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.4444444444444446,
+  "open": [
+   1,
+   4,
+   5,
+   36
+  ]
+ },
+ {
+  "lvl": 1025,
+  "shape": "dog",
+  "tier": "B",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 47,
+  "initialOpen": 5,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 3.3404255319148937,
+  "open": [
+   2,
+   3,
+   14,
+   16,
+   43
+  ]
+ },
+ {
+  "lvl": 1030,
+  "shape": "snail",
+  "tier": "B",
+  "attempt": 38,
+  "inBand": true,
+  "arrows": 51,
+  "initialOpen": 5,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.235294117647059,
+  "open": [
+   8,
+   11,
+   17,
+   31,
+   33
+  ]
+ },
+ {
+  "lvl": 1035,
+  "shape": "mushroom",
+  "tier": "B",
+  "attempt": 50,
+  "inBand": true,
+  "arrows": 45,
+  "initialOpen": 4,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.6444444444444444,
+  "open": [
+   15,
+   18,
+   26,
+   44
+  ]
+ },
+ {
+  "lvl": 1040,
+  "shape": "magnet",
+  "tier": "B",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 45,
+  "initialOpen": 5,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.2222222222222223,
+  "open": [
+   5,
+   14,
+   20,
+   22,
+   40
+  ]
+ },
+ {
+  "lvl": 1045,
+  "shape": "fox",
+  "tier": "B",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 38,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.289473684210526,
+  "open": [
+   7,
+   11,
+   13,
+   17,
+   20
+  ]
+ },
+ {
+  "lvl": 1050,
+  "shape": "heart",
+  "tier": "B",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 39,
+  "initialOpen": 5,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.6923076923076925,
+  "open": [
+   4,
+   20,
+   22,
+   29,
+   35
+  ]
+ },
+ {
+  "lvl": 1055,
+  "shape": "ladybug",
+  "tier": "B",
+  "attempt": 13,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 5,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.5348837209302326,
+  "open": [
+   5,
+   20,
+   23,
+   37,
+   38
+  ]
+ },
+ {
+  "lvl": 1060,
+  "shape": "whale",
+  "tier": "B",
+  "attempt": 61,
+  "inBand": true,
+  "arrows": 44,
+  "initialOpen": 5,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.2954545454545454,
+  "open": [
+   10,
+   30,
+   34,
+   38,
+   40
+  ]
+ },
+ {
+  "lvl": 1065,
+  "shape": "car",
+  "tier": "B",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 39,
+  "initialOpen": 5,
+  "waves": 10,
+  "chain": 10,
+  "avgBlockers": 2.769230769230769,
+  "open": [
+   6,
+   12,
+   13,
+   30,
+   35
+  ]
+ },
+ {
+  "lvl": 1070,
+  "shape": "cake",
+  "tier": "B",
+  "attempt": 28,
+  "inBand": true,
+  "arrows": 47,
+  "initialOpen": 5,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 2.8085106382978724,
+  "open": [
+   11,
+   20,
+   35,
+   37,
+   39
+  ]
+ },
+ {
+  "lvl": 1075,
+  "shape": "turtle",
+  "tier": "B",
+  "attempt": 37,
+  "inBand": true,
+  "arrows": 41,
+  "initialOpen": 4,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.4146341463414633,
+  "open": [
+   10,
+   27,
+   30,
+   31
+  ]
+ },
+ {
+  "lvl": 1080,
+  "shape": "boat",
+  "tier": "B",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.5806451612903225,
+  "open": [
+   5,
+   6,
+   8,
+   28,
+   30
+  ]
+ },
+ {
+  "lvl": 1085,
+  "shape": "rocket",
+  "tier": "B",
+  "attempt": 36,
+  "inBand": true,
+  "arrows": 40,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.775,
+  "open": [
+   3,
+   14,
+   16,
+   25,
+   31
+  ]
+ },
+ {
+  "lvl": 1090,
+  "shape": "balloon",
+  "tier": "B",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 45,
+  "initialOpen": 5,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.8666666666666667,
+  "open": [
+   1,
+   4,
+   15,
+   29,
+   36
+  ]
+ },
+ {
+  "lvl": 1095,
+  "shape": "kite",
+  "tier": "B",
+  "attempt": 46,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 5,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.129032258064516,
+  "open": [
+   7,
+   9,
+   16,
+   19,
+   28
+  ]
+ },
+ {
+  "lvl": 1100,
+  "shape": "1100",
+  "tier": "B",
+  "attempt": 140,
+  "inBand": true,
+  "arrows": 53,
+  "initialOpen": 4,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.7169811320754715,
+  "open": [
+   8,
+   22,
+   39,
+   42
+  ]
+ },
+ {
+  "lvl": 1105,
+  "shape": "cat",
+  "tier": "B",
+  "attempt": 49,
+  "inBand": true,
+  "arrows": 45,
+  "initialOpen": 4,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.933333333333333,
+  "open": [
+   0,
+   3,
+   14,
+   19
+  ]
+ },
+ {
+  "lvl": 1110,
+  "shape": "dog",
+  "tier": "B",
+  "attempt": 80,
+  "inBand": true,
+  "arrows": 40,
+  "initialOpen": 5,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.55,
+  "open": [
+   10,
+   12,
+   17,
+   21,
+   35
+  ]
+ },
+ {
+  "lvl": 1115,
+  "shape": "camera",
+  "tier": "B",
+  "attempt": 76,
+  "inBand": true,
+  "arrows": 45,
+  "initialOpen": 5,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 3.3333333333333335,
+  "open": [
+   8,
+   11,
+   17,
+   22,
+   26
+  ]
+ },
+ {
+  "lvl": 1120,
+  "shape": "dolphin",
+  "tier": "B",
+  "attempt": 68,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 5,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.5952380952380953,
+  "open": [
+   7,
+   17,
+   20,
+   26,
+   34
+  ]
+ },
+ {
+  "lvl": 1125,
+  "shape": "bear",
+  "tier": "B",
+  "attempt": 65,
+  "inBand": true,
+  "arrows": 47,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.6595744680851063,
+  "open": [
+   10,
+   21,
+   22,
+   27,
+   46
+  ]
+ },
+ {
+  "lvl": 1130,
+  "shape": "snowman",
+  "tier": "B",
+  "attempt": 46,
+  "inBand": true,
+  "arrows": 53,
+  "initialOpen": 5,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.9622641509433962,
+  "open": [
+   8,
+   12,
+   14,
+   22,
+   40
+  ]
+ },
+ {
+  "lvl": 1135,
+  "shape": "frog",
+  "tier": "B",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 46,
+  "initialOpen": 5,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 2.5869565217391304,
+  "open": [
+   21,
+   22,
+   24,
+   39,
+   40
+  ]
+ },
+ {
+  "lvl": 1140,
+  "shape": "raindrop",
+  "tier": "B",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 40,
+  "initialOpen": 5,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.325,
+  "open": [
+   9,
+   12,
+   20,
+   27,
+   31
+  ]
+ },
+ {
+  "lvl": 1145,
+  "shape": "bee",
+  "tier": "B",
+  "attempt": 53,
+  "inBand": true,
+  "arrows": 39,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 2.8205128205128207,
+  "open": [
+   3,
+   5,
+   14,
+   17,
+   18
+  ]
+ },
+ {
+  "lvl": 1150,
+  "shape": "cactus",
+  "tier": "B",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 40,
+  "initialOpen": 5,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.475,
+  "open": [
+   3,
+   12,
+   18,
+   27,
+   31
+  ]
+ },
+ {
+  "lvl": 1155,
+  "shape": "planet",
+  "tier": "B",
+  "attempt": 0,
+  "inBand": true,
+  "arrows": 54,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 3.037037037037037,
+  "open": [
+   6,
+   14,
+   29,
+   48,
+   52
+  ]
+ },
+ {
+  "lvl": 1160,
+  "shape": "tent",
+  "tier": "B",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 35,
+  "initialOpen": 5,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.4571428571428573,
+  "open": [
+   10,
+   12,
+   17,
+   23,
+   28
+  ]
+ },
+ {
+  "lvl": 1165,
+  "shape": "donut",
+  "tier": "B",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 44,
+  "initialOpen": 5,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.340909090909091,
+  "open": [
+   4,
+   12,
+   13,
+   36,
+   43
+  ]
+ },
+ {
+  "lvl": 1170,
+  "shape": "glasses",
+  "tier": "B",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 30,
+  "initialOpen": 5,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.6,
+  "open": [
+   6,
+   7,
+   16,
+   18,
+   19
+  ]
+ },
+ {
+  "lvl": 1175,
+  "shape": "lightning",
+  "tier": "B",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 31,
+  "initialOpen": 5,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 1.8387096774193548,
+  "open": [
+   11,
+   13,
+   14,
+   18,
+   20
+  ]
+ },
+ {
+  "lvl": 1180,
+  "shape": "snail",
+  "tier": "B",
+  "attempt": 39,
+  "inBand": true,
+  "arrows": 50,
+  "initialOpen": 5,
+  "waves": 27,
+  "chain": 27,
+  "avgBlockers": 3.08,
+  "open": [
+   10,
+   23,
+   26,
+   27,
+   39
+  ]
+ },
+ {
+  "lvl": 1185,
+  "shape": "plane",
+  "tier": "B",
+  "attempt": 13,
+  "inBand": true,
+  "arrows": 26,
+  "initialOpen": 4,
+  "waves": 11,
+  "chain": 11,
+  "avgBlockers": 2.1923076923076925,
+  "open": [
+   3,
+   11,
+   15,
+   21
+  ]
+ },
+ {
+  "lvl": 1190,
+  "shape": "pencil",
+  "tier": "B",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 34,
+  "initialOpen": 5,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 1.9411764705882353,
+  "open": [
+   5,
+   16,
+   20,
+   29,
+   32
+  ]
+ },
+ {
+  "lvl": 1195,
+  "shape": "smiley",
+  "tier": "B",
+  "attempt": 47,
+  "inBand": true,
+  "arrows": 46,
+  "initialOpen": 4,
+  "waves": 12,
+  "chain": 12,
+  "avgBlockers": 2.9130434782608696,
+  "open": [
+   21,
+   24,
+   27,
+   31
+  ]
+ },
+ {
+  "lvl": 1200,
+  "shape": "1200",
+  "tier": "C",
+  "attempt": 8,
+  "inBand": true,
+  "arrows": 49,
+  "initialOpen": 7,
+  "waves": 23,
+  "chain": 23,
+  "avgBlockers": 2.3877551020408165,
+  "open": [
+   0,
+   1,
+   15,
+   24,
+   31,
+   41,
+   43
+  ]
+ },
+ {
+  "lvl": 1205,
+  "shape": "snowflake",
+  "tier": "C",
+  "attempt": 65,
+  "inBand": true,
+  "arrows": 57,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.456140350877193,
+  "open": [
+   5,
+   16,
+   27,
+   39,
+   51,
+   52,
+   54
+  ]
+ },
+ {
+  "lvl": 1210,
+  "shape": "lock",
+  "tier": "C",
+  "attempt": 316,
+  "inBand": true,
+  "arrows": 77,
+  "initialOpen": 7,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.3766233766233764,
+  "open": [
+   0,
+   17,
+   18,
+   24,
+   36,
+   65,
+   72
+  ]
+ },
+ {
+  "lvl": 1215,
+  "shape": "duck",
+  "tier": "C",
+  "attempt": 63,
+  "inBand": false,
+  "arrows": 57,
+  "initialOpen": 8,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.824561403508772,
+  "open": [
+   3,
+   8,
+   9,
+   11,
+   14,
+   17,
+   18,
+   19
+  ]
+ },
+ {
+  "lvl": 1220,
+  "shape": "swan",
+  "tier": "C",
+  "attempt": 101,
+  "inBand": true,
+  "arrows": 65,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.3846153846153846,
+  "open": [
+   4,
+   7,
+   8,
+   11,
+   12,
+   21,
+   46
+  ]
+ },
+ {
+  "lvl": 1225,
+  "shape": "flag",
+  "tier": "C",
+  "attempt": 59,
+  "inBand": true,
+  "arrows": 59,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.2711864406779663,
+  "open": [
+   17,
+   24,
+   27,
+   40,
+   52,
+   53,
+   57
+  ]
+ },
+ {
+  "lvl": 1230,
+  "shape": "sun",
+  "tier": "C",
+  "attempt": 144,
+  "inBand": false,
+  "arrows": 77,
+  "initialOpen": 10,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 2.9220779220779223,
+  "open": [
+   11,
+   21,
+   24,
+   30,
+   36,
+   43,
+   47,
+   50,
+   62,
+   65
+  ]
+ },
+ {
+  "lvl": 1235,
+  "shape": "owl",
+  "tier": "C",
+  "attempt": 7,
+  "inBand": false,
+  "arrows": 73,
+  "initialOpen": 7,
+  "waves": 13,
+  "chain": 13,
+  "avgBlockers": 3.5205479452054793,
+  "open": [
+   1,
+   10,
+   20,
+   26,
+   43,
+   44,
+   54
+  ]
+ },
+ {
+  "lvl": 1240,
+  "shape": "elephant",
+  "tier": "C",
+  "attempt": 278,
+  "inBand": true,
+  "arrows": 70,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3,
+  "open": [
+   15,
+   28,
+   33,
+   34,
+   55,
+   58,
+   65
+  ]
+ },
+ {
+  "lvl": 1245,
+  "shape": "key",
+  "tier": "C",
+  "attempt": 10,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 7,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.6538461538461537,
+  "open": [
+   2,
+   4,
+   9,
+   12,
+   39,
+   41,
+   46
+  ]
+ },
+ {
+  "lvl": 1250,
+  "shape": "bell",
+  "tier": "C",
+  "attempt": 36,
+  "inBand": true,
+  "arrows": 53,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.849056603773585,
+  "open": [
+   1,
+   12,
+   23,
+   27,
+   28,
+   40,
+   52
+  ]
+ },
+ {
+  "lvl": 1255,
+  "shape": "pizza",
+  "tier": "C",
+  "attempt": 67,
+  "inBand": true,
+  "arrows": 67,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.5522388059701493,
+  "open": [
+   19,
+   20,
+   28,
+   38,
+   39,
+   53,
+   60
+  ]
+ },
+ {
+  "lvl": 1260,
+  "shape": "wave",
+  "tier": "C",
+  "attempt": 18,
+  "inBand": true,
+  "arrows": 59,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.864406779661017,
+  "open": [
+   0,
+   4,
+   7,
+   8,
+   17,
+   22,
+   52
+  ]
+ },
+ {
+  "lvl": 1265,
+  "shape": "tree",
+  "tier": "C",
+  "attempt": 10,
+  "inBand": true,
+  "arrows": 56,
+  "initialOpen": 7,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 2.875,
+  "open": [
+   9,
+   19,
+   22,
+   23,
+   26,
+   38,
+   41
+  ]
+ },
+ {
+  "lvl": 1270,
+  "shape": "sword",
+  "tier": "C",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 39,
+  "initialOpen": 6,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.051282051282051,
+  "open": [
+   0,
+   2,
+   20,
+   32,
+   34,
+   36
+  ]
+ },
+ {
+  "lvl": 1275,
+  "shape": "gift",
+  "tier": "C",
+  "attempt": 275,
+  "inBand": true,
+  "arrows": 82,
+  "initialOpen": 4,
+  "waves": 24,
+  "chain": 24,
+  "avgBlockers": 3.9878048780487805,
+  "open": [
+   4,
+   9,
+   30,
+   61
+  ]
+ },
+ {
+  "lvl": 1280,
+  "shape": "crab",
+  "tier": "C",
+  "attempt": 103,
+  "inBand": true,
+  "arrows": 64,
+  "initialOpen": 7,
+  "waves": 24,
+  "chain": 24,
+  "avgBlockers": 2.890625,
+  "open": [
+   16,
+   25,
+   32,
+   35,
+   44,
+   57,
+   60
+  ]
+ },
+ {
+  "lvl": 1285,
+  "shape": "bird",
+  "tier": "C",
+  "attempt": 170,
+  "inBand": true,
+  "arrows": 67,
+  "initialOpen": 7,
+  "waves": 24,
+  "chain": 24,
+  "avgBlockers": 3.671641791044776,
+  "open": [
+   5,
+   10,
+   21,
+   22,
+   23,
+   39,
+   52
+  ]
+ },
+ {
+  "lvl": 1290,
+  "shape": "octopus",
+  "tier": "C",
+  "attempt": 137,
+  "inBand": true,
+  "arrows": 74,
+  "initialOpen": 7,
+  "waves": 24,
+  "chain": 24,
+  "avgBlockers": 3.7162162162162162,
+  "open": [
+   0,
+   1,
+   2,
+   4,
+   10,
+   33,
+   65
+  ]
+ },
+ {
+  "lvl": 1295,
+  "shape": "leaf",
+  "tier": "C",
+  "attempt": 32,
+  "inBand": true,
+  "arrows": 55,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.1636363636363636,
+  "open": [
+   2,
+   8,
+   16,
+   23,
+   29,
+   40,
+   42
+  ]
+ },
+ {
+  "lvl": 1300,
+  "shape": "1300",
+  "tier": "C",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 53,
+  "initialOpen": 7,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.9245283018867925,
+  "open": [
+   2,
+   10,
+   16,
+   30,
+   32,
+   41,
+   48
+  ]
+ },
+ {
+  "lvl": 1305,
+  "shape": "paw",
+  "tier": "C",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 59,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.8135593220338984,
+  "open": [
+   18,
+   22,
+   27,
+   28,
+   41,
+   42,
+   54
+  ]
+ },
+ {
+  "lvl": 1310,
+  "shape": "anchor",
+  "tier": "C",
+  "attempt": 73,
+  "inBand": true,
+  "arrows": 63,
+  "initialOpen": 7,
+  "waves": 27,
+  "chain": 27,
+  "avgBlockers": 2.6984126984126986,
+  "open": [
+   1,
+   10,
+   11,
+   16,
+   28,
+   38,
+   62
+  ]
+ },
+ {
+  "lvl": 1315,
+  "shape": "mountain",
+  "tier": "C",
+  "attempt": 336,
+  "inBand": true,
+  "arrows": 65,
+  "initialOpen": 5,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.6307692307692307,
+  "open": [
+   1,
+   22,
+   28,
+   39,
+   48
+  ]
+ },
+ {
+  "lvl": 1320,
+  "shape": "clock",
+  "tier": "C",
+  "attempt": 105,
+  "inBand": false,
+  "arrows": 72,
+  "initialOpen": 8,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.2083333333333335,
+  "open": [
+   6,
+   18,
+   24,
+   31,
+   51,
+   53,
+   58,
+   59
+  ]
+ },
+ {
+  "lvl": 1325,
+  "shape": "palm",
+  "tier": "C",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 51,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.7058823529411766,
+  "open": [
+   5,
+   9,
+   17,
+   21,
+   34,
+   41,
+   43
+  ]
+ },
+ {
+  "lvl": 1330,
+  "shape": "infinity",
+  "tier": "C",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 62,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.193548387096774,
+  "open": [
+   3,
+   7,
+   13,
+   18,
+   19,
+   30,
+   49
+  ]
+ },
+ {
+  "lvl": 1335,
+  "shape": "diamond",
+  "tier": "C",
+  "attempt": 315,
+  "inBand": true,
+  "arrows": 56,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.4107142857142856,
+  "open": [
+   9,
+   21,
+   22,
+   29,
+   32,
+   37,
+   55
+  ]
+ },
+ {
+  "lvl": 1340,
+  "shape": "train",
+  "tier": "C",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 62,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3,
+  "open": [
+   1,
+   2,
+   7,
+   9,
+   23,
+   34,
+   60
+  ]
+ },
+ {
+  "lvl": 1345,
+  "shape": "mouse",
+  "tier": "C",
+  "attempt": 344,
+  "inBand": true,
+  "arrows": 63,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.6984126984126986,
+  "open": [
+   2,
+   16,
+   29,
+   31,
+   36,
+   43,
+   60
+  ]
+ },
+ {
+  "lvl": 1350,
+  "shape": "note",
+  "tier": "C",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 50,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.44,
+  "open": [
+   0,
+   1,
+   3,
+   14,
+   16,
+   17,
+   41
+  ]
+ },
+ {
+  "lvl": 1355,
+  "shape": "crown",
+  "tier": "C",
+  "attempt": 187,
+  "inBand": true,
+  "arrows": 67,
+  "initialOpen": 7,
+  "waves": 23,
+  "chain": 23,
+  "avgBlockers": 3.5522388059701493,
+  "open": [
+   9,
+   14,
+   19,
+   40,
+   45,
+   50,
+   56
+  ]
+ },
+ {
+  "lvl": 1360,
+  "shape": "fish",
+  "tier": "C",
+  "attempt": 21,
+  "inBand": true,
+  "arrows": 73,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.3972602739726026,
+  "open": [
+   1,
+   13,
+   39,
+   49,
+   58,
+   68,
+   71
+  ]
+ },
+ {
+  "lvl": 1365,
+  "shape": "cloud",
+  "tier": "C",
+  "attempt": 108,
+  "inBand": true,
+  "arrows": 69,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.391304347826087,
+  "open": [
+   0,
+   33,
+   40,
+   50,
+   56,
+   63,
+   67
+  ]
+ },
+ {
+  "lvl": 1370,
+  "shape": "cup",
+  "tier": "C",
+  "attempt": 314,
+  "inBand": false,
+  "arrows": 84,
+  "initialOpen": 9,
+  "waves": 28,
+  "chain": 28,
+  "avgBlockers": 3.75,
+  "open": [
+   13,
+   27,
+   41,
+   47,
+   60,
+   62,
+   66,
+   67,
+   82
+  ]
+ },
+ {
+  "lvl": 1375,
+  "shape": "rabbit",
+  "tier": "C",
+  "attempt": 172,
+  "inBand": true,
+  "arrows": 79,
+  "initialOpen": 7,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.088607594936709,
+  "open": [
+   0,
+   4,
+   17,
+   20,
+   21,
+   51,
+   78
+  ]
+ },
+ {
+  "lvl": 1380,
+  "shape": "chick",
+  "tier": "C",
+  "attempt": 177,
+  "inBand": true,
+  "arrows": 65,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3.0615384615384613,
+  "open": [
+   5,
+   7,
+   17,
+   20,
+   47,
+   55,
+   56
+  ]
+ },
+ {
+  "lvl": 1385,
+  "shape": "house",
+  "tier": "C",
+  "attempt": 237,
+  "inBand": true,
+  "arrows": 77,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.987012987012987,
+  "open": [
+   10,
+   24,
+   38,
+   39,
+   58,
+   61,
+   68
+  ]
+ },
+ {
+  "lvl": 1390,
+  "shape": "pig",
+  "tier": "C",
+  "attempt": 226,
+  "inBand": true,
+  "arrows": 81,
+  "initialOpen": 7,
+  "waves": 27,
+  "chain": 27,
+  "avgBlockers": 3.308641975308642,
+  "open": [
+   0,
+   8,
+   9,
+   23,
+   48,
+   51,
+   52
+  ]
+ },
+ {
+  "lvl": 1395,
+  "shape": "star",
+  "tier": "C",
+  "attempt": 110,
+  "inBand": true,
+  "arrows": 60,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.8666666666666667,
+  "open": [
+   0,
+   13,
+   27,
+   32,
+   37,
+   50,
+   59
+  ]
+ },
+ {
+  "lvl": 1400,
+  "shape": "1400",
+  "tier": "C",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 54,
+  "initialOpen": 7,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.4814814814814814,
+  "open": [
+   0,
+   4,
+   5,
+   9,
+   25,
+   33,
+   35
+  ]
+ },
+ {
+  "lvl": 1405,
+  "shape": "butterfly",
+  "tier": "C",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 57,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.2982456140350878,
+  "open": [
+   0,
+   15,
+   28,
+   29,
+   31,
+   37,
+   48
+  ]
+ },
+ {
+  "lvl": 1410,
+  "shape": "moon",
+  "tier": "C",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.5961538461538463,
+  "open": [
+   2,
+   9,
+   10,
+   11,
+   22,
+   36,
+   38
+  ]
+ },
+ {
+  "lvl": 1415,
+  "shape": "flower",
+  "tier": "C",
+  "attempt": 52,
+  "inBand": true,
+  "arrows": 69,
+  "initialOpen": 7,
+  "waves": 24,
+  "chain": 24,
+  "avgBlockers": 2.9855072463768115,
+  "open": [
+   1,
+   8,
+   13,
+   33,
+   36,
+   55,
+   63
+  ]
+ },
+ {
+  "lvl": 1420,
+  "shape": "pear",
+  "tier": "C",
+  "attempt": 19,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.769230769230769,
+  "open": [
+   5,
+   13,
+   17,
+   26,
+   28,
+   31,
+   42
+  ]
+ },
+ {
+  "lvl": 1425,
+  "shape": "penguin",
+  "tier": "C",
+  "attempt": 12,
+  "inBand": true,
+  "arrows": 66,
+  "initialOpen": 7,
+  "waves": 24,
+  "chain": 24,
+  "avgBlockers": 3,
+  "open": [
+   2,
+   11,
+   33,
+   39,
+   44,
+   53,
+   56
+  ]
+ },
+ {
+  "lvl": 1430,
+  "shape": "apple",
+  "tier": "C",
+  "attempt": 238,
+  "inBand": true,
+  "arrows": 68,
+  "initialOpen": 7,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 3.3823529411764706,
+  "open": [
+   6,
+   28,
+   31,
+   40,
+   47,
+   53,
+   63
+  ]
+ },
+ {
+  "lvl": 1435,
+  "shape": "icecream",
+  "tier": "C",
+  "attempt": 359,
+  "inBand": true,
+  "arrows": 63,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.111111111111111,
+  "open": [
+   10,
+   15,
+   22,
+   23,
+   29,
+   35,
+   37
+  ]
+ },
+ {
+  "lvl": 1440,
+  "shape": "bat",
+  "tier": "C",
+  "attempt": 29,
+  "inBand": true,
+  "arrows": 69,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.3333333333333335,
+  "open": [
+   19,
+   21,
+   33,
+   44,
+   48,
+   53,
+   55
+  ]
+ },
+ {
+  "lvl": 1445,
+  "shape": "hat",
+  "tier": "C",
+  "attempt": 30,
+  "inBand": true,
+  "arrows": 54,
+  "initialOpen": 7,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 3.611111111111111,
+  "open": [
+   0,
+   4,
+   7,
+   26,
+   28,
+   50,
+   51
+  ]
+ },
+ {
+  "lvl": 1450,
+  "shape": "cherry",
+  "tier": "C",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 46,
+  "initialOpen": 6,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.369565217391304,
+  "open": [
+   11,
+   12,
+   17,
+   27,
+   28,
+   30
+  ]
+ },
+ {
+  "lvl": 1455,
+  "shape": "hourglass",
+  "tier": "C",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 79,
+  "initialOpen": 7,
+  "waves": 27,
+  "chain": 27,
+  "avgBlockers": 3.3417721518987342,
+  "open": [
+   21,
+   22,
+   44,
+   45,
+   55,
+   57,
+   74
+  ]
+ },
+ {
+  "lvl": 1460,
+  "shape": "umbrella",
+  "tier": "C",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.1153846153846154,
+  "open": [
+   5,
+   6,
+   7,
+   9,
+   14,
+   15,
+   24
+  ]
+ },
+ {
+  "lvl": 1465,
+  "shape": "comet",
+  "tier": "C",
+  "attempt": 34,
+  "inBand": true,
+  "arrows": 72,
+  "initialOpen": 7,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.3055555555555554,
+  "open": [
+   6,
+   7,
+   12,
+   25,
+   36,
+   63,
+   65
+  ]
+ },
+ {
+  "lvl": 1470,
+  "shape": "snowflake",
+  "tier": "C",
+  "attempt": 28,
+  "inBand": true,
+  "arrows": 48,
+  "initialOpen": 7,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.625,
+  "open": [
+   2,
+   13,
+   20,
+   33,
+   36,
+   42,
+   44
+  ]
+ },
+ {
+  "lvl": 1475,
+  "shape": "bird",
+  "tier": "C",
+  "attempt": 185,
+  "inBand": true,
+  "arrows": 66,
+  "initialOpen": 7,
+  "waves": 23,
+  "chain": 23,
+  "avgBlockers": 2.9393939393939394,
+  "open": [
+   5,
+   7,
+   14,
+   18,
+   25,
+   28,
+   46
+  ]
+ },
+ {
+  "lvl": 1480,
+  "shape": "raindrop",
+  "tier": "C",
+  "attempt": 52,
+  "inBand": true,
+  "arrows": 63,
+  "initialOpen": 7,
+  "waves": 24,
+  "chain": 24,
+  "avgBlockers": 3.4285714285714284,
+  "open": [
+   7,
+   16,
+   26,
+   32,
+   38,
+   47,
+   49
+  ]
+ },
+ {
+  "lvl": 1485,
+  "shape": "key",
+  "tier": "C",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 50,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.62,
+  "open": [
+   0,
+   1,
+   2,
+   12,
+   16,
+   19,
+   24
+  ]
+ },
+ {
+  "lvl": 1490,
+  "shape": "donut",
+  "tier": "C",
+  "attempt": 87,
+  "inBand": true,
+  "arrows": 60,
+  "initialOpen": 6,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.8,
+  "open": [
+   1,
+   8,
+   9,
+   11,
+   45,
+   59
+  ]
+ },
+ {
+  "lvl": 1495,
+  "shape": "car",
+  "tier": "C",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 56,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.625,
+  "open": [
+   0,
+   14,
+   18,
+   23,
+   27,
+   29,
+   33
+  ]
+ },
+ {
+  "lvl": 1500,
+  "shape": "1500",
+  "tier": "C",
+  "attempt": 58,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.3653846153846154,
+  "open": [
+   2,
+   13,
+   15,
+   16,
+   22,
+   32,
+   50
+  ]
+ },
+ {
+  "lvl": 1505,
+  "shape": "whale",
+  "tier": "C",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 73,
+  "initialOpen": 7,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.6301369863013697,
+  "open": [
+   1,
+   11,
+   13,
+   42,
+   54,
+   57,
+   68
+  ]
+ },
+ {
+  "lvl": 1510,
+  "shape": "balloon",
+  "tier": "C",
+  "attempt": 34,
+  "inBand": true,
+  "arrows": 66,
+  "initialOpen": 7,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 3.742424242424242,
+  "open": [
+   2,
+   3,
+   16,
+   30,
+   45,
+   56,
+   61
+  ]
+ },
+ {
+  "lvl": 1515,
+  "shape": "dolphin",
+  "tier": "C",
+  "attempt": 139,
+  "inBand": true,
+  "arrows": 58,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.6206896551724137,
+  "open": [
+   11,
+   14,
+   21,
+   30,
+   35,
+   38,
+   50
+  ]
+ },
+ {
+  "lvl": 1520,
+  "shape": "swan",
+  "tier": "C",
+  "attempt": 105,
+  "inBand": true,
+  "arrows": 63,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.142857142857143,
+  "open": [
+   5,
+   8,
+   17,
+   31,
+   41,
+   43,
+   53
+  ]
+ },
+ {
+  "lvl": 1525,
+  "shape": "bee",
+  "tier": "C",
+  "attempt": 13,
+  "inBand": true,
+  "arrows": 62,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.096774193548387,
+  "open": [
+   1,
+   21,
+   24,
+   25,
+   47,
+   49,
+   52
+  ]
+ },
+ {
+  "lvl": 1530,
+  "shape": "crab",
+  "tier": "C",
+  "attempt": 36,
+  "inBand": true,
+  "arrows": 67,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.4328358208955225,
+  "open": [
+   0,
+   1,
+   16,
+   38,
+   41,
+   46,
+   62
+  ]
+ },
+ {
+  "lvl": 1535,
+  "shape": "sun",
+  "tier": "C",
+  "attempt": 277,
+  "inBand": false,
+  "arrows": 78,
+  "initialOpen": 9,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3.08974358974359,
+  "open": [
+   1,
+   3,
+   9,
+   14,
+   19,
+   33,
+   39,
+   50,
+   60
+  ]
+ },
+ {
+  "lvl": 1540,
+  "shape": "duck",
+  "tier": "C",
+  "attempt": 13,
+  "inBand": false,
+  "arrows": 73,
+  "initialOpen": 8,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.315068493150685,
+  "open": [
+   11,
+   16,
+   30,
+   31,
+   41,
+   43,
+   48,
+   50
+  ]
+ },
+ {
+  "lvl": 1545,
+  "shape": "planet",
+  "tier": "C",
+  "attempt": 66,
+  "inBand": false,
+  "arrows": 72,
+  "initialOpen": 9,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.8472222222222223,
+  "open": [
+   10,
+   12,
+   19,
+   36,
+   39,
+   47,
+   53,
+   57,
+   64
+  ]
+ },
+ {
+  "lvl": 1550,
+  "shape": "note",
+  "tier": "C",
+  "attempt": 34,
+  "inBand": true,
+  "arrows": 47,
+  "initialOpen": 6,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 3.148936170212766,
+  "open": [
+   5,
+   10,
+   18,
+   23,
+   28,
+   46
+  ]
+ },
+ {
+  "lvl": 1555,
+  "shape": "penguin",
+  "tier": "C",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 70,
+  "initialOpen": 7,
+  "waves": 24,
+  "chain": 24,
+  "avgBlockers": 3.085714285714286,
+  "open": [
+   3,
+   12,
+   18,
+   24,
+   54,
+   55,
+   69
+  ]
+ },
+ {
+  "lvl": 1560,
+  "shape": "lightning",
+  "tier": "C",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 46,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.630434782608696,
+  "open": [
+   3,
+   10,
+   23,
+   32,
+   36,
+   39,
+   40
+  ]
+ },
+ {
+  "lvl": 1565,
+  "shape": "icecream",
+  "tier": "C",
+  "attempt": 37,
+  "inBand": true,
+  "arrows": 56,
+  "initialOpen": 7,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 3.125,
+  "open": [
+   1,
+   14,
+   18,
+   25,
+   39,
+   43,
+   53
+  ]
+ },
+ {
+  "lvl": 1570,
+  "shape": "wave",
+  "tier": "C",
+  "attempt": 144,
+  "inBand": true,
+  "arrows": 61,
+  "initialOpen": 7,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.721311475409836,
+  "open": [
+   0,
+   10,
+   12,
+   20,
+   24,
+   27,
+   28
+  ]
+ },
+ {
+  "lvl": 1575,
+  "shape": "butterfly",
+  "tier": "C",
+  "attempt": 36,
+  "inBand": true,
+  "arrows": 53,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.056603773584906,
+  "open": [
+   1,
+   7,
+   44,
+   46,
+   49,
+   50,
+   51
+  ]
+ },
+ {
+  "lvl": 1580,
+  "shape": "snail",
+  "tier": "C",
+  "attempt": 81,
+  "inBand": false,
+  "arrows": 70,
+  "initialOpen": 8,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.2142857142857144,
+  "open": [
+   2,
+   8,
+   15,
+   23,
+   31,
+   44,
+   45,
+   60
+  ]
+ },
+ {
+  "lvl": 1585,
+  "shape": "clock",
+  "tier": "C",
+  "attempt": 33,
+  "inBand": true,
+  "arrows": 70,
+  "initialOpen": 6,
+  "waves": 24,
+  "chain": 24,
+  "avgBlockers": 3.342857142857143,
+  "open": [
+   16,
+   19,
+   20,
+   30,
+   54,
+   56
+  ]
+ },
+ {
+  "lvl": 1590,
+  "shape": "kite",
+  "tier": "C",
+  "attempt": 21,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.8333333333333335,
+  "open": [
+   1,
+   2,
+   6,
+   8,
+   14,
+   25,
+   28
+  ]
+ },
+ {
+  "lvl": 1595,
+  "shape": "cat",
+  "tier": "C",
+  "attempt": 225,
+  "inBand": true,
+  "arrows": 66,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.757575757575758,
+  "open": [
+   8,
+   17,
+   25,
+   32,
+   37,
+   38,
+   42
+  ]
+ },
+ {
+  "lvl": 1600,
+  "shape": "1600",
+  "tier": "C",
+  "attempt": 37,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.3076923076923075,
+  "open": [
+   12,
+   21,
+   27,
+   30,
+   37,
+   39,
+   48
+  ]
+ },
+ {
+  "lvl": 1605,
+  "shape": "mouse",
+  "tier": "C",
+  "attempt": 46,
+  "inBand": true,
+  "arrows": 62,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.532258064516129,
+  "open": [
+   20,
+   29,
+   30,
+   32,
+   36,
+   42,
+   49
+  ]
+ },
+ {
+  "lvl": 1610,
+  "shape": "palm",
+  "tier": "C",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 50,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 2.66,
+  "open": [
+   5,
+   13,
+   14,
+   17,
+   22,
+   24,
+   28
+  ]
+ },
+ {
+  "lvl": 1615,
+  "shape": "tree",
+  "tier": "C",
+  "attempt": 90,
+  "inBand": true,
+  "arrows": 55,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.7454545454545456,
+  "open": [
+   10,
+   16,
+   20,
+   21,
+   41,
+   48,
+   52
+  ]
+ },
+ {
+  "lvl": 1620,
+  "shape": "umbrella",
+  "tier": "C",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 53,
+  "initialOpen": 7,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.0754716981132075,
+  "open": [
+   2,
+   22,
+   31,
+   33,
+   38,
+   43,
+   48
+  ]
+ },
+ {
+  "lvl": 1625,
+  "shape": "infinity",
+  "tier": "C",
+  "attempt": 81,
+  "inBand": true,
+  "arrows": 60,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.533333333333333,
+  "open": [
+   0,
+   7,
+   29,
+   37,
+   39,
+   42,
+   45
+  ]
+ },
+ {
+  "lvl": 1630,
+  "shape": "cactus",
+  "tier": "C",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 59,
+  "initialOpen": 7,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.694915254237288,
+  "open": [
+   24,
+   33,
+   39,
+   43,
+   46,
+   50,
+   54
+  ]
+ },
+ {
+  "lvl": 1635,
+  "shape": "bell",
+  "tier": "C",
+  "attempt": 137,
+  "inBand": true,
+  "arrows": 58,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.206896551724138,
+  "open": [
+   7,
+   8,
+   12,
+   17,
+   20,
+   21,
+   33
+  ]
+ },
+ {
+  "lvl": 1640,
+  "shape": "turtle",
+  "tier": "C",
+  "attempt": 98,
+  "inBand": true,
+  "arrows": 69,
+  "initialOpen": 7,
+  "waves": 28,
+  "chain": 28,
+  "avgBlockers": 3.5072463768115942,
+  "open": [
+   0,
+   12,
+   19,
+   33,
+   35,
+   39,
+   44
+  ]
+ },
+ {
+  "lvl": 1645,
+  "shape": "glasses",
+  "tier": "C",
+  "attempt": 52,
+  "inBand": true,
+  "arrows": 44,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 3.1363636363636362,
+  "open": [
+   2,
+   6,
+   15,
+   26,
+   31,
+   34,
+   35
+  ]
+ },
+ {
+  "lvl": 1650,
+  "shape": "heart",
+  "tier": "C",
+  "attempt": 34,
+  "inBand": true,
+  "arrows": 57,
+  "initialOpen": 7,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 2.807017543859649,
+  "open": [
+   1,
+   8,
+   9,
+   17,
+   32,
+   44,
+   45
+  ]
+ },
+ {
+  "lvl": 1655,
+  "shape": "flower",
+  "tier": "C",
+  "attempt": 144,
+  "inBand": true,
+  "arrows": 70,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 2.742857142857143,
+  "open": [
+   1,
+   3,
+   8,
+   9,
+   39,
+   45,
+   63
+  ]
+ },
+ {
+  "lvl": 1660,
+  "shape": "plane",
+  "tier": "C",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 6,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.761904761904762,
+  "open": [
+   0,
+   2,
+   18,
+   19,
+   33,
+   37
+  ]
+ },
+ {
+  "lvl": 1665,
+  "shape": "tent",
+  "tier": "C",
+  "attempt": 10,
+  "inBand": true,
+  "arrows": 50,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3,
+  "open": [
+   15,
+   16,
+   17,
+   26,
+   30,
+   39,
+   40
+  ]
+ },
+ {
+  "lvl": 1670,
+  "shape": "camera",
+  "tier": "C",
+  "attempt": 96,
+  "inBand": true,
+  "arrows": 74,
+  "initialOpen": 6,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.175675675675676,
+  "open": [
+   7,
+   8,
+   36,
+   37,
+   46,
+   58
+  ]
+ },
+ {
+  "lvl": 1675,
+  "shape": "leaf",
+  "tier": "C",
+  "attempt": 17,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 2.673076923076923,
+  "open": [
+   1,
+   4,
+   8,
+   17,
+   30,
+   42,
+   43
+  ]
+ },
+ {
+  "lvl": 1680,
+  "shape": "rabbit",
+  "tier": "C",
+  "attempt": 226,
+  "inBand": false,
+  "arrows": 78,
+  "initialOpen": 11,
+  "waves": 27,
+  "chain": 27,
+  "avgBlockers": 3.371794871794872,
+  "open": [
+   0,
+   2,
+   3,
+   15,
+   17,
+   33,
+   57,
+   67,
+   75,
+   76,
+   77
+  ]
+ },
+ {
+  "lvl": 1685,
+  "shape": "house",
+  "tier": "C",
+  "attempt": 102,
+  "inBand": true,
+  "arrows": 72,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 3.1944444444444446,
+  "open": [
+   2,
+   3,
+   14,
+   17,
+   39,
+   62,
+   69
+  ]
+ },
+ {
+  "lvl": 1690,
+  "shape": "flag",
+  "tier": "C",
+  "attempt": 14,
+  "inBand": true,
+  "arrows": 54,
+  "initialOpen": 6,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 3.0925925925925926,
+  "open": [
+   3,
+   5,
+   14,
+   32,
+   35,
+   46
+  ]
+ },
+ {
+  "lvl": 1695,
+  "shape": "cake",
+  "tier": "C",
+  "attempt": 67,
+  "inBand": true,
+  "arrows": 67,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.9402985074626864,
+  "open": [
+   16,
+   18,
+   20,
+   34,
+   40,
+   57,
+   64
+  ]
+ },
+ {
+  "lvl": 1700,
+  "shape": "1700",
+  "tier": "C",
+  "attempt": 8,
+  "inBand": true,
+  "arrows": 51,
+  "initialOpen": 6,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 2.7058823529411766,
+  "open": [
+   0,
+   15,
+   19,
+   21,
+   25,
+   38
+  ]
+ },
+ {
+  "lvl": 1705,
+  "shape": "hat",
+  "tier": "C",
+  "attempt": 51,
+  "inBand": true,
+  "arrows": 53,
+  "initialOpen": 7,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.0943396226415096,
+  "open": [
+   13,
+   15,
+   27,
+   30,
+   36,
+   39,
+   48
+  ]
+ },
+ {
+  "lvl": 1710,
+  "shape": "owl",
+  "tier": "C",
+  "attempt": 142,
+  "inBand": true,
+  "arrows": 69,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.5942028985507246,
+  "open": [
+   2,
+   22,
+   47,
+   56,
+   57,
+   58,
+   67
+  ]
+ },
+ {
+  "lvl": 1715,
+  "shape": "snowman",
+  "tier": "C",
+  "attempt": 102,
+  "inBand": false,
+  "arrows": 79,
+  "initialOpen": 9,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.5569620253164556,
+  "open": [
+   0,
+   1,
+   5,
+   14,
+   18,
+   34,
+   35,
+   40,
+   50
+  ]
+ },
+ {
+  "lvl": 1720,
+  "shape": "pizza",
+  "tier": "C",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 5,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 4,
+  "open": [
+   0,
+   4,
+   24,
+   25,
+   45
+  ]
+ },
+ {
+  "lvl": 1725,
+  "shape": "bat",
+  "tier": "C",
+  "attempt": 204,
+  "inBand": true,
+  "arrows": 67,
+  "initialOpen": 7,
+  "waves": 23,
+  "chain": 23,
+  "avgBlockers": 3.1343283582089554,
+  "open": [
+   10,
+   11,
+   14,
+   19,
+   27,
+   38,
+   63
+  ]
+ },
+ {
+  "lvl": 1730,
+  "shape": "dog",
+  "tier": "C",
+  "attempt": 188,
+  "inBand": true,
+  "arrows": 74,
+  "initialOpen": 7,
+  "waves": 28,
+  "chain": 28,
+  "avgBlockers": 3.6621621621621623,
+  "open": [
+   0,
+   3,
+   10,
+   33,
+   38,
+   66,
+   69
+  ]
+ },
+ {
+  "lvl": 1735,
+  "shape": "smiley",
+  "tier": "C",
+  "attempt": 150,
+  "inBand": false,
+  "arrows": 84,
+  "initialOpen": 12,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.7857142857142856,
+  "open": [
+   2,
+   5,
+   7,
+   9,
+   20,
+   44,
+   45,
+   63,
+   66,
+   71,
+   76,
+   77
+  ]
+ },
+ {
+  "lvl": 1740,
+  "shape": "mountain",
+  "tier": "C",
+  "attempt": 48,
+  "inBand": true,
+  "arrows": 72,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.3055555555555554,
+  "open": [
+   8,
+   19,
+   36,
+   37,
+   50,
+   53,
+   56
+  ]
+ },
+ {
+  "lvl": 1745,
+  "shape": "pig",
+  "tier": "C",
+  "attempt": 70,
+  "inBand": true,
+  "arrows": 84,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.25,
+  "open": [
+   2,
+   8,
+   10,
+   40,
+   68,
+   69,
+   71
+  ]
+ },
+ {
+  "lvl": 1750,
+  "shape": "train",
+  "tier": "C",
+  "attempt": 36,
+  "inBand": true,
+  "arrows": 58,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.6379310344827585,
+  "open": [
+   4,
+   8,
+   19,
+   27,
+   38,
+   51,
+   54
+  ]
+ },
+ {
+  "lvl": 1755,
+  "shape": "crown",
+  "tier": "C",
+  "attempt": 100,
+  "inBand": true,
+  "arrows": 65,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.276923076923077,
+  "open": [
+   12,
+   13,
+   19,
+   22,
+   33,
+   44,
+   54
+  ]
+ },
+ {
+  "lvl": 1760,
+  "shape": "rocket",
+  "tier": "C",
+  "attempt": 22,
+  "inBand": true,
+  "arrows": 62,
+  "initialOpen": 7,
+  "waves": 23,
+  "chain": 23,
+  "avgBlockers": 2.693548387096774,
+  "open": [
+   4,
+   7,
+   15,
+   38,
+   41,
+   47,
+   51
+  ]
+ },
+ {
+  "lvl": 1765,
+  "shape": "mushroom",
+  "tier": "C",
+  "attempt": 142,
+  "inBand": true,
+  "arrows": 58,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.5517241379310347,
+  "open": [
+   0,
+   4,
+   11,
+   13,
+   21,
+   26,
+   29
+  ]
+ },
+ {
+  "lvl": 1770,
+  "shape": "lock",
+  "tier": "C",
+  "attempt": 54,
+  "inBand": true,
+  "arrows": 70,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.8714285714285714,
+  "open": [
+   6,
+   17,
+   18,
+   40,
+   47,
+   48,
+   59
+  ]
+ },
+ {
+  "lvl": 1775,
+  "shape": "octopus",
+  "tier": "C",
+  "attempt": 14,
+  "inBand": false,
+  "arrows": 77,
+  "initialOpen": 8,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.090909090909091,
+  "open": [
+   22,
+   24,
+   29,
+   30,
+   38,
+   40,
+   67,
+   72
+  ]
+ },
+ {
+  "lvl": 1780,
+  "shape": "fox",
+  "tier": "C",
+  "attempt": 100,
+  "inBand": true,
+  "arrows": 63,
+  "initialOpen": 5,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.1904761904761907,
+  "open": [
+   13,
+   17,
+   35,
+   43,
+   57
+  ]
+ },
+ {
+  "lvl": 1785,
+  "shape": "cherry",
+  "tier": "C",
+  "attempt": 31,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.2325581395348837,
+  "open": [
+   13,
+   14,
+   23,
+   28,
+   31,
+   36,
+   38
+  ]
+ },
+ {
+  "lvl": 1790,
+  "shape": "elephant",
+  "tier": "C",
+  "attempt": 350,
+  "inBand": true,
+  "arrows": 77,
+  "initialOpen": 7,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.5974025974025974,
+  "open": [
+   8,
+   16,
+   20,
+   28,
+   38,
+   40,
+   71
+  ]
+ },
+ {
+  "lvl": 1795,
+  "shape": "paw",
+  "tier": "C",
+  "attempt": 13,
+  "inBand": true,
+  "arrows": 56,
+  "initialOpen": 7,
+  "waves": 26,
+  "chain": 26,
+  "avgBlockers": 2.5,
+  "open": [
+   13,
+   27,
+   36,
+   37,
+   43,
+   47,
+   55
+  ]
+ },
+ {
+  "lvl": 1800,
+  "shape": "1800",
+  "tier": "C",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 51,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.5686274509803924,
+  "open": [
+   0,
+   5,
+   6,
+   7,
+   18,
+   39,
+   42
+  ]
+ },
+ {
+  "lvl": 1805,
+  "shape": "boat",
+  "tier": "C",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 48,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.9166666666666665,
+  "open": [
+   2,
+   15,
+   19,
+   27,
+   29,
+   42,
+   46
+  ]
+ },
+ {
+  "lvl": 1810,
+  "shape": "gift",
+  "tier": "C",
+  "attempt": 254,
+  "inBand": true,
+  "arrows": 78,
+  "initialOpen": 7,
+  "waves": 28,
+  "chain": 28,
+  "avgBlockers": 3.8076923076923075,
+  "open": [
+   21,
+   24,
+   36,
+   46,
+   52,
+   56,
+   62
+  ]
+ },
+ {
+  "lvl": 1815,
+  "shape": "chick",
+  "tier": "C",
+  "attempt": 54,
+  "inBand": true,
+  "arrows": 66,
+  "initialOpen": 7,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 3.090909090909091,
+  "open": [
+   4,
+   6,
+   19,
+   32,
+   34,
+   46,
+   65
+  ]
+ },
+ {
+  "lvl": 1820,
+  "shape": "ladybug",
+  "tier": "C",
+  "attempt": 168,
+  "inBand": true,
+  "arrows": 73,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.164383561643836,
+  "open": [
+   12,
+   17,
+   18,
+   25,
+   35,
+   42,
+   66
+  ]
+ },
+ {
+  "lvl": 1825,
+  "shape": "frog",
+  "tier": "C",
+  "attempt": 103,
+  "inBand": true,
+  "arrows": 77,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.948051948051948,
+  "open": [
+   10,
+   13,
+   31,
+   50,
+   54,
+   57,
+   60
+  ]
+ },
+ {
+  "lvl": 1830,
+  "shape": "comet",
+  "tier": "C",
+  "attempt": 110,
+  "inBand": true,
+  "arrows": 67,
+  "initialOpen": 7,
+  "waves": 23,
+  "chain": 23,
+  "avgBlockers": 3.08955223880597,
+  "open": [
+   1,
+   5,
+   8,
+   23,
+   41,
+   47,
+   66
+  ]
+ },
+ {
+  "lvl": 1835,
+  "shape": "hourglass",
+  "tier": "C",
+  "attempt": 206,
+  "inBand": true,
+  "arrows": 73,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.452054794520548,
+  "open": [
+   18,
+   31,
+   51,
+   53,
+   55,
+   61,
+   67
+  ]
+ },
+ {
+  "lvl": 1840,
+  "shape": "cloud",
+  "tier": "C",
+  "attempt": 37,
+  "inBand": true,
+  "arrows": 68,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.5441176470588234,
+  "open": [
+   4,
+   12,
+   22,
+   41,
+   42,
+   49,
+   67
+  ]
+ },
+ {
+  "lvl": 1845,
+  "shape": "diamond",
+  "tier": "C",
+  "attempt": 152,
+  "inBand": true,
+  "arrows": 46,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.0217391304347827,
+  "open": [
+   0,
+   1,
+   4,
+   11,
+   24,
+   28,
+   38
+  ]
+ },
+ {
+  "lvl": 1850,
+  "shape": "star",
+  "tier": "C",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 59,
+  "initialOpen": 6,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.9661016949152543,
+  "open": [
+   0,
+   6,
+   8,
+   14,
+   28,
+   53
+  ]
+ },
+ {
+  "lvl": 1855,
+  "shape": "pear",
+  "tier": "C",
+  "attempt": 106,
+  "inBand": true,
+  "arrows": 53,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 3.207547169811321,
+  "open": [
+   0,
+   5,
+   14,
+   31,
+   34,
+   38,
+   43
+  ]
+ },
+ {
+  "lvl": 1860,
+  "shape": "pencil",
+  "tier": "C",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 47,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.0851063829787235,
+  "open": [
+   1,
+   12,
+   16,
+   21,
+   31,
+   32,
+   41
+  ]
+ },
+ {
+  "lvl": 1865,
+  "shape": "cup",
+  "tier": "C",
+  "attempt": 386,
+  "inBand": false,
+  "arrows": 84,
+  "initialOpen": 9,
+  "waves": 23,
+  "chain": 23,
+  "avgBlockers": 3.619047619047619,
+  "open": [
+   0,
+   8,
+   11,
+   14,
+   21,
+   38,
+   58,
+   68,
+   71
+  ]
+ },
+ {
+  "lvl": 1870,
+  "shape": "anchor",
+  "tier": "C",
+  "attempt": 101,
+  "inBand": true,
+  "arrows": 65,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3.1384615384615384,
+  "open": [
+   0,
+   9,
+   10,
+   12,
+   16,
+   56,
+   64
+  ]
+ },
+ {
+  "lvl": 1875,
+  "shape": "magnet",
+  "tier": "C",
+  "attempt": 203,
+  "inBand": true,
+  "arrows": 77,
+  "initialOpen": 7,
+  "waves": 27,
+  "chain": 27,
+  "avgBlockers": 3.2857142857142856,
+  "open": [
+   56,
+   60,
+   61,
+   63,
+   64,
+   68,
+   74
+  ]
+ },
+ {
+  "lvl": 1880,
+  "shape": "bear",
+  "tier": "C",
+  "attempt": 341,
+  "inBand": true,
+  "arrows": 65,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.830769230769231,
+  "open": [
+   1,
+   20,
+   23,
+   24,
+   28,
+   54,
+   55
+  ]
+ },
+ {
+  "lvl": 1885,
+  "shape": "moon",
+  "tier": "C",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.730769230769231,
+  "open": [
+   1,
+   10,
+   27,
+   30,
+   35,
+   40,
+   47
+  ]
+ },
+ {
+  "lvl": 1890,
+  "shape": "apple",
+  "tier": "C",
+  "attempt": 133,
+  "inBand": true,
+  "arrows": 74,
+  "initialOpen": 7,
+  "waves": 26,
+  "chain": 26,
+  "avgBlockers": 3.4324324324324325,
+  "open": [
+   1,
+   35,
+   47,
+   54,
+   66,
+   70,
+   72
+  ]
+ },
+ {
+  "lvl": 1895,
+  "shape": "fish",
+  "tier": "C",
+  "attempt": 237,
+  "inBand": true,
+  "arrows": 70,
+  "initialOpen": 7,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 3.3285714285714287,
+  "open": [
+   0,
+   1,
+   5,
+   11,
+   32,
+   46,
+   50
+  ]
+ },
+ {
+  "lvl": 1900,
+  "shape": "1900",
+  "tier": "C",
+  "attempt": 41,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 5,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.730769230769231,
+  "open": [
+   8,
+   11,
+   28,
+   33,
+   35
+  ]
+ },
+ {
+  "lvl": 1905,
+  "shape": "sword",
+  "tier": "C",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 46,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.1739130434782608,
+  "open": [
+   8,
+   9,
+   10,
+   16,
+   36,
+   43,
+   45
+  ]
+ },
+ {
+  "lvl": 1910,
+  "shape": "ladybug",
+  "tier": "C",
+  "attempt": 111,
+  "inBand": true,
+  "arrows": 66,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3.0303030303030303,
+  "open": [
+   3,
+   21,
+   31,
+   33,
+   51,
+   53,
+   59
+  ]
+ },
+ {
+  "lvl": 1915,
+  "shape": "anchor",
+  "tier": "C",
+  "attempt": 47,
+  "inBand": true,
+  "arrows": 65,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3.123076923076923,
+  "open": [
+   8,
+   10,
+   12,
+   30,
+   38,
+   39,
+   42
+  ]
+ },
+ {
+  "lvl": 1920,
+  "shape": "kite",
+  "tier": "C",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 46,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.739130434782609,
+  "open": [
+   1,
+   2,
+   11,
+   27,
+   28,
+   38,
+   44
+  ]
+ },
+ {
+  "lvl": 1925,
+  "shape": "moon",
+  "tier": "C",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 53,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.5660377358490565,
+  "open": [
+   0,
+   10,
+   11,
+   12,
+   14,
+   25,
+   50
+  ]
+ },
+ {
+  "lvl": 1930,
+  "shape": "mouse",
+  "tier": "C",
+  "attempt": 144,
+  "inBand": true,
+  "arrows": 64,
+  "initialOpen": 7,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.515625,
+  "open": [
+   9,
+   10,
+   14,
+   32,
+   44,
+   54,
+   62
+  ]
+ },
+ {
+  "lvl": 1935,
+  "shape": "rabbit",
+  "tier": "C",
+  "attempt": 132,
+  "inBand": true,
+  "arrows": 72,
+  "initialOpen": 7,
+  "waves": 27,
+  "chain": 27,
+  "avgBlockers": 3.9722222222222223,
+  "open": [
+   13,
+   17,
+   22,
+   27,
+   31,
+   43,
+   63
+  ]
+ },
+ {
+  "lvl": 1940,
+  "shape": "train",
+  "tier": "C",
+  "attempt": 39,
+  "inBand": true,
+  "arrows": 58,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.413793103448276,
+  "open": [
+   1,
+   7,
+   29,
+   32,
+   37,
+   46,
+   55
+  ]
+ },
+ {
+  "lvl": 1945,
+  "shape": "bear",
+  "tier": "C",
+  "attempt": 253,
+  "inBand": true,
+  "arrows": 69,
+  "initialOpen": 7,
+  "waves": 24,
+  "chain": 24,
+  "avgBlockers": 3.3333333333333335,
+  "open": [
+   2,
+   5,
+   6,
+   7,
+   14,
+   18,
+   42
+  ]
+ },
+ {
+  "lvl": 1950,
+  "shape": "cake",
+  "tier": "C",
+  "attempt": 118,
+  "inBand": true,
+  "arrows": 61,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.7540983606557377,
+  "open": [
+   1,
+   17,
+   37,
+   41,
+   50,
+   54,
+   58
+  ]
+ },
+ {
+  "lvl": 1955,
+  "shape": "bird",
+  "tier": "C",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 64,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 4.28125,
+  "open": [
+   1,
+   5,
+   6,
+   33,
+   39,
+   47,
+   55
+  ]
+ },
+ {
+  "lvl": 1960,
+  "shape": "bat",
+  "tier": "C",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 57,
+  "initialOpen": 7,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.5789473684210527,
+  "open": [
+   2,
+   5,
+   8,
+   19,
+   35,
+   52,
+   55
+  ]
+ },
+ {
+  "lvl": 1965,
+  "shape": "wave",
+  "tier": "C",
+  "attempt": 40,
+  "inBand": true,
+  "arrows": 68,
+  "initialOpen": 7,
+  "waves": 26,
+  "chain": 26,
+  "avgBlockers": 2.8676470588235294,
+  "open": [
+   2,
+   7,
+   11,
+   19,
+   20,
+   53,
+   65
+  ]
+ },
+ {
+  "lvl": 1970,
+  "shape": "butterfly",
+  "tier": "C",
+  "attempt": 43,
+  "inBand": true,
+  "arrows": 56,
+  "initialOpen": 7,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 2.857142857142857,
+  "open": [
+   1,
+   15,
+   22,
+   36,
+   39,
+   40,
+   45
+  ]
+ },
+ {
+  "lvl": 1975,
+  "shape": "snowman",
+  "tier": "C",
+  "attempt": 23,
+  "inBand": false,
+  "arrows": 76,
+  "initialOpen": 9,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 3.710526315789474,
+  "open": [
+   8,
+   22,
+   27,
+   30,
+   42,
+   47,
+   57,
+   63,
+   67
+  ]
+ },
+ {
+  "lvl": 1980,
+  "shape": "cloud",
+  "tier": "C",
+  "attempt": 78,
+  "inBand": true,
+  "arrows": 61,
+  "initialOpen": 6,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 4.180327868852459,
+  "open": [
+   11,
+   14,
+   15,
+   21,
+   35,
+   53
+  ]
+ },
+ {
+  "lvl": 1985,
+  "shape": "fox",
+  "tier": "C",
+  "attempt": 54,
+  "inBand": true,
+  "arrows": 63,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.2063492063492065,
+  "open": [
+   0,
+   12,
+   13,
+   32,
+   37,
+   45,
+   52
+  ]
+ },
+ {
+  "lvl": 1990,
+  "shape": "flag",
+  "tier": "C",
+  "attempt": 11,
+  "inBand": true,
+  "arrows": 42,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.5952380952380953,
+  "open": [
+   0,
+   1,
+   6,
+   16,
+   22,
+   23,
+   29
+  ]
+ },
+ {
+  "lvl": 1995,
+  "shape": "diamond",
+  "tier": "C",
+  "attempt": 2,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 7,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 2.7884615384615383,
+  "open": [
+   1,
+   4,
+   13,
+   14,
+   23,
+   24,
+   43
+  ]
+ },
+ {
+  "lvl": 2000,
+  "shape": "2000",
+  "tier": "C",
+  "attempt": 24,
+  "inBand": true,
+  "arrows": 64,
+  "initialOpen": 6,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 2.765625,
+  "open": [
+   0,
+   1,
+   8,
+   19,
+   31,
+   51
+  ]
+ },
+ {
+  "lvl": 2005,
+  "shape": "glasses",
+  "tier": "C",
+  "attempt": 5,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 7,
+  "waves": 25,
+  "chain": 25,
+  "avgBlockers": 3.6346153846153846,
+  "open": [
+   1,
+   14,
+   21,
+   32,
+   35,
+   47,
+   51
+  ]
+ },
+ {
+  "lvl": 2010,
+  "shape": "pencil",
+  "tier": "C",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 7,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.116279069767442,
+  "open": [
+   10,
+   16,
+   21,
+   29,
+   32,
+   33,
+   40
+  ]
+ },
+ {
+  "lvl": 2015,
+  "shape": "planet",
+  "tier": "C",
+  "attempt": 69,
+  "inBand": false,
+  "arrows": 79,
+  "initialOpen": 9,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 3.1139240506329116,
+  "open": [
+   19,
+   34,
+   41,
+   42,
+   43,
+   49,
+   61,
+   75,
+   76
+  ]
+ },
+ {
+  "lvl": 2020,
+  "shape": "whale",
+  "tier": "C",
+  "attempt": 16,
+  "inBand": true,
+  "arrows": 65,
+  "initialOpen": 7,
+  "waves": 23,
+  "chain": 23,
+  "avgBlockers": 3.4307692307692306,
+  "open": [
+   0,
+   11,
+   20,
+   38,
+   52,
+   55,
+   60
+  ]
+ },
+ {
+  "lvl": 2025,
+  "shape": "snail",
+  "tier": "C",
+  "attempt": 275,
+  "inBand": true,
+  "arrows": 70,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.0714285714285716,
+  "open": [
+   0,
+   8,
+   10,
+   28,
+   29,
+   44,
+   49
+  ]
+ },
+ {
+  "lvl": 2030,
+  "shape": "paw",
+  "tier": "C",
+  "attempt": 60,
+  "inBand": true,
+  "arrows": 65,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.6307692307692307,
+  "open": [
+   1,
+   3,
+   14,
+   18,
+   19,
+   38,
+   41
+  ]
+ },
+ {
+  "lvl": 2035,
+  "shape": "owl",
+  "tier": "C",
+  "attempt": 396,
+  "inBand": true,
+  "arrows": 74,
+  "initialOpen": 7,
+  "waves": 25,
+  "chain": 25,
+  "avgBlockers": 3.5945945945945947,
+  "open": [
+   9,
+   14,
+   17,
+   34,
+   57,
+   61,
+   72
+  ]
+ },
+ {
+  "lvl": 2040,
+  "shape": "key",
+  "tier": "C",
+  "attempt": 3,
+  "inBand": true,
+  "arrows": 51,
+  "initialOpen": 7,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 2.5098039215686274,
+  "open": [
+   4,
+   29,
+   32,
+   37,
+   39,
+   44,
+   47
+  ]
+ },
+ {
+  "lvl": 2045,
+  "shape": "crab",
+  "tier": "C",
+  "attempt": 76,
+  "inBand": true,
+  "arrows": 70,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.742857142857143,
+  "open": [
+   5,
+   34,
+   37,
+   38,
+   46,
+   47,
+   50
+  ]
+ },
+ {
+  "lvl": 2050,
+  "shape": "swan",
+  "tier": "C",
+  "attempt": 24,
+  "inBand": true,
+  "arrows": 66,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 2.9242424242424243,
+  "open": [
+   5,
+   6,
+   8,
+   48,
+   49,
+   52,
+   63
+  ]
+ },
+ {
+  "lvl": 2055,
+  "shape": "cup",
+  "tier": "C",
+  "attempt": 105,
+  "inBand": false,
+  "arrows": 91,
+  "initialOpen": 9,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3.2747252747252746,
+  "open": [
+   8,
+   23,
+   24,
+   25,
+   33,
+   36,
+   44,
+   56,
+   61
+  ]
+ },
+ {
+  "lvl": 2060,
+  "shape": "leaf",
+  "tier": "C",
+  "attempt": 23,
+  "inBand": true,
+  "arrows": 51,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.4705882352941178,
+  "open": [
+   8,
+   23,
+   24,
+   32,
+   33,
+   38,
+   40
+  ]
+ },
+ {
+  "lvl": 2065,
+  "shape": "apple",
+  "tier": "C",
+  "attempt": 69,
+  "inBand": false,
+  "arrows": 78,
+  "initialOpen": 9,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.2564102564102564,
+  "open": [
+   0,
+   1,
+   5,
+   8,
+   36,
+   37,
+   43,
+   49,
+   74
+  ]
+ },
+ {
+  "lvl": 2070,
+  "shape": "pig",
+  "tier": "C",
+  "attempt": 251,
+  "inBand": true,
+  "arrows": 80,
+  "initialOpen": 7,
+  "waves": 28,
+  "chain": 28,
+  "avgBlockers": 3.7875,
+  "open": [
+   9,
+   16,
+   33,
+   38,
+   47,
+   48,
+   66
+  ]
+ },
+ {
+  "lvl": 2075,
+  "shape": "fish",
+  "tier": "C",
+  "attempt": 395,
+  "inBand": true,
+  "arrows": 73,
+  "initialOpen": 7,
+  "waves": 27,
+  "chain": 27,
+  "avgBlockers": 3.26027397260274,
+  "open": [
+   28,
+   29,
+   47,
+   54,
+   56,
+   59,
+   63
+  ]
+ },
+ {
+  "lvl": 2080,
+  "shape": "duck",
+  "tier": "C",
+  "attempt": 39,
+  "inBand": true,
+  "arrows": 65,
+  "initialOpen": 6,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.5076923076923077,
+  "open": [
+   0,
+   2,
+   4,
+   7,
+   14,
+   44
+  ]
+ },
+ {
+  "lvl": 2085,
+  "shape": "lock",
+  "tier": "C",
+  "attempt": 374,
+  "inBand": true,
+  "arrows": 70,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 3.4571428571428573,
+  "open": [
+   0,
+   6,
+   18,
+   32,
+   35,
+   36,
+   60
+  ]
+ },
+ {
+  "lvl": 2090,
+  "shape": "crown",
+  "tier": "C",
+  "attempt": 100,
+  "inBand": true,
+  "arrows": 62,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 2.9516129032258065,
+  "open": [
+   0,
+   2,
+   10,
+   12,
+   30,
+   45,
+   50
+  ]
+ },
+ {
+  "lvl": 2095,
+  "shape": "mushroom",
+  "tier": "C",
+  "attempt": 41,
+  "inBand": true,
+  "arrows": 63,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.5238095238095237,
+  "open": [
+   3,
+   11,
+   18,
+   19,
+   32,
+   40,
+   43
+  ]
+ },
+ {
+  "lvl": 2100,
+  "shape": "2100",
+  "tier": "C",
+  "attempt": 69,
+  "inBand": true,
+  "arrows": 58,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.0172413793103448,
+  "open": [
+   8,
+   9,
+   16,
+   21,
+   22,
+   31,
+   48
+  ]
+ },
+ {
+  "lvl": 2105,
+  "shape": "cherry",
+  "tier": "C",
+  "attempt": 14,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 6,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 2.9615384615384617,
+  "open": [
+   1,
+   12,
+   16,
+   26,
+   43,
+   46
+  ]
+ },
+ {
+  "lvl": 2110,
+  "shape": "snowflake",
+  "tier": "C",
+  "attempt": 123,
+  "inBand": true,
+  "arrows": 59,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.542372881355932,
+  "open": [
+   5,
+   9,
+   25,
+   27,
+   32,
+   50,
+   55
+  ]
+ },
+ {
+  "lvl": 2115,
+  "shape": "palm",
+  "tier": "C",
+  "attempt": 56,
+  "inBand": true,
+  "arrows": 52,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.7884615384615383,
+  "open": [
+   1,
+   3,
+   7,
+   13,
+   17,
+   22,
+   35
+  ]
+ },
+ {
+  "lvl": 2120,
+  "shape": "flower",
+  "tier": "C",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 66,
+  "initialOpen": 4,
+  "waves": 26,
+  "chain": 26,
+  "avgBlockers": 3.090909090909091,
+  "open": [
+   31,
+   39,
+   43,
+   59
+  ]
+ },
+ {
+  "lvl": 2125,
+  "shape": "hat",
+  "tier": "C",
+  "attempt": 4,
+  "inBand": true,
+  "arrows": 57,
+  "initialOpen": 7,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 3.6315789473684212,
+  "open": [
+   5,
+   9,
+   27,
+   36,
+   43,
+   55,
+   56
+  ]
+ },
+ {
+  "lvl": 2130,
+  "shape": "chick",
+  "tier": "C",
+  "attempt": 7,
+  "inBand": true,
+  "arrows": 62,
+  "initialOpen": 7,
+  "waves": 25,
+  "chain": 25,
+  "avgBlockers": 2.9516129032258065,
+  "open": [
+   2,
+   27,
+   28,
+   36,
+   41,
+   45,
+   49
+  ]
+ },
+ {
+  "lvl": 2135,
+  "shape": "house",
+  "tier": "C",
+  "attempt": 161,
+  "inBand": true,
+  "arrows": 74,
+  "initialOpen": 7,
+  "waves": 22,
+  "chain": 22,
+  "avgBlockers": 3.4324324324324325,
+  "open": [
+   10,
+   13,
+   23,
+   32,
+   36,
+   57,
+   73
+  ]
+ },
+ {
+  "lvl": 2140,
+  "shape": "pizza",
+  "tier": "C",
+  "attempt": 223,
+  "inBand": true,
+  "arrows": 63,
+  "initialOpen": 7,
+  "waves": 24,
+  "chain": 24,
+  "avgBlockers": 3,
+  "open": [
+   2,
+   8,
+   11,
+   34,
+   37,
+   46,
+   56
+  ]
+ },
+ {
+  "lvl": 2145,
+  "shape": "infinity",
+  "tier": "C",
+  "attempt": 1,
+  "inBand": true,
+  "arrows": 63,
+  "initialOpen": 7,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.8412698412698414,
+  "open": [
+   0,
+   6,
+   10,
+   15,
+   18,
+   36,
+   56
+  ]
+ },
+ {
+  "lvl": 2150,
+  "shape": "rocket",
+  "tier": "C",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 58,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 2.706896551724138,
+  "open": [
+   15,
+   16,
+   27,
+   36,
+   41,
+   54,
+   56
+  ]
+ },
+ {
+  "lvl": 2155,
+  "shape": "umbrella",
+  "tier": "C",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 53,
+  "initialOpen": 7,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 3.1132075471698113,
+  "open": [
+   3,
+   23,
+   34,
+   42,
+   43,
+   49,
+   52
+  ]
+ },
+ {
+  "lvl": 2160,
+  "shape": "boat",
+  "tier": "C",
+  "attempt": 21,
+  "inBand": true,
+  "arrows": 47,
+  "initialOpen": 7,
+  "waves": 16,
+  "chain": 16,
+  "avgBlockers": 2.723404255319149,
+  "open": [
+   2,
+   13,
+   18,
+   33,
+   34,
+   36,
+   43
+  ]
+ },
+ {
+  "lvl": 2165,
+  "shape": "dog",
+  "tier": "C",
+  "attempt": 19,
+  "inBand": false,
+  "arrows": 71,
+  "initialOpen": 8,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.1549295774647885,
+  "open": [
+   5,
+   6,
+   7,
+   23,
+   35,
+   48,
+   59,
+   62
+  ]
+ },
+ {
+  "lvl": 2170,
+  "shape": "sun",
+  "tier": "C",
+  "attempt": 325,
+  "inBand": false,
+  "arrows": 71,
+  "initialOpen": 8,
+  "waves": 17,
+  "chain": 17,
+  "avgBlockers": 2.859154929577465,
+  "open": [
+   0,
+   13,
+   18,
+   22,
+   29,
+   34,
+   47,
+   57
+  ]
+ },
+ {
+  "lvl": 2175,
+  "shape": "sword",
+  "tier": "C",
+  "attempt": 9,
+  "inBand": true,
+  "arrows": 37,
+  "initialOpen": 7,
+  "waves": 14,
+  "chain": 14,
+  "avgBlockers": 2.027027027027027,
+  "open": [
+   5,
+   19,
+   20,
+   25,
+   30,
+   32,
+   33
+  ]
+ },
+ {
+  "lvl": 2180,
+  "shape": "pear",
+  "tier": "C",
+  "attempt": 36,
+  "inBand": true,
+  "arrows": 58,
+  "initialOpen": 7,
+  "waves": 21,
+  "chain": 21,
+  "avgBlockers": 3.1724137931034484,
+  "open": [
+   8,
+   16,
+   17,
+   40,
+   48,
+   52,
+   57
+  ]
+ },
+ {
+  "lvl": 2185,
+  "shape": "magnet",
+  "tier": "C",
+  "attempt": 52,
+  "inBand": true,
+  "arrows": 73,
+  "initialOpen": 7,
+  "waves": 20,
+  "chain": 20,
+  "avgBlockers": 3.287671232876712,
+  "open": [
+   1,
+   4,
+   11,
+   13,
+   27,
+   33,
+   65
+  ]
+ },
+ {
+  "lvl": 2190,
+  "shape": "frog",
+  "tier": "C",
+  "attempt": 324,
+  "inBand": false,
+  "arrows": 71,
+  "initialOpen": 9,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.112676056338028,
+  "open": [
+   8,
+   10,
+   16,
+   20,
+   25,
+   44,
+   47,
+   53,
+   56
+  ]
+ },
+ {
+  "lvl": 2195,
+  "shape": "elephant",
+  "tier": "C",
+  "attempt": 64,
+  "inBand": true,
+  "arrows": 69,
+  "initialOpen": 7,
+  "waves": 23,
+  "chain": 23,
+  "avgBlockers": 3.0434782608695654,
+  "open": [
+   5,
+   8,
+   16,
+   43,
+   44,
+   51,
+   61
+  ]
+ },
+ {
+  "lvl": 2200,
+  "shape": "2200",
+  "tier": "C",
+  "attempt": 29,
+  "inBand": true,
+  "arrows": 61,
+  "initialOpen": 7,
+  "waves": 23,
+  "chain": 23,
+  "avgBlockers": 3.3114754098360657,
+  "open": [
+   0,
+   5,
+   7,
+   15,
+   31,
+   59,
+   60
+  ]
+ },
+ {
+  "lvl": 2205,
+  "shape": "plane",
+  "tier": "C",
+  "attempt": 6,
+  "inBand": true,
+  "arrows": 43,
+  "initialOpen": 7,
+  "waves": 15,
+  "chain": 15,
+  "avgBlockers": 2.3255813953488373,
+  "open": [
+   0,
+   10,
+   11,
+   24,
+   27,
+   31,
+   32
+  ]
+ },
+ {
+  "lvl": 2210,
+  "shape": "smiley",
+  "tier": "C",
+  "attempt": 15,
+  "inBand": true,
+  "arrows": 84,
+  "initialOpen": 7,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.607142857142857,
+  "open": [
+   7,
+   8,
+   50,
+   58,
+   59,
+   67,
+   70
+  ]
+ },
+ {
+  "lvl": 2215,
+  "shape": "cactus",
+  "tier": "C",
+  "attempt": 8,
+  "inBand": true,
+  "arrows": 58,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 2.8275862068965516,
+  "open": [
+   0,
+   2,
+   3,
+   7,
+   46,
+   51,
+   56
+  ]
+ },
+ {
+  "lvl": 2220,
+  "shape": "tent",
+  "tier": "C",
+  "attempt": 13,
+  "inBand": true,
+  "arrows": 48,
+  "initialOpen": 4,
+  "waves": 19,
+  "chain": 19,
+  "avgBlockers": 3.75,
+  "open": [
+   0,
+   17,
+   27,
+   28
+  ]
+ },
+ {
+  "lvl": 2225,
+  "shape": "raindrop",
+  "tier": "C",
+  "attempt": 125,
+  "inBand": true,
+  "arrows": 56,
+  "initialOpen": 7,
+  "waves": 18,
+  "chain": 18,
+  "avgBlockers": 3.267857142857143,
+  "open": [
+   1,
+   3,
+   4,
+   9,
+   17,
+   24,
+   41
+  ]
+ }
+]

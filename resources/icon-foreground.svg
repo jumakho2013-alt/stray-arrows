@@ -1,20 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <defs>
-    <linearGradient id="arrow" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#e8d5b7"/>
-      <stop offset="100%" stop-color="#f5f0e8"/>
-    </linearGradient>
+    <path id="sparkle" d="M 0,-100 C 25,-30 25,-25 100,0 C 25,25 25,30 0,100 C -25,30 -25,25 -100,0 C -25,-25 -25,-30 0,-100 Z"/>
   </defs>
 
-  <!-- Main arrow path centered for adaptive icon safe zone -->
-  <g stroke="url(#arrow)" stroke-width="50" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <polyline points="300,660 300,460 480,460 480,580 640,580 640,380"/>
+  <!-- Hero arrow inside the 660-px safe zone -->
+  <g stroke="#f0a890" stroke-width="56" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <polyline points="320,700 320,460 540,460 540,340"/>
   </g>
-  <polygon points="640,305 585,375 695,375" fill="url(#arrow)"/>
+  <polygon points="540,256 470,340 610,340" fill="#f0a890"/>
 
-  <!-- Small accent -->
-  <g stroke="rgba(232,213,183,0.22)" stroke-width="24" stroke-linecap="round" fill="none">
-    <polyline points="520,730 680,730"/>
+  <g fill="#ffc8b0">
+    <use href="#sparkle" transform="translate(640 640) scale(1.85)"/>
   </g>
-  <polygon points="715,730 670,705 670,755" fill="rgba(232,213,183,0.22)"/>
+  <circle cx="618" cy="618" r="32" fill="#ffffff" opacity="0.45"/>
+
+  <g fill="#f0a890" opacity="0.55">
+    <use href="#sparkle" transform="translate(380 320) scale(0.30)"/>
+  </g>
 </svg>

@@ -1,7 +1,49 @@
-<svg xmlns='http://www.w3.org/2000/svg' width='1024' height='1024'>
-  <rect width='1024' height='1024' rx='200' fill='#5c7caa'/>
-  <g stroke='white' stroke-width='60' stroke-linecap='round' stroke-linejoin='round' fill='none'>
-    <polyline points='280,660 280,300 580,300 580,500 750,500'/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!--
+    Stray Arrows app icon — v3 (Sunset Macaron).
+    Warm earthy palette per design research:
+      • Aubergine gradient bg (#4a3a37 → #3a2c2a) — same as the in-game
+        dark mode in v2.5.
+      • Soft coral / salmon glow centred on the hero so the colours
+        read alive at small sizes.
+      • Hero is a 4-pointed sparkle in dusty coral over a single bold
+        coral arrow.
+      • Ambient mini-sparkles in soft peach.
+  -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a3a37"/>
+      <stop offset="100%" stop-color="#3a2c2a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f0a890" stop-opacity="0.40"/>
+      <stop offset="60%" stop-color="#f0a890" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#f0a890" stop-opacity="0"/>
+    </radialGradient>
+    <path id="sparkle" d="M 0,-100 C 25,-30 25,-25 100,0 C 25,25 25,30 0,100 C -25,30 -25,25 -100,0 C -25,-25 -25,-30 0,-100 Z"/>
+  </defs>
+
+  <rect width="1024" height="1024" rx="220" ry="220" fill="url(#bg)"/>
+  <rect width="1024" height="1024" rx="220" ry="220" fill="url(#glow)"/>
+
+  <g fill="#f0a890" opacity="0.55">
+    <use href="#sparkle" transform="translate(780 260) scale(0.55)"/>
+    <use href="#sparkle" transform="translate(230 820) scale(0.42)"/>
   </g>
-  <polygon points='820,500 680,420 680,580' fill='white'/>
+  <g fill="#f0c8b8" opacity="0.30">
+    <use href="#sparkle" transform="translate(840 780) scale(0.30)"/>
+    <use href="#sparkle" transform="translate(200 300) scale(0.28)"/>
+  </g>
+
+  <!-- Hero arrow — coral, turning up -->
+  <g stroke="#f0a890" stroke-width="64" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <polyline points="240,720 240,440 560,440 560,300"/>
+  </g>
+  <polygon points="560,200 480,300 640,300" fill="#f0a890"/>
+
+  <!-- Hero sparkle in dusty coral -->
+  <g fill="#ffc8b0">
+    <use href="#sparkle" transform="translate(640 640) scale(2.2)"/>
+  </g>
+  <circle cx="615" cy="615" r="40" fill="#ffffff" opacity="0.40"/>
 </svg>

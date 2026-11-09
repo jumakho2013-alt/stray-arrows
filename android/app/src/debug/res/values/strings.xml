@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- Debug-only overlay: the side-by-side dev build must be tellable apart
+     from the store install on the same phone. -->
+<resources>
+    <string name="app_name">Stray Arrows DEV</string>
+    <string name="title_activity_main">Stray Arrows DEV</string>
+</resources>

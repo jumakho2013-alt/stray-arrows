@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stray Arrows — просмотр уровней</title>
+<!--
+  Dev-only contact sheet of real boards. It embeds no level data: it loads the
+  game itself in a hidden same-origin iframe and calls window._ae, so every
+  board shown is exactly what the shipping generator produces right now.
+  Change index.html, hit refresh, see the difference.
+
+  Not copied by `npm run build`, so it never reaches www/ or the app bundles.
+  Serve the repo root (python3 -m http.server 8765) and open
+  http://localhost:8765/tools/levels-preview.html
+-->
+<style>
+:root{
+  --bg:#f2e7db; --card:#fdf6ec; --ink:#3a2c28; --dim:#8a7166;
+  --line:#e3d3c2; --gold:#b8831a; --arrow:#d68f7a; --open:#e8b04b; --shape:#b4703f;
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#241d1a;--card:#2f2622;--ink:#f0e4d8;--dim:#a6907f;
+        --line:#443831;--gold:#e8b04b;--shape:#dd9a63}
+}
+*{box-sizing:border-box}
+body{margin:0;padding:22px;background:var(--bg);color:var(--ink);
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,sans-serif}
+h1{margin:0 0 4px;font-size:23px;letter-spacing:-.02em}
+.sub{margin:0 0 16px;color:var(--dim);font-size:14px;max-width:64ch}
+.sub b{color:var(--gold)}
+form{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px;
+  padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px}
+label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--dim)}
+label.chk{cursor:pointer;user-select:none;padding-left:2px}
+label.chk input{width:auto;accent-color:var(--arrow)}
+.tag.fresh{color:var(--gold)}
+input{width:76px;padding:6px 8px;font:inherit;font-size:13px;color:var(--ink);
+  background:var(--bg);border:1px solid var(--line);border-radius:7px}
+button{padding:7px 16px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;
+  color:#fff;background:var(--arrow);border:0;border-radius:8px}
+button:hover{filter:brightness(1.07)}
+button.ghost{color:var(--ink);background:transparent;border:1px solid var(--line)}
+#status{margin:0 0 16px;color:var(--dim);font-size:13px}
+#status b{color:var(--gold)}
+.grid{display:grid;gap:15px;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));max-width:1500px}
+.tile{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;
+  transition:border-color .18s,box-shadow .18s}
+.tile:hover,.tile:focus-visible{border-color:var(--arrow);box-shadow:0 4px 18px rgba(58,44,40,.14)}
+@media(prefers-color-scheme:dark){.tile:hover,.tile:focus-visible{box-shadow:0 4px 18px rgba(0,0,0,.45)}}
+.board{display:flex;justify-content:center;align-items:center;padding:14px 10px;min-height:215px}
+.board svg{max-width:100%;height:auto;max-height:235px}
+.meta{border-top:1px solid var(--line);padding:10px 12px 12px}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:5px}
+.tag{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);white-space:nowrap}
+.tag.shape{color:var(--shape)}
+.nums{display:flex;flex-wrap:wrap;gap:3px 11px;font-size:12px;color:var(--dim)}
+.nums i{font-style:normal;font-weight:700;color:var(--ink)}
+.nums .hi i{color:var(--gold)}
+.bad{color:#c0392b;font-weight:700}
+@media(prefers-color-scheme:dark){.bad{color:#ff7d6b}}
+iframe{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;border:0}
+</style>
+</head>
+<body>
+
+<h1>Уровни — то, что реально выдаёт игра</h1>
+<p class="sub"><b>Золотым</b> — стрелы, которые можно нажать первым ходом. Всё
+остальное сначала надо расчистить чужими стрелами. Клик по доске открывает
+игру на этом уровне.</p>
+
+<form id="controls">
+  <label>с <input id="from" type="number" value="301" min="1" max="9999"></label>
+  <label>шаг <input id="step" type="number" value="1" min="1" max="500"></label>
+  <label>сколько <input id="count" type="number" value="12" min="1" max="48"></label>
+  <button type="submit">Показать</button>
+  <label class="chk"><input id="fresh" type="checkbox"> новым генератором</label>
+  <button type="button" class="ghost" data-preset="21,40,100,150,205,260">Фигуры</button>
+  <button type="button" class="ghost" data-preset="301,302,303,306,307,308">Процедурные</button>
+  <button type="button" class="ghost" data-preset="50,100,500,1000,1500,2000">Юбилейные</button>
+  <button type="button" class="ghost" data-preset="1,2,3,4,5,6,7,8,9,10" data-fresh="1">Первые 10 — новым</button>
+</form>
+
+<p id="status">Загружаю игру…</p>
+<div class="grid" id="grid"></div>
+
+<iframe id="game" src="../index.html" title="генератор уровней"></iframe>
+
+<script>
+const DX = [1, 0, -1, 0], DY = [0, -1, 0, 1];   // 0=R 1=U 2=L 3=D
+const $ = (id) => document.getElementById(id);
+
+// The game is the source of truth — no level data lives in this file.
+function gameReady() {
+  return new Promise((resolve, reject) => {
+    const started = Date.now();
+    (function poll() {
+      let w = null;
+      try { w = $('game').contentWindow; } catch (e) { /* not navigated yet */ }
+      if (w && w._ae && w._ae.generateLevel) return resolve(w);
+      if (Date.now() - started > 15000) return reject(new Error('игра не загрузилась за 15 с'));
+      setTimeout(poll, 120);
+    })();
+  });
+}
+
+// Wave decomposition — the metric the generator exists to control. Wave 0 is
+// every arrow tappable before a single move is made; an empty wave before the
+// board is clear means no ordering finishes it.
+function analyse(rows, cols, arrows) {
+  const occ = new Map();
+  arrows.forEach((a, i) => a.cells.forEach(([r, c]) => occ.set(r * cols + c, i)));
+  const deps = arrows.map((a, i) => {
+    const s = new Set();
+    const h = a.cells[a.cells.length - 1];
+    let r = h[0] + DY[a.dir], c = h[1] + DX[a.dir];
+    while (r >= 0 && r < rows && c >= 0 && c < cols) {
+      const j = occ.get(r * cols + c);
+      if (j !== undefined && j !== i) s.add(j);
+      r += DY[a.dir]; c += DX[a.dir];
+    }
+    return s;
+  });
+  const rem = new Set(arrows.map((_, i) => i));
+  let waves = 0, open = new Set();
+  while (rem.size) {
+    const ready = [];
+    for (const i of rem) {
+      let ok = true;
+      for (const b of deps[i]) if (rem.has(b)) { ok = false; break; }
+      // a locked arrow also waits for its key (v2.1 lock & key)
+      if (ok && arrows[i].lock != null && rem.has(arrows[i].lock)) ok = false;
+      if (ok) ready.push(i);
+    }
+    if (!ready.length) return { open, waves, solvable: false, fill: 0 };
+    if (!waves) open = new Set(ready);
+    waves++;
+    ready.forEach((i) => rem.delete(i));
+  }
+  const cells = arrows.reduce((s, a) => s + a.cells.length, 0);
+  return { open, waves, solvable: true, fill: Math.round(cells / (rows * cols) * 100) };
+}
+
+function svg(rows, cols, arrows, open, px) {
+  const S = Math.max(4, Math.floor(px / Math.max(rows, cols)));
+  const cx = (c) => c * S + S / 2, cy = (r) => r * S + S / 2;
+  const body = arrows.map((a, i) => {
+    const pts = a.cells.map(([r, c]) => cx(c) + ',' + cy(r)).join(' ');
+    return `<polyline points="${pts}" stroke="${open.has(i) ? 'var(--open)' : 'var(--arrow)'}"/>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${cols * S} ${rows * S}" width="${cols * S}" height="${rows * S}">`
+       + `<g fill="none" stroke-width="${Math.max(1.6, S * 0.5)}" stroke-linecap="round" `
+       + `stroke-linejoin="round">${body}</g></svg>`;
+}
+
+function tile(lvl, win, fresh) {
+  // `?fresh=1` makes the game skip the handcrafted file and generate the
+  // level, seeding from lvl*7919+31337. Passing that same seed here means the
+  // preview shows the exact board the player gets, not a lookalike.
+  if (fresh) win._ae.generateLevel(lvl, lvl * 7919 + 31337);
+  else win._ae.generateLevel(lvl);
+  const rows = win._ae.gridRows, cols = win._ae.gridCols;
+  // Copy the cells out — the next generateLevel call reuses these arrays.
+  const arrows = win._ae.arrows.map((a) => ({ cells: a.cells.map((p) => [p[0], p[1]]), dir: a.dir, lock: a.lock }));
+  const locks = arrows.filter((a) => a.lock != null).length;
+  const m = analyse(rows, cols, arrows);
+  const hc = !fresh && win.HANDCRAFTED_LEVELS && win.HANDCRAFTED_LEVELS[lvl];
+  const pct = Math.round(m.open.size / arrows.length * 100);
+  const el = document.createElement('a');
+  el.className = 'tile';
+  el.href = '../index.html?level=' + lvl + (fresh ? '&fresh=1' : '');
+  el.innerHTML = `<div class="board">${svg(rows, cols, arrows, m.open, 300)}</div>
+    <div class="meta">
+      <div class="row"><b>Уровень ${lvl}</b><span class="tag${
+        fresh ? ' fresh' : hc && hc.t ? ' shape' : ''}">${
+        fresh ? 'новый генератор' : hc && hc.t ? 'фигура · ' + hc.t : 'проц'}</span></div>
+      <div class="nums">
+        <span><i>${arrows.length}</i> стрел</span>
+        <span class="hi"><i>${m.open.size}</i> в старте · ${pct}%</span>
+        <span><i>${m.waves}</i> волн</span>
+        <span><i>${m.fill}%</i> заполнено</span>
+        ${locks ? `<span><i>${locks}</i> замк.</span>` : ''}
+
+        ${m.solvable ? '' : '<span class="bad">НЕРАЗРЕШИМ</span>'}
+      </div>
+    </div>`;
+  return { el, pct, solvable: m.solvable };
+}
+
+let win = null;
+
+function render(levels, fresh) {
+  const grid = $('grid');
+  grid.innerHTML = '';
+  const t0 = performance.now();
+  let pctSum = 0, bad = 0;
+  for (const lvl of levels) {
+    const t = tile(lvl, win, fresh);
+    grid.appendChild(t.el);
+    pctSum += t.pct;
+    if (!t.solvable) bad++;
+  }
+  const ms = Math.round(performance.now() - t0);
+  $('status').innerHTML = `${levels.length} досок${fresh ? ' · <b>новым генератором</b>' : ''}`
+    + ` · в старте в среднем <b>${Math.round(pctSum / levels.length)}%</b>`
+    + ` · сгенерировано за ${ms} мс`
+    + (bad ? ` · <span class="bad">${bad} НЕРАЗРЕШИМЫХ</span>` : '');
+}
+
+$('controls').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const from = +$('from').value, step = +$('step').value, count = +$('count').value;
+  render(Array.from({ length: count }, (_, i) => from + i * step), $('fresh').checked);
+});
+document.querySelectorAll('[data-preset]').forEach((b) => {
+  b.addEventListener('click', () => {
+    const fresh = b.dataset.fresh === '1';
+    $('fresh').checked = fresh;
+    render(b.dataset.preset.split(',').map(Number), fresh);
+  });
+});
+
+gameReady().then((w) => {
+  win = w;
+  render([301, 302, 303, 306, 307, 308, 311, 312, 313, 316, 317, 318]);
+}).catch((err) => {
+  $('status').innerHTML = `<span class="bad">${err.message}</span> — открой страницу `
+    + 'по http:// с корня репозитория, не через file://';
+});
+</script>
+</body>
+</html>
